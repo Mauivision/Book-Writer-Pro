@@ -1,0 +1,440 @@
+/* Ancient Scroll Theme - Hand-crafted with mystical care */
+
+/* Root variables for the ancient scroll theme */
+:root {
+  --scroll-bg: #f4f1e8;
+  --scroll-border: #d4c4a8;
+  --scroll-shadow: #8b7355;
+  --scroll-text: #2c1810;
+  --scroll-accent: #8b4513;
+  --scroll-gold: #daa520;
+  --scroll-fade: #e6d7c3;
+  --scroll-dark: #1a0f08;
+}
+
+/* Dark mode scroll variables */
+.dark {
+  --scroll-bg: #2a1f15;
+  --scroll-border: #4a3c2a;
+  --scroll-shadow: #1a0f08;
+  --scroll-text: #f4f1e8;
+  --scroll-accent: #cd853f;
+  --scroll-gold: #ffd700;
+  --scroll-fade: #3a2f1f;
+  --scroll-dark: #0d0804;
+}
+
+/* Ancient scroll background pattern */
+.ancient-scroll-bg {
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(218, 165, 32, 0.1) 0%, transparent 50%),
+    linear-gradient(135deg, var(--scroll-bg) 0%, var(--scroll-fade) 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  position: relative;
+}
+
+.ancient-scroll-bg::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    /* Aged paper texture */
+    radial-gradient(circle at 25% 25%, rgba(139, 69, 19, 0.05) 0%, transparent 25%),
+    radial-gradient(circle at 75% 75%, rgba(218, 165, 32, 0.05) 0%, transparent 25%),
+    /* Subtle lines like old parchment */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 24px,
+      rgba(139, 69, 19, 0.03) 25px,
+      rgba(139, 69, 19, 0.03) 26px
+    );
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Ancient scroll container */
+.ancient-scroll {
+  background: var(--scroll-bg);
+  border: 2px solid var(--scroll-border);
+  border-radius: 8px;
+  box-shadow: 
+    0 0 20px rgba(139, 115, 85, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.ancient-scroll::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    /* Scroll edges */
+    linear-gradient(90deg, var(--scroll-shadow) 0%, transparent 2%, transparent 98%, var(--scroll-shadow) 100%),
+    /* Aged spots */
+    radial-gradient(circle at 20% 30%, rgba(139, 69, 19, 0.1) 0%, transparent 15%),
+    radial-gradient(circle at 80% 70%, rgba(218, 165, 32, 0.1) 0%, transparent 15%);
+  pointer-events: none;
+}
+
+/* Ancient scroll content */
+.ancient-scroll-content {
+  position: relative;
+  z-index: 1;
+  padding: 2rem;
+  color: var(--scroll-text);
+  font-family: 'Times New Roman', 'Georgia', serif;
+  line-height: 1.8;
+}
+
+/* Ancient scroll header */
+.ancient-scroll-header {
+  border-bottom: 2px solid var(--scroll-accent);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.ancient-scroll-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--scroll-gold), transparent);
+}
+
+.ancient-scroll-title {
+  font-family: 'Times New Roman', 'Georgia', serif;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--scroll-accent);
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.ancient-scroll-subtitle {
+  font-size: 1.2rem;
+  color: var(--scroll-text);
+  text-align: center;
+  font-style: italic;
+  margin-top: 0.5rem;
+  opacity: 0.8;
+}
+
+/* Ancient scroll sidebar */
+.ancient-scroll-sidebar {
+  background: var(--scroll-bg);
+  border-right: 3px solid var(--scroll-accent);
+  box-shadow: 2px 0 10px rgba(139, 115, 85, 0.2);
+  position: relative;
+}
+
+.ancient-scroll-sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--scroll-gold), transparent);
+}
+
+/* Ancient scroll buttons */
+.ancient-scroll-button {
+  background: linear-gradient(145deg, var(--scroll-bg), var(--scroll-fade));
+  border: 2px solid var(--scroll-border);
+  color: var(--scroll-text);
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-family: 'Times New Roman', 'Georgia', serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 4px 8px rgba(139, 115, 85, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.ancient-scroll-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(218, 165, 32, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.ancient-scroll-button:hover::before {
+  left: 100%;
+}
+
+.ancient-scroll-button:hover {
+  background: linear-gradient(145deg, var(--scroll-fade), var(--scroll-bg));
+  border-color: var(--scroll-gold);
+  color: var(--scroll-accent);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 12px rgba(139, 115, 85, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.ancient-scroll-button:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 4px rgba(139, 115, 85, 0.3),
+    inset 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Ancient scroll input fields */
+.ancient-scroll-input {
+  background: var(--scroll-bg);
+  border: 2px solid var(--scroll-border);
+  color: var(--scroll-text);
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  font-family: 'Times New Roman', 'Georgia', serif;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(139, 115, 85, 0.1);
+}
+
+.ancient-scroll-input:focus {
+  outline: none;
+  border-color: var(--scroll-gold);
+  box-shadow: 
+    inset 0 2px 4px rgba(139, 115, 85, 0.1),
+    0 0 0 3px rgba(218, 165, 32, 0.2);
+}
+
+.ancient-scroll-input::placeholder {
+  color: var(--scroll-text);
+  opacity: 0.6;
+  font-style: italic;
+}
+
+/* Ancient scroll cards */
+.ancient-scroll-card {
+  background: var(--scroll-bg);
+  border: 2px solid var(--scroll-border);
+  border-radius: 8px;
+  box-shadow: 
+    0 4px 12px rgba(139, 115, 85, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.ancient-scroll-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 30% 20%, rgba(139, 69, 19, 0.05) 0%, transparent 20%),
+    radial-gradient(circle at 70% 80%, rgba(218, 165, 32, 0.05) 0%, transparent 20%);
+  pointer-events: none;
+}
+
+.ancient-scroll-card-content {
+  position: relative;
+  z-index: 1;
+  padding: 1.5rem;
+  color: var(--scroll-text);
+}
+
+/* Ancient scroll editor */
+.ancient-scroll-editor {
+  background: var(--scroll-bg);
+  border: 3px solid var(--scroll-accent);
+  border-radius: 12px;
+  box-shadow: 
+    0 0 30px rgba(139, 115, 85, 0.4),
+    inset 0 2px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.ancient-scroll-editor::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    /* Parchment texture */
+    radial-gradient(circle at 25% 25%, rgba(139, 69, 19, 0.08) 0%, transparent 25%),
+    radial-gradient(circle at 75% 75%, rgba(218, 165, 32, 0.08) 0%, transparent 25%),
+    /* Aged spots */
+    radial-gradient(circle at 15% 85%, rgba(139, 69, 19, 0.1) 0%, transparent 15%),
+    radial-gradient(circle at 85% 15%, rgba(218, 165, 32, 0.1) 0%, transparent 15%);
+  pointer-events: none;
+}
+
+.ancient-scroll-editor-content {
+  position: relative;
+  z-index: 1;
+  padding: 3rem;
+  color: var(--scroll-text);
+  font-family: 'Times New Roman', 'Georgia', serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  min-height: 600px;
+}
+
+/* Ancient scroll margins */
+.ancient-scroll-margin {
+  position: absolute;
+  left: 2rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--scroll-accent), var(--scroll-gold), var(--scroll-accent));
+  opacity: 0.6;
+}
+
+/* Ancient scroll decorations */
+.ancient-scroll-decoration {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, var(--scroll-gold), var(--scroll-accent));
+  border-radius: 50%;
+  opacity: 0.3;
+  box-shadow: 0 0 10px rgba(218, 165, 32, 0.3);
+}
+
+.ancient-scroll-decoration::before {
+  content: '✦';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--scroll-bg);
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Ancient scroll animations */
+@keyframes scrollFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ancient-scroll-fade-in {
+  animation: scrollFadeIn 0.8s ease-out;
+}
+
+/* Ancient scroll typography */
+.ancient-scroll-text {
+  font-family: 'Times New Roman', 'Georgia', serif;
+  color: var(--scroll-text);
+  line-height: 1.8;
+}
+
+.ancient-scroll-text h1,
+.ancient-scroll-text h2,
+.ancient-scroll-text h3 {
+  color: var(--scroll-accent);
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.ancient-scroll-text h1 {
+  font-size: 2.5rem;
+  border-bottom: 2px solid var(--scroll-gold);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.ancient-scroll-text h2 {
+  font-size: 2rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.ancient-scroll-text h3 {
+  font-size: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.ancient-scroll-text p {
+  margin-bottom: 1.5rem;
+  text-align: justify;
+}
+
+.ancient-scroll-text blockquote {
+  border-left: 4px solid var(--scroll-gold);
+  padding-left: 1.5rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: var(--scroll-accent);
+  background: rgba(218, 165, 32, 0.05);
+  padding: 1rem 1.5rem;
+  border-radius: 0 8px 8px 0;
+}
+
+/* Ancient scroll responsive design */
+@media (max-width: 768px) {
+  .ancient-scroll-content {
+    padding: 1rem;
+  }
+  
+  .ancient-scroll-editor-content {
+    padding: 1.5rem;
+  }
+  
+  .ancient-scroll-title {
+    font-size: 2rem;
+  }
+  
+  .ancient-scroll-margin {
+    left: 1rem;
+  }
+}
+
+/* Ancient scroll print styles */
+@media print {
+  .ancient-scroll-bg {
+    background: white !important;
+  }
+  
+  .ancient-scroll {
+    border: 1px solid #000 !important;
+    box-shadow: none !important;
+  }
+  
+  .ancient-scroll-text {
+    color: black !important;
+  }
+}

@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .editor-container {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200;
+  }
+
+  .editor-toolbar {
+    @apply flex items-center space-x-2 p-2 border-b border-gray-200;
+  }
+
+  .editor-toolbar button {
+    @apply px-3 py-1 rounded hover:bg-gray-100 text-gray-700;
+  }
+
+  .editor-toolbar button.is-active {
+    @apply bg-blue-50 text-blue-600;
+  }
+
+  .editor-content {
+    @apply p-4 min-h-[300px] prose max-w-none;
+  }
+
+  .editor-footer {
+    @apply flex justify-between items-center p-2 border-t border-gray-200 text-sm text-gray-500;
+  }
+
+  .word-count {
+    @apply px-2;
+  }
+} 
