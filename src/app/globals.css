@@ -113,4 +113,35 @@
 
 .animate-slide-in {
   animation: slideIn 0.3s ease-out;
+}
+
+/* Book Writer - writer-focused design tokens */
+:root {
+  --bw-sidebar-bg: 220 13% 18%;
+  --bw-sidebar-hover: 220 13% 24%;
+  --bw-sidebar-active: 217 91% 60%;
+  --bw-paper-bg: 40 33% 98%;
+  --bw-paper-shadow: 40 20% 90%;
+  --bw-accent: 217 91% 60%;
+  --bw-accent-muted: 217 91% 96%;
+  --bw-text: 220 13% 18%;
+  --bw-text-muted: 220 9% 46%;
+}
+
+/* Paper-like editor surface */
+.book-writer-paper {
+  background: linear-gradient(to bottom, hsl(var(--bw-paper-bg)), hsl(40 25% 96%));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Sidebar nav item hover/active states */
+.sidebar-nav-item {
+  @apply rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200;
+}
+.sidebar-nav-item:hover {
+  background: hsl(var(--bw-sidebar-hover));
+}
+.sidebar-nav-item.active {
+  background: hsl(var(--bw-accent));
+  color: white;
 } 

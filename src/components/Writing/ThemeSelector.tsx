@@ -102,18 +102,7 @@ import {
   FaDarter,
   FaFrigatebird,
   FaTropicbird,
-  FaTern,
-  FaNoddy,
-  FaSkuas,
-  FaJaegers,
-  FaGulls,
-  FaTerns,
-  FaNoddies,
-  FaSkuas,
-  FaJaegers,
-  FaGulls,
-  FaTerns,
-  FaNoddies
+  FaNoddy
 } from 'react-icons/fa';
 
 interface WritingTheme {
@@ -605,7 +594,7 @@ export default function ThemeSelector() {
   };
 
   // Preview theme
-  const previewTheme = (theme: WritingTheme) => {
+  const handlePreviewTheme = (theme: WritingTheme) => {
     setPreviewTheme(theme);
     setShowPreview(true);
   };
@@ -740,7 +729,7 @@ export default function ThemeSelector() {
                           size="sm"
                           onClick={(e) => {
                             e.stopPropagation();
-                            previewTheme(theme);
+                            handlePreviewTheme(theme);
                           }}
                         >
                           <FaEye />

@@ -16,7 +16,7 @@ import {
   FaSave,
   FaShare,
   FaCopy,
-  FaRefresh,
+  FaRedo,
   FaFilter,
   FaSearch,
   FaBookmark,
@@ -127,7 +127,7 @@ export default function PromptGenerator() {
         "Write about a character who discovers they have magic",
         "Describe a fantasy world through the eyes of a non-magical character"
       ],
-      sci-fi: [
+      'sci-fi': [
         "Write about technology that has unintended consequences",
         "Create a future where humans are the minority",
         "Describe a world where time travel is possible but dangerous"
@@ -637,7 +637,7 @@ export default function PromptGenerator() {
                   >
                     {isGenerating ? (
                       <>
-                        <FaRefresh className="mr-2 animate-spin" />
+                        <FaRedo className="mr-2 animate-spin" />
                         Generating...
                       </>
                     ) : (

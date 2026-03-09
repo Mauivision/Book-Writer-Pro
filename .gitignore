@@ -75,11 +75,8 @@ ENV/
 env.bak/
 venv.bak/
 
-# Generated books
-*.txt
-*.md
-*.json
-!README.md
+# Generated outputs (keep source content)
+Book/pdfs for print/production-status.json
 
 # Temporary files
 *.tmp

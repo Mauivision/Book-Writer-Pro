@@ -2,18 +2,56 @@
 
 import React, { useState, useEffect } from 'react';
 import { saveAs } from 'file-saver';
+import FullRichTextEditor from './FullRichTextEditor';
 
 interface Chapter {
+  id: string;
   title: string;
   content: string;
+  wordCount: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const SimpleBookWriter: React.FC = () => {
-  const [chapters, setChapters] = useState<Chapter[]>([]);
-  const [currentChapter, setCurrentChapter] = useState(0);
-  const [buffer, setBuffer] = useState('');
+interface Story {
+  id: string;
+  title: string;
+  genre: string;
+  description: string;
+  chapters: Chapter[];
+  characters: string[];
+  plotPoints: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface SimpleBookWriterProps {
+  chapters: Chapter[];
+  currentChapterIndex: number;
+  onChapterUpdate: (index: number, content: string) => void;
+  onWordCountUpdate?: (count: number) => void;
+  onAddChapter?: () => void;
+  storyContext?: Story | null;
+  onPromptSelect?: (prompt: string) => void;
+  onPromptInsert?: (text: string) => void;
+  showPrompts?: boolean;
+}
+
+const SimpleBookWriter: React.FC<SimpleBookWriterProps> = ({
+  chapters,
+  currentChapterIndex,
+  onChapterUpdate,
+  onWordCountUpdate,
+  onAddChapter,
+  storyContext,
+  onPromptSelect = () => {},
+  onPromptInsert = () => {},
+  showPrompts = true
+}) => {
   const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
   const [isListening, setIsListening] = useState(false);
+  const [writingStartTime, setWritingStartTime] = useState<Date | null>(null);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
 
   useEffect(() => {
     if ('webkitSpeechRecognition' in window) {
@@ -22,29 +60,41 @@ const SimpleBookWriter: React.FC = () => {
       rec.interimResults = true;
       rec.onresult = (e: any) => {
         const transcript = e.results[e.results.length - 1][0].transcript;
-        setBuffer((prev) => prev + transcript + '\n');
+        // Write directly to current chapter
+        if (chapters[currentChapterIndex]) {
+          const currentContent = chapters[currentChapterIndex].content;
+          onChapterUpdate(currentChapterIndex, currentContent + transcript + ' ');
+        }
       };
       rec.onstart = () => setIsListening(true);
       rec.onend = () => setIsListening(false);
       setRecognition(rec);
     }
-  }, []);
+  }, [chapters, currentChapterIndex, onChapterUpdate]);
 
-  const addChapter = () => {
-    const newChapter: Chapter = { 
-      title: `Chapter ${chapters.length + 1}`, 
-      content: '' 
-    };
-    setChapters([...chapters, newChapter]);
-  };
+  // Auto-save functionality
+  useEffect(() => {
+    const autoSaveInterval = setInterval(() => {
+      if (chapters.length > 0) {
+        setAutoSaveStatus('saving');
+        // Simulate save operation
+        setTimeout(() => {
+          setAutoSaveStatus('saved');
+        }, 500);
+      }
+    }, 5000); // Auto-save every 5 seconds
 
-  const updateContent = (content: string) => {
-    const updated = [...chapters];
-    if (updated[currentChapter]) {
-      updated[currentChapter].content = content;
-      setChapters(updated);
+    return () => clearInterval(autoSaveInterval);
+  }, [chapters]);
+
+  // Track writing time
+  useEffect(() => {
+    if (chapters[currentChapterIndex]?.content && !writingStartTime) {
+      setWritingStartTime(new Date());
+    } else if (!chapters[currentChapterIndex]?.content && writingStartTime) {
+      setWritingStartTime(null);
     }
-  };
+  }, [chapters, currentChapterIndex, writingStartTime]);
 
   const startVoice = async () => {
     try {
@@ -57,10 +107,6 @@ const SimpleBookWriter: React.FC = () => {
 
   const stopVoice = () => {
     recognition?.stop();
-    if (chapters[currentChapter] && buffer.trim()) {
-      updateContent(chapters[currentChapter].content + buffer);
-      setBuffer('');
-    }
   };
 
   const saveBook = () => {
@@ -68,13 +114,13 @@ const SimpleBookWriter: React.FC = () => {
       alert('No chapters to save!');
       return;
     }
-    
+
     const bookContent = chapters
-      .map(ch => `${ch.title}\n${ch.content}\n\n`)
+      .map(ch => `## ${ch.title}\n\n${ch.content}\n\n---\n\n`)
       .join('');
-    
-    const blob = new Blob([bookContent], { type: 'text/plain' });
-    saveAs(blob, 'my-book.txt');
+
+    const blob = new Blob([bookContent], { type: 'text/markdown' });
+    saveAs(blob, 'my-book.md');
   };
 
   const exportToMarkdown = () => {
@@ -82,308 +128,332 @@ const SimpleBookWriter: React.FC = () => {
       alert('No chapters to export!');
       return;
     }
-    
-    const markdownContent = chapters
-      .map(ch => `# ${ch.title}\n\n${ch.content}\n\n---\n\n`)
-      .join('');
-    
+
+    const markdownContent = `# ${chapters[0]?.title || 'My Book'}\n\n` +
+      chapters.map(ch => `## ${ch.title}\n\n${ch.content}\n\n`).join('');
+
     const blob = new Blob([markdownContent], { type: 'text/markdown' });
     saveAs(blob, 'my-book.md');
   };
 
-  const clearBuffer = () => setBuffer('');
+  const exportToJSON = () => {
+    if (chapters.length === 0) {
+      alert('No chapters to export!');
+      return;
+    }
 
-  const wordCount = chapters.reduce((total, chapter) => {
-    return total + chapter.content.split(/\s+/).filter(word => word.length > 0).length;
-  }, 0);
+    const bookData = {
+      title: 'My Book',
+      chapters: chapters,
+      totalWords: chapters.reduce((total, ch) => total + ch.wordCount, 0),
+      createdAt: new Date().toISOString()
+    };
+
+    const blob = new Blob([JSON.stringify(bookData, null, 2)], { type: 'application/json' });
+    saveAs(blob, 'my-book.json');
+  };
+
+  const currentChapter = chapters[currentChapterIndex];
+  const wordCount = chapters.reduce((total, chapter) => total + chapter.wordCount, 0);
+
+  // Handle prompt selection
+  const handlePromptSelect = (prompt: string) => {
+    console.log('Prompt selected:', prompt);
+    if (onPromptSelect) {
+      onPromptSelect(prompt);
+    }
+  };
+
+  // Handle prompt insertion
+  const handlePromptInsert = (text: string) => {
+    if (currentChapter) {
+      const newContent = currentChapter.content + text;
+      onChapterUpdate(currentChapterIndex, newContent);
+    }
+    if (onPromptInsert) {
+      onPromptInsert(text);
+    }
+  };
+
+  // Update parent component with word count changes
+  useEffect(() => {
+    if (onWordCountUpdate) {
+      onWordCountUpdate(wordCount);
+    }
+  }, [wordCount, onWordCountUpdate]);
 
   return (
-    <div style={{ 
-      padding: '20px', 
-      fontFamily: 'Georgia, serif', 
-      background: '#f5f5dc',
-      minHeight: '100vh',
-      maxWidth: '1200px',
-      margin: '0 auto'
+    <div style={{
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      backgroundColor: '#ffffff'
     }}>
-      {/* Header */}
-      <div style={{ 
-        borderBottom: '2px solid #8b4513', 
-        paddingBottom: '20px', 
-        marginBottom: '20px' 
-      }}>
-        <h1 style={{ 
-          color: '#8b4513', 
-          textAlign: 'center',
-          fontSize: '2.5rem',
-          margin: '0 0 10px 0',
-          textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
+      {/* Chapter Header */}
+      {currentChapter && (
+        <div style={{
+          padding: '20px 30px',
+          borderBottom: '1px solid #e2e8f0',
+          backgroundColor: '#f8fafc'
         }}>
-          📚 Book Writer
-        </h1>
-        <p style={{ 
-          textAlign: 'center', 
-          color: '#666', 
-          fontSize: '1.1rem',
-          margin: '0'
-        }}>
-          Total Words: {wordCount} | Chapters: {chapters.length}
-        </p>
-      </div>
-
-      {/* Controls */}
-      <div style={{ 
-        display: 'flex', 
-        gap: '10px', 
-        marginBottom: '20px',
-        flexWrap: 'wrap',
-        justifyContent: 'center'
-      }}>
-        <button 
-          onClick={addChapter}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#8b4513',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            fontSize: '16px'
-          }}
-        >
-          ➕ Add Chapter
-        </button>
-        
-        <button 
-          onClick={saveBook}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#228b22',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            fontSize: '16px'
-          }}
-        >
-          💾 Save Book (TXT)
-        </button>
-        
-        <button 
-          onClick={exportToMarkdown}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#4169e1',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            fontSize: '16px'
-          }}
-        >
-          📄 Export Markdown
-        </button>
-      </div>
-
-      {/* Chapter Selector */}
-      {chapters.length > 0 && (
-        <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-          <label style={{ 
-            fontSize: '18px', 
-            fontWeight: 'bold',
-            color: '#8b4513',
-            marginRight: '10px'
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '15px'
           }}>
-            Current Chapter:
-          </label>
-          <select 
-            onChange={(e) => setCurrentChapter(Number(e.target.value))}
-            value={currentChapter}
-            style={{
-              padding: '8px 12px',
-              fontSize: '16px',
-              border: '2px solid #8b4513',
-              borderRadius: '5px',
-              backgroundColor: 'white'
-            }}
-          >
-            {chapters.map((ch, i) => (
-              <option key={i} value={i}>
-                {ch.title}
-              </option>
-            ))}
-          </select>
+            <h2 style={{
+              margin: 0,
+              color: '#1f2937',
+              fontSize: '24px',
+              fontWeight: '600'
+            }}>
+              {currentChapter.title}
+            </h2>
+
+            <div style={{
+              display: 'flex',
+              gap: '15px',
+              alignItems: 'center'
+            }}>
+              <div style={{
+                display: 'flex',
+                gap: '20px',
+                fontSize: '14px',
+                color: '#6b7280'
+              }}>
+                <span>
+                  📝 {currentChapter.wordCount} words
+                </span>
+                <span>
+                  📅 {currentChapter.updatedAt.toLocaleDateString()}
+                </span>
+              </div>
+
+              <div style={{
+                display: 'flex',
+                gap: '8px'
+              }}>
+                <button
+                  onClick={saveBook}
+                  style={{
+                    padding: '8px 16px',
+                    backgroundColor: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  💾 Save MD
+                </button>
+
+                <button
+                  onClick={exportToJSON}
+                  style={{
+                    padding: '8px 16px',
+                    backgroundColor: '#8b5cf6',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  📄 Export JSON
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Auto-save indicator */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '12px',
+            color: autoSaveStatus === 'saved' ? '#10b981' : autoSaveStatus === 'saving' ? '#f59e0b' : '#ef4444'
+          }}>
+            <div style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: autoSaveStatus === 'saved' ? '#10b981' : autoSaveStatus === 'saving' ? '#f59e0b' : '#ef4444'
+            }} />
+            {autoSaveStatus === 'saved' && '💾 Auto-saved'}
+            {autoSaveStatus === 'saving' && '⏳ Saving...'}
+            {autoSaveStatus === 'error' && '❌ Save failed'}
+          </div>
         </div>
       )}
 
-      {/* Voice Controls */}
-      <div style={{ 
-        marginBottom: '20px',
-        padding: '15px',
-        backgroundColor: '#fff8dc',
-        border: '2px solid #daa520',
-        borderRadius: '10px'
+      {/* Toolbar */}
+      <div style={{
+        padding: '15px 30px',
+        backgroundColor: '#f8fafc',
+        borderBottom: '1px solid #e2e8f0',
+        display: 'flex',
+        gap: '15px',
+        alignItems: 'center',
+        flexWrap: 'wrap'
       }}>
-        <h3 style={{ 
-          margin: '0 0 10px 0', 
-          color: '#8b4513',
-          textAlign: 'center'
+        {/* Voice Controls */}
+        <div style={{
+          display: 'flex',
+          gap: '10px',
+          alignItems: 'center'
         }}>
-          🎤 Voice Dictation
-        </h3>
-        <div style={{ 
-          display: 'flex', 
-          gap: '10px', 
-          justifyContent: 'center',
-          marginBottom: '10px'
-        }}>
-          <button 
+          <button
             onClick={startVoice}
             disabled={isListening}
             style={{
-              padding: '10px 20px',
-              backgroundColor: isListening ? '#ff6b6b' : '#4caf50',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: isListening ? 'not-allowed' : 'pointer',
-              fontSize: '16px',
-              opacity: isListening ? 0.7 : 1
-            }}
-          >
-            {isListening ? '🔴 Listening...' : '🎤 Start Voice'}
-          </button>
-          
-          <button 
-            onClick={stopVoice}
-            disabled={!isListening}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#ff6b6b',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: !isListening ? 'not-allowed' : 'pointer',
-              fontSize: '16px',
-              opacity: !isListening ? 0.5 : 1
-            }}
-          >
-            ⏹️ Stop & Append
-          </button>
-          
-          <button 
-            onClick={clearBuffer}
-            disabled={!buffer.trim()}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#ffa500',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: !buffer.trim() ? 'not-allowed' : 'pointer',
-              fontSize: '16px',
-              opacity: !buffer.trim() ? 0.5 : 1
-            }}
-          >
-            🗑️ Clear Buffer
-          </button>
-        </div>
-        
-        {buffer && (
-          <div>
-            <label style={{ 
-              display: 'block', 
-              marginBottom: '5px',
-              fontWeight: 'bold',
-              color: '#8b4513'
-            }}>
-              Voice Buffer:
-            </label>
-            <textarea 
-              value={buffer} 
-              readOnly 
-              placeholder="Voice dictation will appear here..."
-              style={{
-                width: '100%',
-                height: '100px',
-                padding: '10px',
-                border: '2px solid #daa520',
-                borderRadius: '5px',
-                fontSize: '14px',
-                backgroundColor: '#fffacd'
-              }}
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Main Editor */}
-      {chapters.length > 0 ? (
-        <div>
-          <h2 style={{ 
-            color: '#8b4513', 
-            marginBottom: '10px',
-            textAlign: 'center'
-          }}>
-            {chapters[currentChapter]?.title}
-          </h2>
-          <textarea
-            value={chapters[currentChapter]?.content || ''}
-            onChange={(e) => updateContent(e.target.value)}
-            style={{ 
-              width: '100%', 
-              height: '500px',
-              padding: '20px',
-              border: '2px solid #8b4513',
-              borderRadius: '10px',
-              fontSize: '16px',
-              lineHeight: '1.6',
-              fontFamily: 'Georgia, serif',
-              backgroundColor: '#fffef7',
-              resize: 'vertical'
-            }}
-            placeholder="Write your chapter here... Use voice dictation or type directly."
-          />
-          <p style={{ 
-            textAlign: 'center', 
-            color: '#666', 
-            marginTop: '10px',
-            fontSize: '14px'
-          }}>
-            Words in this chapter: {chapters[currentChapter]?.content.split(/\s+/).filter(word => word.length > 0).length || 0}
-          </p>
-        </div>
-      ) : (
-        <div style={{ 
-          textAlign: 'center', 
-          padding: '50px',
-          backgroundColor: '#fff8dc',
-          border: '2px dashed #daa520',
-          borderRadius: '10px'
-        }}>
-          <h3 style={{ color: '#8b4513', marginBottom: '20px' }}>
-            📖 Ready to Start Writing?
-          </h3>
-          <p style={{ color: '#666', fontSize: '18px', marginBottom: '20px' }}>
-            Click "Add Chapter" to begin your book, or use voice dictation to start writing immediately.
-          </p>
-          <button 
-            onClick={addChapter}
-            style={{
-              padding: '15px 30px',
-              backgroundColor: '#8b4513',
+              padding: '10px 16px',
+              backgroundColor: isListening ? '#ef4444' : '#10b981',
               color: 'white',
               border: 'none',
               borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '18px',
-              fontWeight: 'bold'
+              cursor: isListening ? 'not-allowed' : 'pointer',
+              fontSize: '14px',
+              fontWeight: '500',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'all 0.2s ease',
+              opacity: isListening ? 0.8 : 1
             }}
           >
-            🚀 Start Your First Chapter
+            {isListening ? '🔴' : '🎤'} {isListening ? 'Listening...' : 'Voice Dictation'}
+          </button>
+
+          <button
+            onClick={stopVoice}
+            disabled={!isListening}
+            style={{
+              padding: '10px 16px',
+              backgroundColor: '#ef4444',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: !isListening ? 'not-allowed' : 'pointer',
+              fontSize: '14px',
+              fontWeight: '500',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              opacity: !isListening ? 0.5 : 1
+            }}
+          >
+            ⏹️ Stop
           </button>
         </div>
-      )}
+
+        {/* Writing Stats */}
+        <div style={{
+          display: 'flex',
+          gap: '20px',
+          alignItems: 'center',
+          fontSize: '14px',
+          color: '#6b7280'
+        }}>
+          <span>
+            📊 Total: {wordCount.toLocaleString()} words
+          </span>
+          <span>
+            📖 Chapters: {chapters.length}
+          </span>
+          {writingStartTime && (
+            <span>
+              ⏱️ Writing: {Math.floor((new Date().getTime() - writingStartTime.getTime()) / 60000)}m
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Main Editor */}
+      <div style={{ flex: 1, padding: '20px', overflow: 'hidden' }}>
+        {currentChapter ? (
+          <FullRichTextEditor
+            content={currentChapter.content}
+            onChange={(content) => onChapterUpdate(currentChapterIndex, content)}
+            placeholder="Write your chapter here... Use voice dictation by clicking the microphone button, or type normally. Your work auto-saves every few seconds."
+            currentChapter={currentChapterIndex + 1}
+            totalChapters={chapters.length}
+            storyContext={storyContext ? {
+              genre: storyContext.genre,
+              characters: storyContext.characters,
+              setting: storyContext.description,
+              plotPoints: storyContext.plotPoints
+            } : undefined}
+            onPromptSelect={handlePromptSelect}
+            onPromptInsert={handlePromptInsert}
+            showPrompts={showPrompts}
+          />
+        ) : (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            backgroundColor: '#f8fafc',
+            border: '2px dashed #cbd5e0',
+            borderRadius: '12px',
+            color: '#6b7280',
+            textAlign: 'center'
+          }}>
+            <div>
+              <h3 style={{
+                margin: '0 0 20px 0',
+                fontSize: '24px',
+                color: '#374151'
+              }}>
+                📚 Ready to Start Writing?
+              </h3>
+              <p style={{
+                margin: '0 0 30px 0',
+                fontSize: '16px',
+                lineHeight: '1.6',
+                maxWidth: '400px'
+              }}>
+                Select a chapter from the sidebar or add a new chapter to begin writing.
+                Use the voice dictation feature for hands-free writing.
+              </p>
+              <div style={{
+                display: 'flex',
+                gap: '15px',
+                justifyContent: 'center'
+              }}>
+                <button
+                  onClick={() => {/* This would trigger adding a chapter in the parent */}}
+                  style={{
+                    padding: '12px 24px',
+                    backgroundColor: '#3b82f6',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '16px',
+                    fontWeight: '500',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <span>+</span> Add Chapter
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

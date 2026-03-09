@@ -215,4 +215,8 @@ export interface BookState {
     title: string;
     genres: string[];
   } | null;
+  achievements?: import('./achievements').Achievement[];
+  userProgress?: import('./achievements').UserProgress;
+  dailyChallenge?: import('./achievements').DailyChallenge | null;
+  writingSessions?: Array<{ date: string; wordCount: number }>;
 } 

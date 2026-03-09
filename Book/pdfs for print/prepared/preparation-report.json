@@ -1,0 +1,96 @@
+{
+  "book": "Shadow Realms Reborn",
+  "date": "2025-11-06T05:33:21.487Z",
+  "totalChapters": 11,
+  "chapters": [
+    {
+      "number": 1,
+      "title": "The Shadow Awakens",
+      "original": "Chapter-01-The-Shadow-Awakens.md",
+      "prepared": "chapter-01-01-The-Shadow-Awakens.md",
+      "words": 2301,
+      "reduction": "9.7%"
+    },
+    {
+      "number": 2,
+      "title": "The Cursed Guardian",
+      "original": "Chapter-02-The-Cursed-Guardian.md",
+      "prepared": "chapter-02-02-The-Cursed-Guardian.md",
+      "words": 2432,
+      "reduction": "15.7%"
+    },
+    {
+      "number": 3,
+      "title": "Into the Shadows",
+      "original": "Chapter-03-Into-the-Shadows.md",
+      "prepared": "chapter-03-03-Into-the-Shadows.md",
+      "words": 2389,
+      "reduction": "17.5%"
+    },
+    {
+      "number": 4,
+      "title": "The Forgotten City",
+      "original": "Chapter-04-The-Forgotten-City.md",
+      "prepared": "chapter-04-04-The-Forgotten-City.md",
+      "words": 1994,
+      "reduction": "13.5%"
+    },
+    {
+      "number": 5,
+      "title": "Fractured Alliances",
+      "original": "Chapter-05-Fractured-Alliances.md",
+      "prepared": "chapter-05-05-Fractured-Alliances.md",
+      "words": 1949,
+      "reduction": "14.4%"
+    },
+    {
+      "number": 6,
+      "title": "The Breaking Point",
+      "original": "Chapter-06-The-Breaking-Point.md",
+      "prepared": "chapter-06-06-The-Breaking-Point.md",
+      "words": 1676,
+      "reduction": "16.9%"
+    },
+    {
+      "number": 7,
+      "title": "Shadows of Betrayal",
+      "original": "Chapter-07-Shadows-of-Betrayal.md",
+      "prepared": "chapter-07-07-Shadows-of-Betrayal.md",
+      "words": 1226,
+      "reduction": "20.4%"
+    },
+    {
+      "number": 8,
+      "title": "Gathering Forces",
+      "original": "Chapter-08-Gathering-Forces.md",
+      "prepared": "chapter-08-08-Gathering-Forces.md",
+      "words": 1515,
+      "reduction": "17.7%"
+    },
+    {
+      "number": 9,
+      "title": "The Veil Falls",
+      "original": "Chapter-09-The-Veil-Falls.md",
+      "prepared": "chapter-09-09-The-Veil-Falls.md",
+      "words": 1537,
+      "reduction": "17.6%"
+    },
+    {
+      "number": 10,
+      "title": "Shadows Heart",
+      "original": "Chapter-10-Shadows-Heart.md",
+      "prepared": "chapter-10-10-Shadows-Heart.md",
+      "words": 1551,
+      "reduction": "18.0%"
+    },
+    {
+      "number": 11,
+      "title": "The Weavers Legacy",
+      "original": "Epilogue-The-Weavers-Legacy.md",
+      "prepared": "chapter-11-The-Weavers-Legacy.md",
+      "words": 1794,
+      "reduction": "14.1%"
+    }
+  ],
+  "totalWords": 20364
+}

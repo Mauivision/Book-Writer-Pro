@@ -34,7 +34,7 @@ export default function AnalyticsPage() {
   const [activeTab, setActiveTab] = useState<'overview' | 'challenges' | 'streak' | 'characters' | 'writing' | 'plot' | 'visualizer' | 'prompts' | 'environment'>('overview');
   const [newAchievement, setNewAchievement] = useState<Achievement | null>(null);
   
-  const { achievements, checkAchievements } = useBookStore();
+  const { achievements = [], checkAchievements } = useBookStore();
 
   useEffect(() => {
     // Check for new achievements when component mounts
