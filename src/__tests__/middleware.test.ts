@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { NextRequest } from 'next/server';
 import { middleware } from '@/middleware';
 import { middlewareConfig } from '@/config/middleware';
@@ -12,7 +15,7 @@ const createMockRequest = (path: string, authHeader?: string | string[]) => {
       headers.set('authorization', authHeader);
     }
   }
-  
+
   const url = new URL(`http://localhost${path}`);
   return new NextRequest(url, {
     headers,
@@ -30,12 +33,16 @@ describe('Middleware', () => {
   });
 
   it('should reject requests without API key', async () => {
-    const request = createMockRequest(`${middlewareConfig.api.routes.prefix}/test`);
+    const request = createMockRequest(
+      `${middlewareConfig.api.routes.prefix}/test`
+    );
     const response = await middleware(request);
-    expect(response.status).toBe(middlewareConfig.api.errors.unauthorized.status);
-    
+    expect(response.status).toBe(
+      middlewareConfig.api.errors.unauthorized.status
+    );
+
     const data = await response.json();
-    expect(data).toBe(middlewareConfig.api.errors.unauthorized.message);
+    expect(data).toEqual({ error: 'Unauthorized' });
   });
 
   it('should reject requests with invalid authorization format', async () => {
@@ -44,10 +51,12 @@ describe('Middleware', () => {
       'InvalidFormat'
     );
     const response = await middleware(request);
-    expect(response.status).toBe(middlewareConfig.api.errors.unauthorized.status);
-    
+    expect(response.status).toBe(
+      middlewareConfig.api.errors.unauthorized.status
+    );
+
     const data = await response.json();
-    expect(data).toBe(middlewareConfig.api.errors.unauthorized.message);
+    expect(data).toEqual({ error: 'Unauthorized' });
   });
 
   it('should not intercept non-API routes', async () => {
@@ -62,7 +71,9 @@ describe('Middleware', () => {
       ''
     );
     const response = await middleware(request);
-    expect(response.status).toBe(middlewareConfig.api.errors.unauthorized.status);
+    expect(response.status).toBe(
+      middlewareConfig.api.errors.unauthorized.status
+    );
   });
 
   it('should handle malformed authorization header', async () => {
@@ -71,7 +82,9 @@ describe('Middleware', () => {
       'Bearer'
     );
     const response = await middleware(request);
-    expect(response.status).toBe(middlewareConfig.api.errors.unauthorized.status);
+    expect(response.status).toBe(
+      middlewareConfig.api.errors.unauthorized.status
+    );
   });
 
   // Test cases for API key formats
@@ -141,7 +154,7 @@ describe('Middleware', () => {
         `${middlewareConfig.api.routes.prefix}/test`,
         [
           `${middlewareConfig.api.routes.authScheme} valid-api-key`,
-          `${middlewareConfig.api.routes.authScheme} invalid-api-key`
+          `${middlewareConfig.api.routes.authScheme} invalid-api-key`,
         ]
       );
       const response = await middleware(request);
@@ -151,13 +164,12 @@ describe('Middleware', () => {
     it('should handle multiple invalid headers', async () => {
       const request = createMockRequest(
         `${middlewareConfig.api.routes.prefix}/test`,
-        [
-          'InvalidFormat1',
-          'InvalidFormat2'
-        ]
+        ['InvalidFormat1', 'InvalidFormat2']
       );
       const response = await middleware(request);
-      expect(response.status).toBe(middlewareConfig.api.errors.unauthorized.status);
+      expect(response.status).toBe(
+        middlewareConfig.api.errors.unauthorized.status
+      );
     });
 
     it('should handle mix of valid and invalid headers', async () => {
@@ -165,11 +177,11 @@ describe('Middleware', () => {
         `${middlewareConfig.api.routes.prefix}/test`,
         [
           'InvalidFormat',
-          `${middlewareConfig.api.routes.authScheme} valid-api-key`
+          `${middlewareConfig.api.routes.authScheme} valid-api-key`,
         ]
       );
       const response = await middleware(request);
       expect(response.status).toBe(200);
     });
   });
-}); 
+});

@@ -5,15 +5,15 @@ import { useBookStore } from '@/store/useBookStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
-import { 
-  FaBook, 
-  FaMagic, 
-  FaRocket, 
+import {
+  FaBook,
+  FaMagic,
+  FaRocket,
   FaLightbulb,
   FaUser,
   FaMap,
   FaStar,
-  FaPlus
+  FaPlus,
 } from 'react-icons/fa';
 
 export function WelcomeScreen() {
@@ -21,7 +21,7 @@ export function WelcomeScreen() {
   const [bookTitle, setBookTitle] = useState('');
   const [bookGenre, setBookGenre] = useState('');
   const [bookDescription, setBookDescription] = useState('');
-  
+
   const { createBook, metadata } = useBookStore();
 
   const handleCreateBook = () => {
@@ -31,11 +31,13 @@ export function WelcomeScreen() {
         genre: bookGenre,
         description: bookDescription,
         author: 'You',
-        targetWordCount: 80000,
+        genres: bookGenre ? [bookGenre] : [],
+        targetAudience: 'General',
+        wordCountGoal: 80000,
         currentWordCount: 0,
         status: 'draft',
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        lastModified: new Date().toISOString(),
       });
       setShowBookCreator(false);
       setBookTitle('');
@@ -97,7 +99,7 @@ export function WelcomeScreen() {
             <FaPlus className="mr-2" />
             Start Writing Your Book
           </Button>
-          
+
           <p className="text-gray-500 text-sm">
             Create your first book to begin your writing journey
           </p>
@@ -113,37 +115,37 @@ export function WelcomeScreen() {
                 </label>
                 <Input
                   value={bookTitle}
-                  onChange={(e) => setBookTitle(e.target.value)}
+                  onChange={e => setBookTitle(e.target.value)}
                   placeholder="Enter your book title..."
                   className="w-full"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Genre
                 </label>
                 <Input
                   value={bookGenre}
-                  onChange={(e) => setBookGenre(e.target.value)}
+                  onChange={e => setBookGenre(e.target.value)}
                   placeholder="e.g., Science Fiction, Fantasy, Romance..."
                   className="w-full"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Description
                 </label>
                 <textarea
                   value={bookDescription}
-                  onChange={(e) => setBookDescription(e.target.value)}
+                  onChange={e => setBookDescription(e.target.value)}
                   placeholder="Brief description of your story..."
                   className="w-full p-3 border border-gray-300 rounded-md resize-none"
                   rows={3}
                 />
               </div>
-              
+
               <div className="flex gap-3">
                 <Button
                   onClick={handleCreateBook}

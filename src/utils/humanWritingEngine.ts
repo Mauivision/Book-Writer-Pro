@@ -2,7 +2,12 @@
 // This system ensures writing feels like it came directly from mind to paper
 
 export interface HumanWritingStyle {
-  voice: 'conversational' | 'literary' | 'journalistic' | 'poetic' | 'stream-of-consciousness';
+  voice:
+    | 'conversational'
+    | 'literary'
+    | 'journalistic'
+    | 'poetic'
+    | 'stream-of-consciousness';
   pacing: 'slow' | 'moderate' | 'fast' | 'varied';
   complexity: 'simple' | 'moderate' | 'complex';
   emotionalTone: 'neutral' | 'warm' | 'distant' | 'intimate' | 'dramatic';
@@ -43,7 +48,7 @@ class HumanWritingEngine {
       complexity: 'moderate',
       emotionalTone: 'warm',
       sentenceVariety: 'varied',
-      vocabularyLevel: 'mixed'
+      vocabularyLevel: 'mixed',
     };
 
     this.patterns = {
@@ -54,7 +59,7 @@ class HumanWritingEngine {
       realisticDialogue: true,
       sensoryDetails: true,
       internalMonologue: true,
-      memoryFlows: true
+      memoryFlows: true,
     };
 
     this.context = {};
@@ -69,11 +74,15 @@ class HumanWritingEngine {
   // Adapt writing style based on context
   private adaptStyleToContext() {
     if (this.context.characterVoice) {
-      this.style.voice = this.getCharacterVoiceStyle(this.context.characterVoice);
+      this.style.voice = this.getCharacterVoiceStyle(
+        this.context.characterVoice
+      );
     }
 
     if (this.context.emotionalState) {
-      this.style.emotionalTone = this.getEmotionalTone(this.context.emotionalState);
+      this.style.emotionalTone = this.getEmotionalTone(
+        this.context.emotionalState
+      );
     }
 
     if (this.context.genre) {
@@ -82,31 +91,35 @@ class HumanWritingEngine {
   }
 
   // Get character-specific voice style
-  private getCharacterVoiceStyle(characterType: string): HumanWritingStyle['voice'] {
+  private getCharacterVoiceStyle(
+    characterType: string
+  ): HumanWritingStyle['voice'] {
     const voiceMap: Record<string, HumanWritingStyle['voice']> = {
-      'introvert': 'stream-of-consciousness',
-      'extrovert': 'conversational',
-      'intellectual': 'literary',
-      'artist': 'poetic',
-      'reporter': 'journalistic',
-      'teenager': 'conversational',
-      'elder': 'literary',
-      'child': 'stream-of-consciousness'
+      introvert: 'stream-of-consciousness',
+      extrovert: 'conversational',
+      intellectual: 'literary',
+      artist: 'poetic',
+      reporter: 'journalistic',
+      teenager: 'conversational',
+      elder: 'literary',
+      child: 'stream-of-consciousness',
     };
     return voiceMap[characterType] || 'conversational';
   }
 
   // Get emotional tone based on character state
-  private getEmotionalTone(emotion: string): HumanWritingStyle['emotionalTone'] {
+  private getEmotionalTone(
+    emotion: string
+  ): HumanWritingStyle['emotionalTone'] {
     const toneMap: Record<string, HumanWritingStyle['emotionalTone']> = {
-      'happy': 'warm',
-      'sad': 'distant',
-      'angry': 'dramatic',
-      'anxious': 'intimate',
-      'excited': 'warm',
-      'melancholy': 'distant',
-      'passionate': 'dramatic',
-      'reflective': 'intimate'
+      happy: 'warm',
+      sad: 'distant',
+      angry: 'dramatic',
+      anxious: 'intimate',
+      excited: 'warm',
+      melancholy: 'distant',
+      passionate: 'dramatic',
+      reflective: 'intimate',
     };
     return toneMap[emotion] || 'neutral';
   }
@@ -181,15 +194,6 @@ class HumanWritingEngine {
 
   // Add natural pauses and breathing room
   private addNaturalPauses(text: string): string {
-    const pausePatterns = [
-      '...',
-      '—',
-      '.',
-      ';',
-      ',',
-      '\n\n'
-    ];
-
     // Add strategic pauses for natural flow
     return text.replace(/([.!?])\s+/g, (match, punctuation) => {
       const random = Math.random();
@@ -207,12 +211,15 @@ class HumanWritingEngine {
       'I suppose...',
       'Come to think of it...',
       'Actually...',
-      'Well...'
+      'Well...',
     ];
 
     // Occasionally add incomplete thoughts
     if (Math.random() < 0.15) {
-      const pattern = incompletePatterns[Math.floor(Math.random() * incompletePatterns.length)];
+      const pattern =
+        incompletePatterns[
+          Math.floor(Math.random() * incompletePatterns.length)
+        ];
       return `${pattern} ${text}`;
     }
 
@@ -227,12 +234,15 @@ class HumanWritingEngine {
       'In an instant,',
       'Just like that,',
       'All at once,',
-      'Before I knew it,'
+      'Before I knew it,',
     ];
 
     // Add emotional transitions occasionally
     if (Math.random() < 0.1) {
-      const transition = emotionalTransitions[Math.floor(Math.random() * emotionalTransitions.length)];
+      const transition =
+        emotionalTransitions[
+          Math.floor(Math.random() * emotionalTransitions.length)
+        ];
       return `${transition} ${text}`;
     }
 
@@ -249,13 +259,16 @@ class HumanWritingEngine {
       'really',
       'actually',
       'basically',
-      'literally'
+      'literally',
     ];
 
     // Add personal expressions naturally
-    return text.replace(/(\w+\.\s+)/g, (match) => {
+    return text.replace(/(\w+\.\s+)/g, match => {
       if (Math.random() < 0.05) {
-        const expression = personalExpressions[Math.floor(Math.random() * personalExpressions.length)];
+        const expression =
+          personalExpressions[
+            Math.floor(Math.random() * personalExpressions.length)
+          ];
         return `${expression}, ${match}`;
       }
       return match;
@@ -272,12 +285,13 @@ class HumanWritingEngine {
       'The taste lingered on my tongue.',
       'The light danced across the surface.',
       'The temperature seemed to shift.',
-      'The atmosphere grew heavy.'
+      'The atmosphere grew heavy.',
     ];
 
     // Add sensory details occasionally
     if (Math.random() < 0.08) {
-      const detail = sensoryDetails[Math.floor(Math.random() * sensoryDetails.length)];
+      const detail =
+        sensoryDetails[Math.floor(Math.random() * sensoryDetails.length)];
       return `${text} ${detail}`;
     }
 
@@ -289,17 +303,18 @@ class HumanWritingEngine {
     const thoughtPatterns = [
       'I wondered if...',
       'The thought crossed my mind that...',
-      'I couldn\'t help thinking...',
+      "I couldn't help thinking...",
       'It occurred to me that...',
       'I realized...',
       'I felt...',
       'I knew...',
-      'I hoped...'
+      'I hoped...',
     ];
 
     // Add internal thoughts occasionally
     if (Math.random() < 0.12) {
-      const thought = thoughtPatterns[Math.floor(Math.random() * thoughtPatterns.length)];
+      const thought =
+        thoughtPatterns[Math.floor(Math.random() * thoughtPatterns.length)];
       return `${text} ${thought}`;
     }
 
@@ -335,12 +350,15 @@ class HumanWritingEngine {
         'she murmured, almost to herself.',
         'he muttered under his breath.',
         'they sighed, the weight of it all.',
-        'I stammered, trying to find the right words.'
+        'I stammered, trying to find the right words.',
       ];
 
-      return text.replace(/(".*?")/g, (match) => {
+      return text.replace(/(".*?")/g, match => {
         if (Math.random() < 0.3) {
-          const pattern = dialoguePatterns[Math.floor(Math.random() * dialoguePatterns.length)];
+          const pattern =
+            dialoguePatterns[
+              Math.floor(Math.random() * dialoguePatterns.length)
+            ];
           return `${match} ${pattern}`;
         }
         return match;
@@ -398,15 +416,16 @@ class HumanWritingEngine {
       'But wait...',
       'Or was it...',
       'I remember...',
-      'It\'s like...',
+      "It's like...",
       'You see...',
       'The thing is...',
-      'I mean...'
+      'I mean...',
     ];
 
     // Add stream-of-consciousness elements
     if (Math.random() < 0.2) {
-      const pattern = streamPatterns[Math.floor(Math.random() * streamPatterns.length)];
+      const pattern =
+        streamPatterns[Math.floor(Math.random() * streamPatterns.length)];
       return `${pattern} ${text}`;
     }
 
@@ -423,12 +442,15 @@ class HumanWritingEngine {
       'kind of.',
       'actually.',
       'really.',
-      'basically.'
+      'basically.',
     ];
 
     // Add conversational elements
     if (Math.random() < 0.15) {
-      const element = conversationalElements[Math.floor(Math.random() * conversationalElements.length)];
+      const element =
+        conversationalElements[
+          Math.floor(Math.random() * conversationalElements.length)
+        ];
       return `${text} ${element}`;
     }
 
@@ -445,12 +467,13 @@ class HumanWritingEngine {
       'What became clear...',
       'The essence of it all...',
       'The heart of the matter...',
-      'The crux of the issue...'
+      'The crux of the issue...',
     ];
 
     // Add literary elements
     if (Math.random() < 0.1) {
-      const element = literaryElements[Math.floor(Math.random() * literaryElements.length)];
+      const element =
+        literaryElements[Math.floor(Math.random() * literaryElements.length)];
       return `${element} ${text}`;
     }
 
@@ -467,12 +490,13 @@ class HumanWritingEngine {
       'like stars in the night sky',
       'as soft as falling snow',
       'like music in the air',
-      'as bright as summer days'
+      'as bright as summer days',
     ];
 
     // Add poetic elements
     if (Math.random() < 0.12) {
-      const element = poeticElements[Math.floor(Math.random() * poeticElements.length)];
+      const element =
+        poeticElements[Math.floor(Math.random() * poeticElements.length)];
       return `${text}, ${element}`;
     }
 
@@ -486,15 +510,16 @@ class HumanWritingEngine {
       'The emotion was raw and real.',
       'It hit me like a wave.',
       'The feeling was overwhelming.',
-      'I couldn\'t shake it.',
+      "I couldn't shake it.",
       'It lingered in my mind.',
       'The impact was immediate.',
-      'I was caught off guard.'
+      'I was caught off guard.',
     ];
 
     // Add emotional depth
     if (Math.random() < 0.08) {
-      const element = emotionalElements[Math.floor(Math.random() * emotionalElements.length)];
+      const element =
+        emotionalElements[Math.floor(Math.random() * emotionalElements.length)];
       return `${text} ${element}`;
     }
 
@@ -513,12 +538,13 @@ class HumanWritingEngine {
       'It brought to mind...',
       'I remembered...',
       'The past came flooding back...',
-      'I found myself thinking of...'
+      'I found myself thinking of...',
     ];
 
     // Add memory flows occasionally
     if (Math.random() < 0.06) {
-      const pattern = memoryPatterns[Math.floor(Math.random() * memoryPatterns.length)];
+      const pattern =
+        memoryPatterns[Math.floor(Math.random() * memoryPatterns.length)];
       return `${text} ${pattern}`;
     }
 
@@ -544,4 +570,4 @@ class HumanWritingEngine {
   }
 }
 
-export const humanWritingEngine = new HumanWritingEngine(); 
+export const humanWritingEngine = new HumanWritingEngine();

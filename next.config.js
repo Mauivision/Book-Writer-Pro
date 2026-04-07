@@ -5,6 +5,9 @@ const nextConfig = {
   images: {
     domains: ['localhost'],
   },
-}
+  eslint: {
+    dirs: ['src'],
+  },
+};
 
-module.exports = nextConfig 
+module.exports = nextConfig;

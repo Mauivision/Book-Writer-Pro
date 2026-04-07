@@ -1,10 +1,23 @@
 import { useBookStore } from '@/store/useBookStore';
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
-import { FaEdit, FaEye, FaArrowUp, FaArrowDown, FaTrash, FaPlus, FaChartLine } from 'react-icons/fa';
+import {
+  FaEdit,
+  FaEye,
+  FaArrowUp,
+  FaArrowDown,
+  FaTrash,
+  FaPlus,
+  FaChartLine,
+} from 'react-icons/fa';
 
-export default function ChapterList({ onEditChapter }: { onEditChapter: (chapterId?: string) => void }) {
-  const { chapters, addChapter, removeChapter, reorderChapters } = useBookStore();
+export default function ChapterList({
+  onEditChapter,
+}: {
+  onEditChapter: (chapterId?: string) => void;
+}) {
+  const { chapters, addChapter, removeChapter, reorderChapters } =
+    useBookStore();
   const [editingId, setEditingId] = useState<string | null>(null);
 
   return (
@@ -18,12 +31,15 @@ export default function ChapterList({ onEditChapter }: { onEditChapter: (chapter
               content: '',
               summary: '',
               order: chapters.length,
-              status: 'draft' as 'draft',
+              status: 'draft' as const,
               wordCount: 0,
             };
             addChapter(newChapter);
             setTimeout(() => {
-              const last = useBookStore.getState().chapters[useBookStore.getState().chapters.length - 1];
+              const last =
+                useBookStore.getState().chapters[
+                  useBookStore.getState().chapters.length - 1
+                ];
               setEditingId(last.id);
               onEditChapter(last.id);
             }, 0);
@@ -55,11 +71,15 @@ export default function ChapterList({ onEditChapter }: { onEditChapter: (chapter
                     {chapter.wordCount} words
                   </span>
                   <span>•</span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    chapter.status === 'final' ? 'bg-green-100 text-green-700' :
-                    chapter.status === 'review' ? 'bg-yellow-100 text-yellow-700' :
-                    'bg-mint-100 text-mint-700'
-                  }`}>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      chapter.status === 'final'
+                        ? 'bg-green-100 text-green-700'
+                        : chapter.status === 'review'
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-mint-100 text-mint-700'
+                    }`}
+                  >
                     {chapter.status}
                   </span>
                 </div>
@@ -69,7 +89,10 @@ export default function ChapterList({ onEditChapter }: { onEditChapter: (chapter
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => { setEditingId(chapter.id); onEditChapter(chapter.id); }}
+                    onClick={() => {
+                      setEditingId(chapter.id);
+                      onEditChapter(chapter.id);
+                    }}
                     className="border-mint-200 hover:border-blue-300 text-mint-700"
                   >
                     <FaEdit className="text-sm" />
@@ -77,7 +100,10 @@ export default function ChapterList({ onEditChapter }: { onEditChapter: (chapter
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => { setEditingId(chapter.id); onEditChapter(chapter.id); }}
+                    onClick={() => {
+                      setEditingId(chapter.id);
+                      onEditChapter(chapter.id);
+                    }}
                     className="border-mint-200 hover:border-blue-300 text-mint-700"
                   >
                     <FaEye className="text-sm" />
@@ -104,8 +130,11 @@ export default function ChapterList({ onEditChapter }: { onEditChapter: (chapter
                     onClick={() => {
                       if (index > 0) {
                         const reordered = [...chapters];
-                        [reordered[index - 1], reordered[index]] = [reordered[index], reordered[index - 1]];
-                        reordered.forEach((c, i) => c.order = i);
+                        [reordered[index - 1], reordered[index]] = [
+                          reordered[index],
+                          reordered[index - 1],
+                        ];
+                        reordered.forEach((c, i) => (c.order = i));
                         reorderChapters(reordered);
                       }
                     }}
@@ -120,8 +149,11 @@ export default function ChapterList({ onEditChapter }: { onEditChapter: (chapter
                     onClick={() => {
                       if (index < chapters.length - 1) {
                         const reordered = [...chapters];
-                        [reordered[index], reordered[index + 1]] = [reordered[index + 1], reordered[index]];
-                        reordered.forEach((c, i) => c.order = i);
+                        [reordered[index], reordered[index + 1]] = [
+                          reordered[index + 1],
+                          reordered[index],
+                        ];
+                        reordered.forEach((c, i) => (c.order = i));
                         reorderChapters(reordered);
                       }
                     }}
@@ -137,4 +169,4 @@ export default function ChapterList({ onEditChapter }: { onEditChapter: (chapter
       </div>
     </div>
   );
-} 
+}

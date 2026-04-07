@@ -5,47 +5,44 @@ describe('useBookStore', () => {
   beforeEach(() => {
     const { result } = renderHook(() => useBookStore());
     act(() => {
+      result.current.loadBook({
+        chapters: [],
+        characters: [],
+        plot: { summary: '', outline: [] },
+        setting: { description: '' },
+      });
       result.current.updateMetadata({
         title: '',
         genre: '',
-        theme: '',
+        themes: [],
         synopsis: '',
       });
-      result.current.chapters = [];
-      result.current.characters = [];
-      result.current.plot = {
-        summary: '',
-        outline: [],
-      };
-      result.current.setting = {
-        description: '',
-      };
     });
   });
 
   it('should update metadata', () => {
     const { result } = renderHook(() => useBookStore());
-    
+
     act(() => {
       result.current.updateMetadata({
         title: 'Test Book',
         genre: 'Fantasy',
-        theme: 'Adventure',
+        themes: ['Adventure'],
         synopsis: 'A test book synopsis',
       });
     });
 
-    expect(result.current.metadata).toEqual({
+    expect(result.current.metadata).toMatchObject({
       title: 'Test Book',
       genre: 'Fantasy',
-      theme: 'Adventure',
+      themes: ['Adventure'],
       synopsis: 'A test book synopsis',
     });
   });
 
   it('should add and update chapters', () => {
     const { result } = renderHook(() => useBookStore());
-    
+
     act(() => {
       result.current.addChapter({
         title: 'Chapter 1',
@@ -71,7 +68,7 @@ describe('useBookStore', () => {
 
   it('should add and update characters', () => {
     const { result } = renderHook(() => useBookStore());
-    
+
     act(() => {
       result.current.addCharacter({
         name: 'Test Character',
@@ -97,7 +94,7 @@ describe('useBookStore', () => {
 
   it('should update plot and setting', () => {
     const { result } = renderHook(() => useBookStore());
-    
+
     act(() => {
       result.current.updatePlot({
         summary: 'Test plot summary',
@@ -123,35 +120,40 @@ describe('useBookStore', () => {
 
   it('should handle story generation', async () => {
     const { result } = renderHook(() => useBookStore());
-    
+
     // Mock the fetch call
     global.fetch = jest.fn().mockImplementation(() =>
       Promise.resolve({
         ok: true,
-        json: () => Promise.resolve({
-          title: 'Generated Story',
-          synopsis: 'Generated synopsis',
-          chapters: [{
-            title: 'Chapter 1',
-            content: 'Generated content',
-            summary: 'Generated summary',
-          }],
-          characters: [{
-            name: 'Generated Character',
-            role: 'protagonist',
-            description: 'Generated description',
-            background: 'Generated background',
-            motivations: ['Generated motivation'],
-            relationships: [],
-          }],
-          plot: {
-            summary: 'Generated plot summary',
-            outline: ['Generated plot point'],
-          },
-          setting: {
-            description: 'Generated setting description',
-          },
-        }),
+        json: () =>
+          Promise.resolve({
+            title: 'Generated Story',
+            synopsis: 'Generated synopsis',
+            chapters: [
+              {
+                title: 'Chapter 1',
+                content: 'Generated content',
+                summary: 'Generated summary',
+              },
+            ],
+            characters: [
+              {
+                name: 'Generated Character',
+                role: 'protagonist',
+                description: 'Generated description',
+                background: 'Generated background',
+                motivations: ['Generated motivation'],
+                relationships: [],
+              },
+            ],
+            plot: {
+              summary: 'Generated plot summary',
+              outline: ['Generated plot point'],
+            },
+            setting: {
+              description: 'Generated setting description',
+            },
+          }),
       })
     );
 
@@ -168,6 +170,8 @@ describe('useBookStore', () => {
     expect(result.current.chapters).toHaveLength(1);
     expect(result.current.characters).toHaveLength(1);
     expect(result.current.plot.summary).toBe('Generated plot summary');
-    expect(result.current.setting.description).toBe('Generated setting description');
+    expect(result.current.setting.description).toBe(
+      'Generated setting description'
+    );
   });
-}); 
+});

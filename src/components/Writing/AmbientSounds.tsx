@@ -37,7 +37,7 @@ import {
   FaEdit,
   FaSave,
   FaUndo,
-  FaRedo
+  FaRedo,
 } from 'react-icons/fa';
 
 interface SoundTrack {
@@ -80,8 +80,9 @@ export default function AmbientSounds() {
   const [showCustomTrackForm, setShowCustomTrackForm] = useState(false);
   const [customTrackName, setCustomTrackName] = useState('');
   const [customTrackUrl, setCustomTrackUrl] = useState('');
-  const [customTrackCategory, setCustomTrackCategory] = useState<string>('ambient');
-  
+  const [customTrackCategory, setCustomTrackCategory] =
+    useState<string>('ambient');
+
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -98,7 +99,7 @@ export default function AmbientSounds() {
       isPlaying: false,
       isFavorite: true,
       isCustom: false,
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
       id: 'fireplace',
@@ -111,7 +112,7 @@ export default function AmbientSounds() {
       isPlaying: false,
       isFavorite: true,
       isCustom: false,
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
       id: 'forest',
@@ -124,7 +125,7 @@ export default function AmbientSounds() {
       isPlaying: false,
       isFavorite: false,
       isCustom: false,
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
       id: 'cafe',
@@ -137,7 +138,7 @@ export default function AmbientSounds() {
       isPlaying: false,
       isFavorite: false,
       isCustom: false,
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
       id: 'ocean',
@@ -146,10 +147,11 @@ export default function AmbientSounds() {
       icon: <FaWater />,
       url: '/sounds/ocean.mp3',
       duration: 600,
+      volume: 0.55,
       isPlaying: false,
       isFavorite: true,
       isCustom: false,
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
       id: 'wind',
@@ -162,7 +164,7 @@ export default function AmbientSounds() {
       isPlaying: false,
       isFavorite: false,
       isCustom: false,
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
       id: 'mountains',
@@ -175,7 +177,7 @@ export default function AmbientSounds() {
       isPlaying: false,
       isFavorite: false,
       isCustom: false,
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
       id: 'city',
@@ -188,7 +190,7 @@ export default function AmbientSounds() {
       isPlaying: false,
       isFavorite: false,
       isCustom: false,
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
       id: 'focus',
@@ -201,7 +203,7 @@ export default function AmbientSounds() {
       isPlaying: false,
       isFavorite: true,
       isCustom: false,
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
       id: 'creative',
@@ -214,23 +216,25 @@ export default function AmbientSounds() {
       isPlaying: false,
       isFavorite: false,
       isCustom: false,
-      createdAt: new Date()
-    }
+      createdAt: new Date(),
+    },
   ];
 
   // Initialize tracks and playlists
   useEffect(() => {
     setTracks(defaultTracks);
-    
+
     // Create default playlists
     const defaultPlaylists: Playlist[] = [
       {
         id: 'focus',
         name: 'Focus & Concentration',
         description: 'Sounds to help you focus and concentrate while writing',
-        tracks: defaultTracks.filter(t => t.category === 'focus' || t.category === 'ambient'),
+        tracks: defaultTracks.filter(
+          t => t.category === 'focus' || t.category === 'ambient'
+        ),
         isActive: false,
-        createdAt: new Date()
+        createdAt: new Date(),
       },
       {
         id: 'nature',
@@ -238,18 +242,20 @@ export default function AmbientSounds() {
         description: 'Natural sounds to create a peaceful writing environment',
         tracks: defaultTracks.filter(t => t.category === 'nature'),
         isActive: false,
-        createdAt: new Date()
+        createdAt: new Date(),
       },
       {
         id: 'creative',
         name: 'Creative Inspiration',
         description: 'Sounds to spark creativity and inspiration',
-        tracks: defaultTracks.filter(t => t.category === 'creative' || t.category === 'ambient'),
+        tracks: defaultTracks.filter(
+          t => t.category === 'creative' || t.category === 'ambient'
+        ),
         isActive: false,
-        createdAt: new Date()
-      }
+        createdAt: new Date(),
+      },
     ];
-    
+
     setPlaylists(defaultPlaylists);
   }, []);
 
@@ -282,14 +288,14 @@ export default function AmbientSounds() {
 
     if (track.isPlaying) {
       audio.pause();
-      setTracks(prev => prev.map(t => 
-        t.id === trackId ? { ...t, isPlaying: false } : t
-      ));
+      setTracks(prev =>
+        prev.map(t => (t.id === trackId ? { ...t, isPlaying: false } : t))
+      );
     } else {
       audio.play();
-      setTracks(prev => prev.map(t => 
-        t.id === trackId ? { ...t, isPlaying: true } : t
-      ));
+      setTracks(prev =>
+        prev.map(t => (t.id === trackId ? { ...t, isPlaying: true } : t))
+      );
     }
   };
 
@@ -302,7 +308,7 @@ export default function AmbientSounds() {
         audio.currentTime = 0;
       }
     });
-    
+
     setTracks(prev => prev.map(t => ({ ...t, isPlaying: false })));
     setIsPlaying(false);
     setCurrentTime(0);
@@ -312,7 +318,7 @@ export default function AmbientSounds() {
   const playPlaylist = (playlist: Playlist) => {
     stopAllTracks();
     setActivePlaylist(playlist);
-    
+
     playlist.tracks.forEach(track => {
       const audio = audioRefs.current[track.id];
       if (audio) {
@@ -320,12 +326,14 @@ export default function AmbientSounds() {
         audio.play();
       }
     });
-    
-    setTracks(prev => prev.map(t => ({
-      ...t,
-      isPlaying: playlist.tracks.some(pt => pt.id === t.id)
-    })));
-    
+
+    setTracks(prev =>
+      prev.map(t => ({
+        ...t,
+        isPlaying: playlist.tracks.some(pt => pt.id === t.id),
+      }))
+    );
+
     setIsPlaying(true);
   };
 
@@ -337,17 +345,17 @@ export default function AmbientSounds() {
 
   // Toggle favorite
   const toggleFavorite = (trackId: string) => {
-    setTracks(prev => prev.map(t => 
-      t.id === trackId ? { ...t, isFavorite: !t.isFavorite } : t
-    ));
+    setTracks(prev =>
+      prev.map(t =>
+        t.id === trackId ? { ...t, isFavorite: !t.isFavorite } : t
+      )
+    );
   };
 
   // Adjust track volume
   const adjustTrackVolume = (trackId: string, volume: number) => {
-    setTracks(prev => prev.map(t => 
-      t.id === trackId ? { ...t, volume } : t
-    ));
-    
+    setTracks(prev => prev.map(t => (t.id === trackId ? { ...t, volume } : t)));
+
     const audio = audioRefs.current[trackId];
     if (audio) {
       audio.volume = volume * globalVolume;
@@ -364,7 +372,7 @@ export default function AmbientSounds() {
       description: newPlaylistDescription,
       tracks: tracks.filter(t => selectedTracks.includes(t.id)),
       isActive: false,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
 
     setPlaylists(prev => [...prev, newPlaylist]);
@@ -389,7 +397,7 @@ export default function AmbientSounds() {
       isPlaying: false,
       isFavorite: false,
       isCustom: true,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
 
     setTracks(prev => [...prev, newTrack]);
@@ -427,7 +435,7 @@ export default function AmbientSounds() {
           <FaMusic className="mr-2" />
           Ambient Sounds
         </h2>
-        
+
         <div className="flex items-center space-x-4">
           {/* Global Volume Control */}
           <div className="flex items-center space-x-2">
@@ -438,7 +446,7 @@ export default function AmbientSounds() {
               max="1"
               step="0.1"
               value={globalVolume}
-              onChange={(e) => setGlobalVolume(parseFloat(e.target.value))}
+              onChange={e => setGlobalVolume(parseFloat(e.target.value))}
               className="w-20"
             />
             <span className="text-sm text-gray-600 w-8">
@@ -456,11 +464,7 @@ export default function AmbientSounds() {
           </Button>
 
           {/* Stop All */}
-          <Button
-            variant="danger"
-            size="sm"
-            onClick={stopAllTracks}
-          >
+          <Button variant="danger" size="sm" onClick={stopAllTracks}>
             <FaStop className="mr-1" />
             Stop All
           </Button>
@@ -476,7 +480,7 @@ export default function AmbientSounds() {
               <div className="flex items-center space-x-2">
                 <select
                   value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  onChange={e => setSelectedCategory(e.target.value)}
                   className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="all">All Sounds</option>
@@ -489,7 +493,7 @@ export default function AmbientSounds() {
                   <option value="custom">Custom</option>
                 </select>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <Button
                   variant="secondary"
@@ -521,17 +525,23 @@ export default function AmbientSounds() {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
-                    <div className="text-2xl text-gray-600">
-                      {track.icon}
-                    </div>
-                    
+                    <div className="text-2xl text-gray-600">{track.icon}</div>
+
                     <div className="flex-1">
                       <h3 className="font-medium flex items-center">
                         {track.name}
-                        {track.isFavorite && <FaBookmark className="ml-2 text-yellow-500" />}
-                        {track.isCustom && <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">Custom</span>}
+                        {track.isFavorite && (
+                          <FaBookmark className="ml-2 text-yellow-500" />
+                        )}
+                        {track.isCustom && (
+                          <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
+                            Custom
+                          </span>
+                        )}
                       </h3>
-                      <p className="text-sm text-gray-600 capitalize">{track.category}</p>
+                      <p className="text-sm text-gray-600 capitalize">
+                        {track.category}
+                      </p>
                     </div>
                   </div>
 
@@ -545,7 +555,12 @@ export default function AmbientSounds() {
                         max="1"
                         step="0.1"
                         value={track.volume}
-                        onChange={(e) => adjustTrackVolume(track.id, parseFloat(e.target.value))}
+                        onChange={e =>
+                          adjustTrackVolume(
+                            track.id,
+                            parseFloat(e.target.value)
+                          )
+                        }
                         className="w-16"
                       />
                       <FaVolumeUp className="text-gray-400" />
@@ -566,7 +581,11 @@ export default function AmbientSounds() {
                       size="sm"
                       onClick={() => toggleFavorite(track.id)}
                     >
-                      <FaBookmark className={track.isFavorite ? 'text-yellow-500' : 'text-gray-400'} />
+                      <FaBookmark
+                        className={
+                          track.isFavorite ? 'text-yellow-500' : 'text-gray-400'
+                        }
+                      />
                     </Button>
 
                     {/* Delete Button (for custom tracks) */}
@@ -589,27 +608,39 @@ export default function AmbientSounds() {
         {/* Playlists Panel */}
         <div className="w-1/3 p-4">
           <h3 className="text-lg font-semibold mb-4">Playlists</h3>
-          
+
           <div className="space-y-3">
             {playlists.map(playlist => (
               <Card
                 key={playlist.id}
                 className={`p-3 cursor-pointer hover:bg-gray-50 ${
-                  activePlaylist?.id === playlist.id ? 'bg-blue-50 border-blue-200' : ''
+                  activePlaylist?.id === playlist.id
+                    ? 'bg-blue-50 border-blue-200'
+                    : ''
                 }`}
-                onClick={() => activePlaylist?.id === playlist.id ? stopPlaylist() : playPlaylist(playlist)}
+                onClick={() =>
+                  activePlaylist?.id === playlist.id
+                    ? stopPlaylist()
+                    : playPlaylist(playlist)
+                }
               >
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="font-medium">{playlist.name}</h4>
-                    <p className="text-sm text-gray-600">{playlist.description}</p>
+                    <p className="text-sm text-gray-600">
+                      {playlist.description}
+                    </p>
                     <p className="text-xs text-gray-500 mt-1">
                       {playlist.tracks.length} tracks
                     </p>
                   </div>
-                  
+
                   <div className="text-2xl text-gray-400">
-                    {activePlaylist?.id === playlist.id ? <FaStop /> : <FaPlay />}
+                    {activePlaylist?.id === playlist.id ? (
+                      <FaStop />
+                    ) : (
+                      <FaPlay />
+                    )}
                   </div>
                 </div>
               </Card>
@@ -633,35 +664,41 @@ export default function AmbientSounds() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-96">
             <h3 className="text-lg font-semibold mb-4">Add Custom Track</h3>
-            
+
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Track Name</label>
+                <label className="block text-sm font-medium mb-1">
+                  Track Name
+                </label>
                 <input
                   type="text"
                   value={customTrackName}
-                  onChange={(e) => setCustomTrackName(e.target.value)}
+                  onChange={e => setCustomTrackName(e.target.value)}
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter track name"
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium mb-1">Audio URL</label>
+                <label className="block text-sm font-medium mb-1">
+                  Audio URL
+                </label>
                 <input
                   type="url"
                   value={customTrackUrl}
-                  onChange={(e) => setCustomTrackUrl(e.target.value)}
+                  onChange={e => setCustomTrackUrl(e.target.value)}
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter audio file URL"
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium mb-1">Category</label>
+                <label className="block text-sm font-medium mb-1">
+                  Category
+                </label>
                 <select
                   value={customTrackCategory}
-                  onChange={(e) => setCustomTrackCategory(e.target.value)}
+                  onChange={e => setCustomTrackCategory(e.target.value)}
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="nature">Nature</option>
@@ -672,7 +709,7 @@ export default function AmbientSounds() {
                 </select>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-end space-x-2 mt-6">
               <Button
                 variant="secondary"
@@ -697,42 +734,53 @@ export default function AmbientSounds() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-96">
             <h3 className="text-lg font-semibold mb-4">Create New Playlist</h3>
-            
+
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Playlist Name</label>
+                <label className="block text-sm font-medium mb-1">
+                  Playlist Name
+                </label>
                 <input
                   type="text"
                   value={newPlaylistName}
-                  onChange={(e) => setNewPlaylistName(e.target.value)}
+                  onChange={e => setNewPlaylistName(e.target.value)}
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter playlist name"
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
+                <label className="block text-sm font-medium mb-1">
+                  Description
+                </label>
                 <textarea
                   value={newPlaylistDescription}
-                  onChange={(e) => setNewPlaylistDescription(e.target.value)}
+                  onChange={e => setNewPlaylistDescription(e.target.value)}
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent h-20"
                   placeholder="Enter playlist description"
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium mb-1">Select Tracks</label>
+                <label className="block text-sm font-medium mb-1">
+                  Select Tracks
+                </label>
                 <div className="max-h-40 overflow-y-auto border rounded-lg p-2">
                   {tracks.map(track => (
-                    <label key={track.id} className="flex items-center space-x-2 p-1">
+                    <label
+                      key={track.id}
+                      className="flex items-center space-x-2 p-1"
+                    >
                       <input
                         type="checkbox"
                         checked={selectedTracks.includes(track.id)}
-                        onChange={(e) => {
+                        onChange={e => {
                           if (e.target.checked) {
                             setSelectedTracks(prev => [...prev, track.id]);
                           } else {
-                            setSelectedTracks(prev => prev.filter(id => id !== track.id));
+                            setSelectedTracks(prev =>
+                              prev.filter(id => id !== track.id)
+                            );
                           }
                         }}
                       />
@@ -742,7 +790,7 @@ export default function AmbientSounds() {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-end space-x-2 mt-6">
               <Button
                 variant="secondary"
@@ -753,7 +801,9 @@ export default function AmbientSounds() {
               <Button
                 variant="primary"
                 onClick={createPlaylist}
-                disabled={!newPlaylistName.trim() || selectedTracks.length === 0}
+                disabled={
+                  !newPlaylistName.trim() || selectedTracks.length === 0
+                }
               >
                 Create Playlist
               </Button>
@@ -766,7 +816,7 @@ export default function AmbientSounds() {
       {tracks.map(track => (
         <audio
           key={track.id}
-          ref={(el) => {
+          ref={el => {
             if (el) {
               audioRefs.current[track.id] = el;
               el.volume = track.volume * globalVolume;

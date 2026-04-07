@@ -8,108 +8,31 @@ import {
   FaSun,
   FaMoon,
   FaEye,
-  FaEyeSlash,
-  FaSave,
-  FaUndo,
-  FaRedo,
-  FaDownload,
-  FaUpload,
-  FaCog,
+  FaBookmark,
   FaCheck,
-  FaTimes,
   FaPlus,
   FaTrash,
-  FaEdit,
-  FaCopy,
-  FaShare,
-  FaBookmark,
-  FaHeart,
-  FaStar,
-  FaFire,
-  FaLeaf,
-  FaWater,
-  FaMountain,
-  FaCity,
   FaCoffee,
   FaBrain,
   FaMagic,
+  FaBook,
   FaRocket,
-  FaGem,
-  FaCrown,
-  FaDragon,
-  FaUnicorn,
-  FaRainbow,
-  FaSnowflake,
-  FaCloud,
-  FaTree,
-  FaFlower,
-  FaButterfly,
-  FaFish,
-  FaBird,
-  FaCat,
-  FaDog,
-  FaHorse,
-  FaLion,
-  FaTiger,
-  FaElephant,
-  FaPanda,
-  FaKoala,
-  FaPenguin,
-  FaOwl,
-  FaEagle,
-  FaDove,
-  FaSparrow,
-  FaRobin,
-  FaCardinal,
-  FaBluebird,
-  FaHummingbird,
-  FaPeacock,
-  FaSwan,
-  FaDuck,
-  FaGoose,
-  FaChicken,
-  FaRooster,
-  FaTurkey,
-  FaPigeon,
-  FaCrow,
-  FaRaven,
-  FaMagpie,
-  FaJay,
-  FaWoodpecker,
-  FaKingfisher,
-  FaHeron,
-  FaCrane,
-  FaStork,
-  FaFlamingo,
-  FaPelican,
-  FaAlbatross,
-  FaSeagull,
-  FaTern,
-  FaGull,
-  FaPetrel,
-  FaFulmar,
-  FaShearwater,
-  FaStormPetrel,
-  FaDivingPetrel,
-  FaPrion,
-  FaSkua,
-  FaJaeger,
-  FaGannet,
-  FaBooby,
-  FaCormorant,
-  FaShag,
-  FaAnhinga,
-  FaDarter,
-  FaFrigatebird,
-  FaTropicbird,
-  FaNoddy
+  FaLeaf,
 } from 'react-icons/fa';
 
 interface WritingTheme {
   id: string;
   name: string;
   description: string;
-  category: 'light' | 'dark' | 'colorful' | 'minimal' | 'nature' | 'cosmic' | 'vintage' | 'modern';
+  category:
+    | 'light'
+    | 'dark'
+    | 'colorful'
+    | 'minimal'
+    | 'nature'
+    | 'cosmic'
+    | 'vintage'
+    | 'modern';
   colors: {
     primary: string;
     secondary: string;
@@ -156,7 +79,7 @@ export default function ThemeSelector() {
     switchTime: '18:00',
     customThemes: [],
     favorites: [],
-    recent: []
+    recent: [],
   });
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [showCustomThemeForm, setShowCustomThemeForm] = useState(false);
@@ -164,7 +87,8 @@ export default function ThemeSelector() {
   const [editingTheme, setEditingTheme] = useState<WritingTheme | null>(null);
   const [customThemeName, setCustomThemeName] = useState('');
   const [customThemeDescription, setCustomThemeDescription] = useState('');
-  const [customThemeCategory, setCustomThemeCategory] = useState<string>('modern');
+  const [customThemeCategory, setCustomThemeCategory] =
+    useState<string>('modern');
   const [customThemeColors, setCustomThemeColors] = useState({
     primary: '#3b82f6',
     secondary: '#64748b',
@@ -173,19 +97,19 @@ export default function ThemeSelector() {
     text: '#1e293b',
     accent: '#f59e0b',
     border: '#e2e8f0',
-    shadow: '#000000'
+    shadow: '#000000',
   });
   const [customThemeFonts, setCustomThemeFonts] = useState({
     heading: 'Inter',
     body: 'Inter',
-    mono: 'JetBrains Mono'
+    mono: 'JetBrains Mono',
   });
   const [customThemeEffects, setCustomThemeEffects] = useState({
     blur: false,
     glow: false,
     shadow: true,
     gradient: false,
-    animation: false
+    animation: false,
   });
   const [showPreview, setShowPreview] = useState(false);
   const [previewTheme, setPreviewTheme] = useState<WritingTheme | null>(null);
@@ -205,24 +129,24 @@ export default function ThemeSelector() {
         text: '#1e293b',
         accent: '#f59e0b',
         border: '#e2e8f0',
-        shadow: '#000000'
+        shadow: '#000000',
       },
       fonts: {
         heading: 'Inter',
         body: 'Inter',
-        mono: 'JetBrains Mono'
+        mono: 'JetBrains Mono',
       },
       effects: {
         blur: false,
         glow: false,
         shadow: true,
         gradient: false,
-        animation: false
+        animation: false,
       },
       icon: <FaSun />,
       isCustom: false,
       isFavorite: true,
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
       id: 'dark',
@@ -237,24 +161,24 @@ export default function ThemeSelector() {
         text: '#f1f5f9',
         accent: '#fbbf24',
         border: '#334155',
-        shadow: '#000000'
+        shadow: '#000000',
       },
       fonts: {
         heading: 'Inter',
         body: 'Inter',
-        mono: 'JetBrains Mono'
+        mono: 'JetBrains Mono',
       },
       effects: {
         blur: false,
         glow: true,
         shadow: true,
         gradient: false,
-        animation: false
+        animation: false,
       },
       icon: <FaMoon />,
       isCustom: false,
       isFavorite: true,
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
       id: 'cozy',
@@ -269,24 +193,24 @@ export default function ThemeSelector() {
         text: '#92400e',
         accent: '#f59e0b',
         border: '#fbbf24',
-        shadow: '#000000'
+        shadow: '#000000',
       },
       fonts: {
         heading: 'Merriweather',
         body: 'Merriweather',
-        mono: 'JetBrains Mono'
+        mono: 'JetBrains Mono',
       },
       effects: {
         blur: false,
         glow: false,
         shadow: true,
         gradient: true,
-        animation: false
+        animation: false,
       },
       icon: <FaCoffee />,
       isCustom: false,
       isFavorite: false,
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
       id: 'focus',
@@ -301,24 +225,24 @@ export default function ThemeSelector() {
         text: '#111827',
         accent: '#10b981',
         border: '#d1d5db',
-        shadow: '#000000'
+        shadow: '#000000',
       },
       fonts: {
         heading: 'Inter',
         body: 'Inter',
-        mono: 'JetBrains Mono'
+        mono: 'JetBrains Mono',
       },
       effects: {
         blur: false,
         glow: false,
         shadow: false,
         gradient: false,
-        animation: false
+        animation: false,
       },
       icon: <FaBrain />,
       isCustom: false,
       isFavorite: true,
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
       id: 'creative',
@@ -333,24 +257,24 @@ export default function ThemeSelector() {
         text: '#581c87',
         accent: '#ec4899',
         border: '#c4b5fd',
-        shadow: '#000000'
+        shadow: '#000000',
       },
       fonts: {
         heading: 'Playfair Display',
         body: 'Inter',
-        mono: 'JetBrains Mono'
+        mono: 'JetBrains Mono',
       },
       effects: {
         blur: false,
         glow: true,
         shadow: true,
         gradient: true,
-        animation: true
+        animation: true,
       },
       icon: <FaMagic />,
       isCustom: false,
       isFavorite: false,
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
       id: 'vintage',
@@ -365,24 +289,24 @@ export default function ThemeSelector() {
         text: '#451a03',
         accent: '#d97706',
         border: '#fbbf24',
-        shadow: '#000000'
+        shadow: '#000000',
       },
       fonts: {
         heading: 'Crimson Text',
         body: 'Crimson Text',
-        mono: 'JetBrains Mono'
+        mono: 'JetBrains Mono',
       },
       effects: {
         blur: false,
         glow: false,
         shadow: true,
         gradient: false,
-        animation: false
+        animation: false,
       },
       icon: <FaBook />,
       isCustom: false,
       isFavorite: false,
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
       id: 'cosmic',
@@ -397,24 +321,24 @@ export default function ThemeSelector() {
         text: '#e2e8f0',
         accent: '#f59e0b',
         border: '#374151',
-        shadow: '#000000'
+        shadow: '#000000',
       },
       fonts: {
         heading: 'Orbitron',
         body: 'Inter',
-        mono: 'JetBrains Mono'
+        mono: 'JetBrains Mono',
       },
       effects: {
         blur: true,
         glow: true,
         shadow: true,
         gradient: true,
-        animation: true
+        animation: true,
       },
       icon: <FaRocket />,
       isCustom: false,
       isFavorite: false,
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
       id: 'nature',
@@ -429,25 +353,25 @@ export default function ThemeSelector() {
         text: '#14532d',
         accent: '#22c55e',
         border: '#bbf7d0',
-        shadow: '#000000'
+        shadow: '#000000',
       },
       fonts: {
         heading: 'Inter',
         body: 'Inter',
-        mono: 'JetBrains Mono'
+        mono: 'JetBrains Mono',
       },
       effects: {
         blur: false,
         glow: false,
         shadow: true,
         gradient: false,
-        animation: false
+        animation: false,
       },
       icon: <FaLeaf />,
       isCustom: false,
       isFavorite: false,
-      createdAt: new Date()
-    }
+      createdAt: new Date(),
+    },
   ];
 
   // Initialize themes
@@ -459,7 +383,7 @@ export default function ThemeSelector() {
   // Apply theme
   const applyTheme = (theme: WritingTheme) => {
     setCurrentTheme(theme);
-    
+
     // Apply CSS custom properties
     const root = document.documentElement;
     root.style.setProperty('--color-primary', theme.colors.primary);
@@ -470,64 +394,69 @@ export default function ThemeSelector() {
     root.style.setProperty('--color-accent', theme.colors.accent);
     root.style.setProperty('--color-border', theme.colors.border);
     root.style.setProperty('--color-shadow', theme.colors.shadow);
-    
+
     // Apply fonts
     root.style.setProperty('--font-heading', theme.fonts.heading);
     root.style.setProperty('--font-body', theme.fonts.body);
     root.style.setProperty('--font-mono', theme.fonts.mono);
-    
+
     // Apply effects
     if (theme.effects.blur) {
       root.classList.add('theme-blur');
     } else {
       root.classList.remove('theme-blur');
     }
-    
+
     if (theme.effects.glow) {
       root.classList.add('theme-glow');
     } else {
       root.classList.remove('theme-glow');
     }
-    
+
     if (theme.effects.shadow) {
       root.classList.add('theme-shadow');
     } else {
       root.classList.remove('theme-shadow');
     }
-    
+
     if (theme.effects.gradient) {
       root.classList.add('theme-gradient');
     } else {
       root.classList.remove('theme-gradient');
     }
-    
+
     if (theme.effects.animation) {
       root.classList.add('theme-animation');
     } else {
       root.classList.remove('theme-animation');
     }
-    
+
     // Update settings
     setSettings(prev => ({
       ...prev,
       currentTheme: theme.id,
-      recent: [theme.id, ...prev.recent.filter(id => id !== theme.id)].slice(0, 5)
+      recent: [theme.id, ...prev.recent.filter(id => id !== theme.id)].slice(
+        0,
+        5
+      ),
     }));
   };
 
   // Toggle favorite
   const toggleFavorite = (themeId: string) => {
-    setThemes(prev => prev.map(theme => 
-      theme.id === themeId 
-        ? { ...theme, isFavorite: !theme.isFavorite }
-        : theme
-    ));
-    
+    setThemes(prev =>
+      prev.map(theme =>
+        theme.id === themeId
+          ? { ...theme, isFavorite: !theme.isFavorite }
+          : theme
+      )
+    );
+
     setSettings(prev => ({
       ...prev,
       favorites: prev.favorites.includes(themeId)
         ? prev.favorites.filter(id => id !== themeId)
-        : [...prev.favorites, themeId]
+        : [...prev.favorites, themeId],
     }));
   };
 
@@ -546,13 +475,13 @@ export default function ThemeSelector() {
       icon: <FaPalette />,
       isCustom: true,
       isFavorite: false,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
 
     setThemes(prev => [...prev, newTheme]);
     setSettings(prev => ({
       ...prev,
-      customThemes: [...prev.customThemes, newTheme]
+      customThemes: [...prev.customThemes, newTheme],
     }));
 
     // Reset form
@@ -567,19 +496,19 @@ export default function ThemeSelector() {
       text: '#1e293b',
       accent: '#f59e0b',
       border: '#e2e8f0',
-      shadow: '#000000'
+      shadow: '#000000',
     });
     setCustomThemeFonts({
       heading: 'Inter',
       body: 'Inter',
-      mono: 'JetBrains Mono'
+      mono: 'JetBrains Mono',
     });
     setCustomThemeEffects({
       blur: false,
       glow: false,
       shadow: true,
       gradient: false,
-      animation: false
+      animation: false,
     });
     setShowCustomThemeForm(false);
   };
@@ -589,7 +518,7 @@ export default function ThemeSelector() {
     setThemes(prev => prev.filter(theme => theme.id !== themeId));
     setSettings(prev => ({
       ...prev,
-      customThemes: prev.customThemes.filter(theme => theme.id !== themeId)
+      customThemes: prev.customThemes.filter(theme => theme.id !== themeId),
     }));
   };
 
@@ -615,7 +544,7 @@ export default function ThemeSelector() {
           <FaPalette className="mr-2" />
           Writing Themes
         </h2>
-        
+
         <div className="flex items-center space-x-2">
           <Button
             variant="secondary"
@@ -637,7 +566,7 @@ export default function ThemeSelector() {
               <div className="flex items-center space-x-2">
                 <select
                   value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  onChange={e => setSelectedCategory(e.target.value)}
                   className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="all">All Themes</option>
@@ -661,24 +590,37 @@ export default function ThemeSelector() {
                   <Card
                     key={theme.id}
                     className={`p-4 cursor-pointer hover:shadow-lg transition-shadow ${
-                      currentTheme?.id === theme.id ? 'ring-2 ring-blue-500' : ''
+                      currentTheme?.id === theme.id
+                        ? 'ring-2 ring-blue-500'
+                        : ''
                     }`}
                     onClick={() => applyTheme(theme)}
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center space-x-2">
-                        <div className="text-2xl" style={{ color: theme.colors.primary }}>
+                        <div
+                          className="text-2xl"
+                          style={{ color: theme.colors.primary }}
+                        >
                           {theme.icon}
                         </div>
                         <div>
                           <h3 className="font-medium">{theme.name}</h3>
-                          <p className="text-sm text-gray-600">{theme.description}</p>
+                          <p className="text-sm text-gray-600">
+                            {theme.description}
+                          </p>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center space-x-1">
-                        {theme.isFavorite && <FaBookmark className="text-yellow-500" />}
-                        {theme.isCustom && <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">Custom</span>}
+                        {theme.isFavorite && (
+                          <FaBookmark className="text-yellow-500" />
+                        )}
+                        {theme.isCustom && (
+                          <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
+                            Custom
+                          </span>
+                        )}
                       </div>
                     </div>
 
@@ -717,17 +659,23 @@ export default function ThemeSelector() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={(e) => {
+                          onClick={e => {
                             e.stopPropagation();
                             toggleFavorite(theme.id);
                           }}
                         >
-                          <FaBookmark className={theme.isFavorite ? 'text-yellow-500' : 'text-gray-400'} />
+                          <FaBookmark
+                            className={
+                              theme.isFavorite
+                                ? 'text-yellow-500'
+                                : 'text-gray-400'
+                            }
+                          />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={(e) => {
+                          onClick={e => {
                             e.stopPropagation();
                             handlePreviewTheme(theme);
                           }}
@@ -735,12 +683,12 @@ export default function ThemeSelector() {
                           <FaEye />
                         </Button>
                       </div>
-                      
+
                       {theme.isCustom && (
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={(e) => {
+                          onClick={e => {
                             e.stopPropagation();
                             deleteCustomTheme(theme.id);
                           }}
@@ -762,12 +710,17 @@ export default function ThemeSelector() {
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Current Theme</h3>
                   <div className="flex items-center space-x-2 mb-3">
-                    <div className="text-2xl" style={{ color: currentTheme.colors.primary }}>
+                    <div
+                      className="text-2xl"
+                      style={{ color: currentTheme.colors.primary }}
+                    >
                       {currentTheme.icon}
                     </div>
                     <div>
                       <h4 className="font-medium">{currentTheme.name}</h4>
-                      <p className="text-sm text-gray-600">{currentTheme.description}</p>
+                      <p className="text-sm text-gray-600">
+                        {currentTheme.description}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -785,14 +738,18 @@ export default function ThemeSelector() {
                     <div className="flex items-center space-x-2">
                       <div
                         className="w-4 h-4 rounded border"
-                        style={{ backgroundColor: currentTheme.colors.secondary }}
+                        style={{
+                          backgroundColor: currentTheme.colors.secondary,
+                        }}
                       />
                       <span>Secondary</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <div
                         className="w-4 h-4 rounded border"
-                        style={{ backgroundColor: currentTheme.colors.background }}
+                        style={{
+                          backgroundColor: currentTheme.colors.background,
+                        }}
                       />
                       <span>Background</span>
                     </div>
@@ -833,23 +790,53 @@ export default function ThemeSelector() {
                   <h4 className="font-medium mb-2">Effects</h4>
                   <div className="text-sm space-y-1">
                     <div className="flex items-center space-x-2">
-                      <FaCheck className={currentTheme.effects.blur ? 'text-green-500' : 'text-gray-400'} />
+                      <FaCheck
+                        className={
+                          currentTheme.effects.blur
+                            ? 'text-green-500'
+                            : 'text-gray-400'
+                        }
+                      />
                       <span>Blur</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <FaCheck className={currentTheme.effects.glow ? 'text-green-500' : 'text-gray-400'} />
+                      <FaCheck
+                        className={
+                          currentTheme.effects.glow
+                            ? 'text-green-500'
+                            : 'text-gray-400'
+                        }
+                      />
                       <span>Glow</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <FaCheck className={currentTheme.effects.shadow ? 'text-green-500' : 'text-gray-400'} />
+                      <FaCheck
+                        className={
+                          currentTheme.effects.shadow
+                            ? 'text-green-500'
+                            : 'text-gray-400'
+                        }
+                      />
                       <span>Shadow</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <FaCheck className={currentTheme.effects.gradient ? 'text-green-500' : 'text-gray-400'} />
+                      <FaCheck
+                        className={
+                          currentTheme.effects.gradient
+                            ? 'text-green-500'
+                            : 'text-gray-400'
+                        }
+                      />
                       <span>Gradient</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <FaCheck className={currentTheme.effects.animation ? 'text-green-500' : 'text-gray-400'} />
+                      <FaCheck
+                        className={
+                          currentTheme.effects.animation
+                            ? 'text-green-500'
+                            : 'text-gray-400'
+                        }
+                      />
                       <span>Animation</span>
                     </div>
                   </div>
@@ -870,34 +857,40 @@ export default function ThemeSelector() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-96 max-h-96 overflow-y-auto">
             <h3 className="text-lg font-semibold mb-4">Create Custom Theme</h3>
-            
+
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Theme Name</label>
+                <label className="block text-sm font-medium mb-1">
+                  Theme Name
+                </label>
                 <input
                   type="text"
                   value={customThemeName}
-                  onChange={(e) => setCustomThemeName(e.target.value)}
+                  onChange={e => setCustomThemeName(e.target.value)}
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter theme name"
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
+                <label className="block text-sm font-medium mb-1">
+                  Description
+                </label>
                 <textarea
                   value={customThemeDescription}
-                  onChange={(e) => setCustomThemeDescription(e.target.value)}
+                  onChange={e => setCustomThemeDescription(e.target.value)}
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent h-20 resize-none"
                   placeholder="Enter theme description"
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium mb-1">Category</label>
+                <label className="block text-sm font-medium mb-1">
+                  Category
+                </label>
                 <select
                   value={customThemeCategory}
-                  onChange={(e) => setCustomThemeCategory(e.target.value)}
+                  onChange={e => setCustomThemeCategory(e.target.value)}
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="light">Light</option>
@@ -910,7 +903,7 @@ export default function ThemeSelector() {
                   <option value="modern">Modern</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium mb-1">Colors</label>
                 <div className="grid grid-cols-2 gap-2">
@@ -919,7 +912,12 @@ export default function ThemeSelector() {
                       <input
                         type="color"
                         value={value}
-                        onChange={(e) => setCustomThemeColors(prev => ({ ...prev, [key]: e.target.value }))}
+                        onChange={e =>
+                          setCustomThemeColors(prev => ({
+                            ...prev,
+                            [key]: e.target.value,
+                          }))
+                        }
                         className="w-8 h-8 border rounded"
                       />
                       <span className="text-sm capitalize">{key}</span>
@@ -928,7 +926,7 @@ export default function ThemeSelector() {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-end space-x-2 mt-6">
               <Button
                 variant="secondary"
@@ -953,14 +951,24 @@ export default function ThemeSelector() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-96">
             <h3 className="text-lg font-semibold mb-4">Theme Preview</h3>
-            
+
             <div className="space-y-4">
-              <div className="p-4 border rounded-lg" style={{ backgroundColor: previewTheme.colors.surface }}>
-                <h4 className="font-medium mb-2" style={{ color: previewTheme.colors.text }}>
+              <div
+                className="p-4 border rounded-lg"
+                style={{ backgroundColor: previewTheme.colors.surface }}
+              >
+                <h4
+                  className="font-medium mb-2"
+                  style={{ color: previewTheme.colors.text }}
+                >
                   Sample Heading
                 </h4>
-                <p className="text-sm" style={{ color: previewTheme.colors.text }}>
-                  This is a sample paragraph to show how the theme looks. The colors and fonts will be applied to your writing environment.
+                <p
+                  className="text-sm"
+                  style={{ color: previewTheme.colors.text }}
+                >
+                  This is a sample paragraph to show how the theme looks. The
+                  colors and fonts will be applied to your writing environment.
                 </p>
                 <div className="mt-2">
                   <Button
@@ -973,12 +981,9 @@ export default function ThemeSelector() {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-end space-x-2 mt-6">
-              <Button
-                variant="secondary"
-                onClick={() => setShowPreview(false)}
-              >
+              <Button variant="secondary" onClick={() => setShowPreview(false)}>
                 Close
               </Button>
               <Button

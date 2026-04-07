@@ -1,11 +1,5 @@
 import { ApiError } from './api';
 
-interface ApiResponse<T = any> {
-  data?: T;
-  error?: string;
-  success: boolean;
-}
-
 class ApiClient {
   private baseUrl: string;
   private isOnline: boolean = navigator.onLine;
@@ -21,7 +15,7 @@ class ApiClient {
         this.isOnline = true;
         console.log('App is online');
       });
-      
+
       window.addEventListener('offline', () => {
         this.isOnline = false;
         console.log('App is offline');
@@ -29,12 +23,17 @@ class ApiClient {
     }
   }
 
-  private async request(endpoint: string, options: RequestInit = {}): Promise<any> {
+  private async request(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<any> {
     const url = `${this.baseUrl}${endpoint}`;
-    
+
     // Check if we're online
     if (!this.isOnline) {
-      throw new ApiError('No internet connection. Please check your connection and try again.');
+      throw new ApiError(
+        'No internet connection. Please check your connection and try again.'
+      );
     }
 
     try {
@@ -58,17 +57,19 @@ class ApiClient {
       if (error instanceof ApiError) {
         throw error;
       }
-      
+
       if (error instanceof TypeError && error.message.includes('fetch')) {
         throw new ApiError('Network error. Please check your connection.');
       }
-      
+
       throw new ApiError('An unexpected error occurred.');
     }
   }
 
   // Test API key
-  async testApiKey(apiKey: string): Promise<{ valid: boolean; message: string }> {
+  async testApiKey(
+    apiKey: string
+  ): Promise<{ valid: boolean; message: string }> {
     return this.request('/api/ai/test-key', {
       method: 'POST',
       body: JSON.stringify({ apiKey }),
@@ -235,19 +236,24 @@ class ApiClient {
       characterCount: number;
       genres: string[];
       conversationHistory: string;
-      currentStage?: 'idea' | 'planning' | 'writing' | 'revision' | 'publishing';
+      currentStage?:
+        | 'idea'
+        | 'planning'
+        | 'writing'
+        | 'revision'
+        | 'publishing';
       userExperience?: 'beginner' | 'intermediate' | 'advanced';
       intent?: string;
       entities?: string[];
     };
   }) {
     console.log('API Client - askLibrarian called with:', params);
-    
+
     const result = await this.request('/api/ai/librarian', {
       method: 'POST',
       body: JSON.stringify(params),
     });
-    
+
     console.log('API Client - askLibrarian response:', result);
     return result;
   }
@@ -306,25 +312,25 @@ class ApiClient {
     delay: number = 1000
   ): Promise<T> {
     let lastError: Error;
-    
+
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         return await requestFn();
       } catch (error) {
         lastError = error as Error;
-        
+
         if (attempt === maxRetries) {
           throw lastError;
         }
-        
+
         // Wait before retrying
         await new Promise(resolve => setTimeout(resolve, delay * attempt));
       }
     }
-    
+
     throw lastError!;
   }
 }
 
 export const apiClient = new ApiClient();
-export { ApiError }; 
+export { ApiError };

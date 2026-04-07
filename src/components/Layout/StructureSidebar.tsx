@@ -1,16 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useBookStore } from '@/store/useBookStore';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
-import { 
-  FaBook, 
-  FaPlus, 
-  FaEdit, 
-  FaTrash, 
-  FaChevronDown, 
+import {
+  FaBook,
+  FaPlus,
+  FaEdit,
+  FaTrash,
+  FaChevronDown,
   FaChevronRight,
   FaUser,
   FaMap,
@@ -35,7 +35,8 @@ import {
   FaExclamationTriangle,
   FaAward,
   FaCheckCircle,
-  FaGem
+  FaGem,
+  FaTimes,
 } from 'react-icons/fa';
 import WritingCompanion from '@/components/AI/WritingCompanion';
 import ChapterGenerator from '@/components/Chapter/ChapterGenerator';
@@ -58,7 +59,7 @@ import { WritingInsightsDashboard } from '@/components/AI/Analysis/WritingInsigh
 import { AIMemorySystem } from '@/components/AI/Memory/AIMemorySystem';
 import { VoiceToneAnalyzer } from '@/components/AI/Analysis/VoiceToneAnalyzer';
 import { SmartWritingPrompts } from '@/components/AI/Prompts/SmartWritingPrompts';
-import ChapterList from '@/components/Chapters/ChapterList';
+import ChapterManager from '@/components/Chapter/ChapterManager';
 
 interface SectionProps {
   title: string;
@@ -67,7 +68,12 @@ interface SectionProps {
   defaultOpen?: boolean;
 }
 
-function Section({ title, icon: Icon, children, defaultOpen = false }: SectionProps) {
+function Section({
+  title,
+  icon: Icon,
+  children,
+  defaultOpen = false,
+}: SectionProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
@@ -78,7 +84,9 @@ function Section({ title, icon: Icon, children, defaultOpen = false }: SectionPr
       >
         <div className="flex items-center gap-3">
           <Icon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-          <span className="font-medium text-gray-900 dark:text-white">{title}</span>
+          <span className="font-medium text-gray-900 dark:text-white">
+            {title}
+          </span>
         </div>
         {isOpen ? (
           <FaChevronDown className="w-4 h-4 text-gray-500" />
@@ -86,12 +94,8 @@ function Section({ title, icon: Icon, children, defaultOpen = false }: SectionPr
           <FaChevronRight className="w-4 h-4 text-gray-500" />
         )}
       </button>
-      
-      {isOpen && (
-        <div className="ml-8 mt-2 space-y-2">
-          {children}
-        </div>
-      )}
+
+      {isOpen && <div className="ml-8 mt-2 space-y-2">{children}</div>}
     </div>
   );
 }
@@ -108,9 +112,10 @@ export function StructureSidebar() {
     addChapter,
     updateChapter,
     deleteChapter,
+    reorderChapters,
     addCharacter,
     updateCharacter,
-    deleteCharacter
+    deleteCharacter,
   } = useBookStore();
 
   const [showChapterGenerator, setShowChapterGenerator] = useState(false);
@@ -135,20 +140,60 @@ export function StructureSidebar() {
   const [showVoiceAnalyzer, setShowVoiceAnalyzer] = useState(false);
   const [showSmartPrompts, setShowSmartPrompts] = useState(false);
   const [showChapterList, setShowChapterList] = useState(false);
+  const [pendingSelectNewestChapter, setPendingSelectNewestChapter] =
+    useState(false);
 
   const handleAddChapter = () => {
     const newChapter = {
-      id: `chapter-${Date.now()}`,
       title: `Chapter ${chapters.length + 1}`,
       content: '',
+      summary: '',
       order: chapters.length,
       wordCount: 0,
       status: 'draft' as const,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
     };
     addChapter(newChapter);
-    setCurrentChapter(newChapter.id);
+    setPendingSelectNewestChapter(true);
+  };
+
+  useEffect(() => {
+    if (!pendingSelectNewestChapter) return;
+    if (chapters.length === 0) return;
+    setCurrentChapter(chapters[chapters.length - 1].id);
+    setPendingSelectNewestChapter(false);
+  }, [chapters, pendingSelectNewestChapter, setCurrentChapter]);
+
+  const OverlayModal = ({
+    title,
+    onClose,
+    children,
+  }: {
+    title: string;
+    onClose: () => void;
+    children: React.ReactNode;
+  }) => {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                {title}
+              </h2>
+              <button
+                onClick={onClose}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              >
+                <FaTimes className="w-6 h-6" />
+              </button>
+            </div>
+          </div>
+          <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+            {children}
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -177,7 +222,7 @@ export function StructureSidebar() {
               <FaPlus className="w-4 h-4 mr-2" />
               Add Chapter
             </Button>
-            
+
             {chapters.map((chapter, index) => (
               <div
                 key={chapter.id}
@@ -201,7 +246,7 @@ export function StructureSidebar() {
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         // Edit chapter title
                       }}
@@ -211,7 +256,7 @@ export function StructureSidebar() {
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         deleteChapter(chapter.id);
                       }}
@@ -237,8 +282,8 @@ export function StructureSidebar() {
               <FaPlus className="w-4 h-4 mr-2" />
               Add Character
             </Button>
-            
-            {characters.map((character) => (
+
+            {characters.map(character => (
               <div
                 key={character.id}
                 className="p-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
@@ -552,7 +597,7 @@ export function StructureSidebar() {
       {/* Modals */}
       {showChapterGenerator && (
         <ChapterGenerator
-          onChapterGenerated={(chapterId) => {
+          onChapterGenerated={chapterId => {
             setCurrentChapter(chapterId);
             setShowChapterGenerator(false);
           }}
@@ -563,164 +608,184 @@ export function StructureSidebar() {
       {showCharacterEditor && (
         <CharacterEditor
           onClose={() => setShowCharacterEditor(false)}
+          onSave={() => {}}
         />
       )}
 
       {showExportDialog && (
-        <EnhancedExportDialog
-          onClose={() => setShowExportDialog(false)}
-        />
+        <OverlayModal title="Export" onClose={() => setShowExportDialog(false)}>
+          <EnhancedExportDialog />
+        </OverlayModal>
       )}
 
       {showWritingCompanion && (
-        <WritingCompanion
+        <OverlayModal
+          title="Writing Companion"
           onClose={() => setShowWritingCompanion(false)}
-        />
+        >
+          <WritingCompanion />
+        </OverlayModal>
       )}
 
       {showAnalytics && (
-        <WritingAnalytics
+        <OverlayModal
+          title="Writing Analytics"
           onClose={() => setShowAnalytics(false)}
-        />
+        >
+          <WritingAnalytics />
+        </OverlayModal>
       )}
 
       {showGoals && (
-        <WritingGoals
-          onClose={() => setShowGoals(false)}
-        />
+        <OverlayModal title="Goals" onClose={() => setShowGoals(false)}>
+          <WritingGoals />
+        </OverlayModal>
       )}
 
       {showStreak && (
-        <WritingStreak
-          onClose={() => setShowStreak(false)}
-        />
+        <OverlayModal title="Streak" onClose={() => setShowStreak(false)}>
+          <WritingStreak />
+        </OverlayModal>
       )}
 
       {showChallenges && (
-        <DailyChallenges
+        <OverlayModal
+          title="Daily Challenges"
           onClose={() => setShowChallenges(false)}
-        />
+        >
+          <DailyChallenges />
+        </OverlayModal>
       )}
 
       {showConsistencyBot && (
-        <StoryConsistencyBot
+        <OverlayModal
+          title="Story Consistency"
           onClose={() => setShowConsistencyBot(false)}
-        />
+        >
+          <StoryConsistencyBot />
+        </OverlayModal>
       )}
 
       {showPlotHoleDetector && (
-        <PlotHoleDetector
+        <OverlayModal
+          title="Plot Hole Detector"
           onClose={() => setShowPlotHoleDetector(false)}
-        />
+        >
+          <PlotHoleDetector />
+        </OverlayModal>
       )}
 
       {showLiveAssistant && (
-        <LiveWritingAssistant
+        <OverlayModal
+          title="Live Writing Assistant"
           onClose={() => setShowLiveAssistant(false)}
-        />
+        >
+          <LiveWritingAssistant />
+        </OverlayModal>
       )}
 
       {showAdvancedTools && (
-        <AdvancedWritingTools
+        <OverlayModal
+          title="Advanced Writing Tools"
           onClose={() => setShowAdvancedTools(false)}
-        />
+        >
+          <AdvancedWritingTools />
+        </OverlayModal>
       )}
 
       {showCharacterMemory && (
-        <CharacterMemorySystem
+        <OverlayModal
+          title="Character Memory"
           onClose={() => setShowCharacterMemory(false)}
-        />
+        >
+          <CharacterMemorySystem />
+        </OverlayModal>
       )}
 
       {showCompletionTracker && (
-        <ChapterCompletionTracker
+        <OverlayModal
+          title="Chapter Completion"
           onClose={() => setShowCompletionTracker(false)}
-        />
+        >
+          <ChapterCompletionTracker />
+        </OverlayModal>
       )}
 
       {showAchievements && (
         <AchievementNotification
+          achievement={null}
           onClose={() => setShowAchievements(false)}
         />
       )}
 
       {showStoryGenerator && (
-        <SessionBasedStoryGenerator
+        <OverlayModal
+          title="Session-Based Story Generator"
           onClose={() => setShowStoryGenerator(false)}
-        />
+        >
+          <SessionBasedStoryGenerator />
+        </OverlayModal>
       )}
 
       {showTextAnalyzer && (
         <IntelligentTextAnalyzer
           text={chapters.find(ch => ch.id === currentChapter)?.content || ''}
-          onInsightSelect={(insight) => console.log('Insight selected:', insight)}
+          onInsightSelect={insight => console.log('Insight selected:', insight)}
         />
       )}
 
       {showInsightsDashboard && (
         <WritingInsightsDashboard
           text={chapters.find(ch => ch.id === currentChapter)?.content || ''}
-          onInsightSelect={(insight) => console.log('Insight selected:', insight)}
+          onInsightSelect={insight => console.log('Insight selected:', insight)}
         />
       )}
 
       {showAIMemory && (
         <AIMemorySystem
           text={chapters.find(ch => ch.id === currentChapter)?.content || ''}
-          onMemorySelect={(memory) => console.log('Memory selected:', memory)}
-          onMemoryCreate={(memory) => console.log('Memory created:', memory)}
+          onMemorySelect={memory => console.log('Memory selected:', memory)}
+          onMemoryCreate={memory => console.log('Memory created:', memory)}
         />
       )}
 
       {showVoiceAnalyzer && (
         <VoiceToneAnalyzer
           text={chapters.find(ch => ch.id === currentChapter)?.content || ''}
-          onVoiceInsight={(insight) => console.log('Voice insight:', insight)}
+          onVoiceInsight={insight => console.log('Voice insight:', insight)}
         />
       )}
 
       {showSmartPrompts && (
         <SmartWritingPrompts
-          currentText={chapters.find(ch => ch.id === currentChapter)?.content || ''}
+          currentText={
+            chapters.find(ch => ch.id === currentChapter)?.content || ''
+          }
           writingContext={{
             genre: metadata.genre,
             mood: 'mysterious',
             characters: characters.map(c => c.name),
             setting: setting.location,
-            theme: plot.themes[0]
+            theme: plot.themes?.[0] ?? '',
           }}
-          onPromptSelect={(prompt) => console.log('Prompt selected:', prompt)}
+          onPromptSelect={prompt => console.log('Prompt selected:', prompt)}
         />
       )}
 
       {showChapterList && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
-            <div className="p-6 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900">Chapter Manager</h2>
-                <button
-                  onClick={() => setShowChapterList(false)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <FaTimes className="w-6 h-6" />
-                </button>
-              </div>
-            </div>
-            <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-              <ChapterList
-                onChapterSelect={(chapterId) => {
-                  setCurrentChapter(chapterId);
-                  setShowChapterList(false);
-                }}
-                onChapterEdit={(chapterId) => {
-                  setCurrentChapter(chapterId);
-                  setShowChapterList(false);
-                }}
-              />
-            </div>
-          </div>
-        </div>
+        <OverlayModal
+          title="Chapter Manager"
+          onClose={() => setShowChapterList(false)}
+        >
+          <ChapterManager
+            chapters={chapters}
+            onChaptersUpdate={next => reorderChapters(next)}
+            onChapterSelect={chapterId => {
+              setCurrentChapter(chapterId);
+              setShowChapterList(false);
+            }}
+          />
+        </OverlayModal>
       )}
     </div>
   );
