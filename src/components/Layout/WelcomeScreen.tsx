@@ -59,16 +59,16 @@ export function WelcomeScreen() {
             Welcome to NovelCraft AI
           </h1>
           <p className="text-xl text-gray-600 mb-8">
-            Your AI-powered writing companion for creating amazing stories
+            Your personal story coach, like having a real writer by your side
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="p-6 text-center">
             <FaMagic className="w-8 h-8 text-purple-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">AI Writing Assistant</h3>
+            <h3 className="text-lg font-semibold mb-2">Story Coach</h3>
             <p className="text-gray-600">
-              Get intelligent suggestions, character development, and plot ideas
+              Get scene-by-scene guidance, character insight, and plot support
             </p>
           </Card>
 
