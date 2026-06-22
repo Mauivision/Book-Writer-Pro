@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lumora — Pick-a-Card Adventure (Autoplay)</title>
+    <link rel="stylesheet" href="lumora-gauntlet.css" />
+    <link rel="stylesheet" href="lumora-adventure.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="top-bar">
+      <div class="brand">
+        <span class="brand-mark">◇</span>
+        <div>
+          <h1>Pick-a-Card Adventure</h1>
+          <p class="subtitle">Lumora: The Eternal Gauntlet — autoplay dungeon-crawl oracle</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a class="header-link" href="index.html">Story prototype</a>
+        <a class="header-link" href="cards.html">Patch Duel (cards)</a>
+        <a class="header-link" href="tarot-rpg.html">Tarot story RPG</a>
+        <button type="button" id="btn-new-run" class="btn ghost">New run</button>
+      </div>
+    </header>
+
+    <main class="layout adventure-layout">
+      <aside class="panel player-panel">
+        <h2>Haruto Takahashi</h2>
+        <p class="role">Eternal Player · Run simulation</p>
+        <div class="bars">
+          <label>HP</label>
+          <div class="bar hp"><span id="bar-hp"></span></div>
+          <label>Unity <span class="hint">(co-op)</span></label>
+          <div class="bar unity"><span id="bar-unity"></span></div>
+          <label>Jealousy <span class="hint">(aggro)</span></label>
+          <div class="bar jealousy"><span id="bar-jealousy"></span></div>
+        </div>
+        <div class="stance-row">
+          <span class="label">Stance</span>
+          <div class="stance-toggle" role="group" aria-label="Combat stance">
+            <button type="button" id="stance-radiant" class="stance active" data-stance="radiant">
+              Radiant
+            </button>
+            <button type="button" id="stance-veil" class="stance" data-stance="veil">Veil</button>
+          </div>
+        </div>
+        <p id="stance-desc" class="stance-desc"></p>
+
+        <div class="rep">
+          <div><span>Radiant rep</span> <strong id="rep-radiant">50</strong></div>
+          <div><span>Veil rep</span> <strong id="rep-veil">50</strong></div>
+        </div>
+
+        <div class="run-meta">
+          <div><span>Act</span> <strong id="meta-act">1</strong></div>
+          <div><span>Room</span> <strong id="meta-room">1</strong></div>
+          <div><span>Depth</span> <strong id="meta-depth">0</strong></div>
+        </div>
+
+        <div class="controls">
+          <div class="control-row">
+            <label class="mono-label" for="policy">Policy</label>
+            <select id="policy" class="select"></select>
+          </div>
+          <div class="control-row">
+            <label class="mono-label" for="speed">Speed</label>
+            <select id="speed" class="select">
+              <option value="900">Slow</option>
+              <option value="550" selected>Normal</option>
+              <option value="250">Fast</option>
+              <option value="120">Turbo</option>
+            </select>
+          </div>
+          <div class="btn-row">
+            <button type="button" id="btn-play" class="btn primary">Autoplay</button>
+            <button type="button" id="btn-step" class="btn ghost">Step</button>
+            <button type="button" id="btn-pause" class="btn ghost" disabled>Pause</button>
+          </div>
+        </div>
+      </aside>
+
+      <section class="panel stage adventure-stage">
+        <div id="route-chip" class="route-chip hidden">Verdant resonance detected</div>
+        <div id="stage-art" class="stage-art" aria-hidden="true"></div>
+        <div class="stage-head">
+          <h2 id="scene-title">Loading…</h2>
+          <span id="phase-pill" class="phase-pill">Explore</span>
+        </div>
+        <p id="scene-body" class="encounter-body"></p>
+
+        <div class="offer-head">
+          <h3>Choices</h3>
+          <p id="offer-hint" class="offer-hint"></p>
+        </div>
+        <div id="offers" class="offers" role="list"></div>
+      </section>
+
+      <aside class="panel log-panel">
+        <h2>Patch log</h2>
+        <ul id="log" class="patch-log"></ul>
+        <p class="rules-hint">
+          This mode uses <strong>shuffled piles</strong> with gates so every offer fits the current story beat.
+          Autoplay picks a card using the selected policy.
+        </p>
+      </aside>
+    </main>
+
+    <footer class="footer">
+      <p>
+        Autoplay oracle for <cite>Lumora: The Eternal Gauntlet</cite>. “Respawn is free; romance is not.”
+        Open locally in a modern browser.
+      </p>
+    </footer>
+
+    <script src="lumora-cards.js" defer></script>
+    <script src="lumora-adventure-content.js" defer></script>
+    <script src="lumora-adventure.js" defer></script>
+  </body>
+</html>
+

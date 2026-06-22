@@ -1,0 +1,87 @@
+{
+  "player_start": "verdant_meadow",
+  "zones": [
+    {
+      "description": "A lush floating meadow with leaking crystal energy.",
+      "id": "verdant_meadow",
+      "name": "Verdant Leak Meadow",
+      "exits": [
+        {
+          "requires": null,
+          "direction": "east",
+          "to": "forest_ruin_gate"
+        },
+        {
+          "requires": null,
+          "direction": "north",
+          "to": "crystal_overlook"
+        },
+        {
+          "requires": null,
+          "direction": "west",
+          "to": "shattered_path"
+        }
+      ]
+    },
+    {
+      "description": "Dense ancient ruins with a heavy atmosphere.",
+      "id": "forest_ruin_gate",
+      "name": "Forest Ruin Gate",
+      "exits": [
+        {
+          "requires": null,
+          "direction": "west",
+          "to": "verdant_meadow"
+        }
+      ]
+    },
+    {
+      "description": "High vantage point with a view of the floating lands.",
+      "id": "crystal_overlook",
+      "name": "Crystal Overlook",
+      "exits": [
+        {
+          "requires": null,
+          "direction": "south",
+          "to": "verdant_meadow"
+        }
+      ]
+    },
+    {
+      "description": "Broken floating walkways and ruins.",
+      "id": "shattered_path",
+      "name": "Shattered Path",
+      "exits": [
+        {
+          "requires": null,
+          "direction": "east",
+          "to": "verdant_meadow"
+        }
+      ]
+    },
+    {
+      "description": "A broken ancient water channel cutting through the floating lands.",
+      "id": "collapsed_aqueduct",
+      "exits": [
+        {
+          "to": "verdant_meadow",
+          "requires": null,
+          "direction": "south"
+        }
+      ],
+      "name": "Collapsed Aqueduct"
+    },
+    {
+      "description": "A misty lower hollow filled with echoing crystal fragments and old ruins. Good for combat practice.",
+      "id": "echo_hollow",
+      "name": "Echo Hollow",
+      "exits": [
+        {
+          "to": "forest_ruin_gate",
+          "requires": null,
+          "direction": "north"
+        }
+      ]
+    }
+  ]
+}

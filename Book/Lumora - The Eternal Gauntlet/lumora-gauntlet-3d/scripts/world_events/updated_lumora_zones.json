@@ -1,0 +1,69 @@
+{
+  "player_start": "verdant_meadow",
+  "zones": [
+    {
+      "id": "verdant_meadow",
+      "name": "Verdant Leak Meadow",
+      "description": "A lush floating meadow with leaking crystal energy. News of the city siege may spread here after certain chapters.",
+      "exits": [
+        {
+          "direction": "east",
+          "to": "forest_ruin_gate",
+          "requires": null
+        },
+        {
+          "direction": "north",
+          "to": "crystal_overlook",
+          "requires": null
+        },
+        {
+          "direction": "west",
+          "to": "shattered_path",
+          "requires": null
+        },
+        {
+          "direction": "south",
+          "to": "hub_city",
+          "requires_chapter": null
+        }
+      ]
+    },
+    {
+      "id": "forest_ruin_gate",
+      "name": "Forest Ruin Gate",
+      "description": "Dense ancient ruins with a heavy atmosphere.",
+      "exits": [
+        {
+          "direction": "west",
+          "to": "verdant_meadow",
+          "requires": null
+        }
+      ]
+    },
+    {
+      "id": "crystal_overlook",
+      "name": "Crystal Overlook",
+      "description": "High vantage point with a view of the floating lands.",
+      "exits": [
+        {
+          "direction": "south",
+          "to": "verdant_meadow",
+          "requires": null
+        }
+      ]
+    },
+    {
+      "id": "hub_city",
+      "name": "Golden Tankard Hub (Main City)",
+      "description": "The bustling main city. Currently may be under siege by a summoned demon until the chapter is resolved.",
+      "exits": [
+        {
+          "direction": "north",
+          "to": "verdant_meadow",
+          "requires": null
+        }
+      ],
+      "requires_chapter_for_full_access": "ch3_demon_summon"
+    }
+  ]
+}

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lumora — Tarot Story RPG (table + guide)</title>
+    <link rel="stylesheet" href="tarot-rpg.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="top-bar">
+      <div class="brand">
+        <span class="brand-mark">◇</span>
+        <div>
+          <h1>Tarot Story RPG</h1>
+          <p class="subtitle">Lumora: The Eternal Gauntlet — use your own deck at the table</p>
+        </div>
+      </div>
+      <nav class="nav-links" aria-label="Other prototypes">
+        <a class="link" href="index.html">Sky Dungeon prototype</a>
+        <a class="link" href="cards.html">Patch Duel</a>
+        <a class="link" href="adventure.html">Adventure</a>
+      </nav>
+    </header>
+
+    <main class="shell">
+      <div class="tablist" role="tablist" aria-label="Guide sections">
+        <button type="button" class="tab" role="tab" data-tab="rules" aria-selected="true">Rules</button>
+        <button type="button" class="tab" role="tab" data-tab="setup">Session setup</button>
+        <button type="button" class="tab" role="tab" data-tab="characters">Characters</button>
+        <button type="button" class="tab" role="tab" data-tab="moves">Moves / resolution</button>
+        <button type="button" class="tab" role="tab" data-tab="generators">Generators</button>
+        <button type="button" class="tab" role="tab" data-tab="play">Play / oracle</button>
+        <button type="button" class="tab" role="tab" data-tab="reference">Card reference</button>
+      </div>
+
+      <div class="panels">
+        <section class="panel" data-panel="rules" role="tabpanel">
+          <h2>What this is</h2>
+          <p>
+            A <strong>rules-light, tarot-first</strong> story game: players bring any standard 78-card tarot deck
+            (Rider–Waite style names assumed for reference text). One person facilitates time and prompts
+            (call them the <strong>Guide</strong>); everyone else plays protagonists. This page is the
+            <strong>rules and oracle companion</strong> — keep a phone, tablet, or laptop at the table, or print
+            the rules later if you prefer paper.
+          </p>
+          <p class="muted">
+            No collectible card packs required. If you do not have a deck yet, use the digital draw in the Play tab
+            and imagine the art you like.
+          </p>
+
+          <h3>What you need</h3>
+          <ul>
+            <li>One tarot deck per table (shared) or one per player (solo journaling) — your choice.</li>
+            <li>2+ people recommended; solo works as a journaling loop.</li>
+            <li>Notes, a timer if you like tight scenes, and safety tools your group already trusts.</li>
+          </ul>
+
+          <h3>Core tracks (pick one style)</h3>
+          <div class="tag-row" aria-hidden="true">
+            <span class="tag radiant">Radiant</span>
+            <span class="tag veil">Veil</span>
+            <span class="tag unity">Unity</span>
+            <span class="tag jealousy">Jealousy</span>
+          </div>
+          <p>
+            <strong>Generic mode:</strong> each protagonist has <strong>Hope</strong> (0–5), <strong>Strain</strong>
+            (0–5), and a shared <strong>Bond</strong> token (0–5). When fiction earns it, the Guide awards +1 Hope
+            or Bond; when the story bites, +1 Strain. If any personal track hits 5, the next beat must address it
+            (breakdown, confession, bargain, or rest).
+          </p>
+          <p>
+            <strong>Lumora mode:</strong> rename Hope → <em>Unity posture</em>, Strain → <em>Jealousy heat</em>, Bond
+            → <em>Party trust</em>. Use Radiant/Veil as <em>stances</em> in narration, not alignment: they are
+            different kinds of courage.
+          </p>
+
+          <h3>Loop</h3>
+          <ol>
+            <li><strong>Scene question.</strong> The Guide names a clear question: “What breaks at the tavern?”</li>
+            <li><strong>Draw.</strong> Pull cards into the chosen spread (physical deck or digital assist).</li>
+            <li><strong>Read together.</strong> Use prompts on this site as <em>sparks</em>, not scripture. First
+              impression counts.</li>
+            <li><strong>Play a beat.</strong> 5–15 minutes of roleplay or narration.</li>
+            <li><strong>Adjust tracks.</strong> Mark Hope / Strain / Bond (or Unity / Jealousy / trust).</li>
+            <li><strong>Cut or continue.</strong> If the Door card feels answered, fade out; if not, pull one more
+              card only on purpose.</li>
+          </ol>
+
+          <h3>Guide principles</h3>
+          <ul>
+            <li>Ask pointed questions; reward honest answers with screen time.</li>
+            <li>Reversals are optional. If you use them, treat them as “tilt,” not “bad.”</li>
+            <li>Minors are everyday magic; Majors are turning points — give Majors a slow beat.</li>
+            <li>When dice would help: flip a coin, or let the highest Strain player choose who takes the risk.</li>
+          </ul>
+        </section>
+
+        <section class="panel" data-panel="setup" role="tabpanel" hidden>
+          <h2>Session sheet (local save)</h2>
+          <p class="muted">
+            Stored only in this browser via <span class="mono">localStorage</span>. Use export elsewhere if you need
+            a backup.
+          </p>
+          <label for="session-party">Party / series title</label>
+          <input type="text" id="session-party" placeholder="e.g., Patch Notes IRL — Haruto’s table" autocomplete="off" />
+          <label for="session-notes">Tonight’s intent, lines, safety notes</label>
+          <textarea id="session-notes" placeholder="Open scenes, tone, no-go topics, NPC wishlist…"></textarea>
+          <div class="btn-row">
+            <button type="button" class="btn primary" id="btn-session-save">Save in browser</button>
+            <button type="button" class="btn ghost" id="btn-session-load">Reload saved</button>
+            <button type="button" class="btn ghost" id="btn-session-export">Export JSON</button>
+          </div>
+
+          <div class="ref-block">
+            <h3>Import / backup</h3>
+            <p class="muted">Paste exported JSON below and import. This replaces the current session fields.</p>
+            <label for="session-json">Session JSON</label>
+            <textarea id="session-json" class="mono" placeholder="{ ... }"></textarea>
+            <div class="btn-row">
+              <button type="button" class="btn primary" id="btn-session-import">Import JSON</button>
+              <button type="button" class="btn ghost" id="btn-session-copy">Copy JSON</button>
+            </div>
+            <p id="session-msg" class="muted" role="status" aria-live="polite" style="margin-top:0.5rem"></p>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="characters" role="tabpanel" hidden>
+          <h2>Characters</h2>
+          <p class="muted">
+            Add protagonists and track Hope/Strain/Bond (or Unity/Jealousy/Trust). Everything saves locally in this
+            browser.
+          </p>
+
+          <div class="grid-2">
+            <div>
+              <label for="char-name">Name</label>
+              <input type="text" id="char-name" placeholder="e.g., Seraphina" autocomplete="off" />
+              <label for="char-role">Role / vibe</label>
+              <input type="text" id="char-role" placeholder="e.g., Veil negotiator · soft power" autocomplete="off" />
+              <label for="char-traits">3 traits (comma separated)</label>
+              <input type="text" id="char-traits" placeholder="sharp, loyal, tired" autocomplete="off" />
+              <div class="btn-row">
+                <button type="button" class="btn primary" id="btn-char-add">Add character</button>
+                <button type="button" class="btn ghost" id="btn-chars-clear">Clear all</button>
+                <button type="button" class="btn ghost" id="btn-chars-export">Export</button>
+              </div>
+              <p id="chars-msg" class="muted" role="status" aria-live="polite" style="margin-top:0.5rem"></p>
+            </div>
+            <div>
+              <div class="ref-block">
+                <h3>Shared Bond / Trust</h3>
+                <p class="muted">Use this as a table-wide meter if you like.</p>
+                <div class="track-row">
+                  <button type="button" class="btn ghost" data-track="bond" data-delta="-1">-</button>
+                  <div>
+                    <div class="mono muted">Bond / Trust</div>
+                    <div class="track-big"><span id="bond-val">0</span><span class="muted"> / 5</span></div>
+                  </div>
+                  <button type="button" class="btn ghost" data-track="bond" data-delta="1">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="chars-mount" class="chars-mount"></div>
+        </section>
+
+        <section class="panel" data-panel="moves" role="tabpanel" hidden>
+          <h2>Moves / resolution (tarot as RNG)</h2>
+          <p>
+            When the outcome is uncertain, do a <strong>Move</strong>. Draw 1 card (physical or digital). Interpret it
+            using the quick rules below.
+          </p>
+
+          <div class="ref-block">
+            <h3>Quick interpretation</h3>
+            <ul>
+              <li><strong>Major Arcana:</strong> a turning point. You succeed, but the world changes.</li>
+              <li><strong>Minor Arcana:</strong> suit tells the flavor; rank tells the intensity.</li>
+              <li><strong>Reversed:</strong> complication, delay, or overcorrection — succeed at a cost.</li>
+            </ul>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <h3>Pick a move</h3>
+              <label for="move-pick">Move</label>
+              <select id="move-pick">
+                <option value="push">Push through (force / courage)</option>
+                <option value="read">Read the room (insight / intuition)</option>
+                <option value="plead">Plead or bargain (heart / leverage)</option>
+                <option value="strike">Strike true (precision / truth)</option>
+                <option value="protect">Protect someone (sacrifice / care)</option>
+              </select>
+              <label for="move-stake">Stakes (one sentence)</label>
+              <input type="text" id="move-stake" placeholder="If we fail, the Curator audits our bond quest." autocomplete="off" />
+              <div class="btn-row">
+                <button type="button" class="btn primary" id="btn-move-draw">Draw digital</button>
+                <button type="button" class="btn ghost" id="btn-move-clear">Clear</button>
+              </div>
+              <p class="muted">Physical deck: draw 1 card and type it below.</p>
+              <label for="move-card">Card</label>
+              <input type="text" id="move-card" list="tarot-card-list" placeholder="The Tower, 9 of Wands…" autocomplete="off" />
+              <label class="pick" style="margin-top:0.35rem"><input type="checkbox" id="move-rev" /> reversed</label>
+            </div>
+            <div>
+              <h3>Result</h3>
+              <div id="move-result" class="move-result muted">No move drawn yet.</div>
+              <div id="move-prompt" class="move-prompt"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="generators" role="tabpanel" hidden>
+          <h2>Generators (scene fuel)</h2>
+          <p class="muted">Fast prompts for Guide prep or mid-session pivots. Physical deck or digital draw.</p>
+
+          <div class="grid-2">
+            <div class="ref-block">
+              <h3>NPC</h3>
+              <div class="btn-row">
+                <button type="button" class="btn primary" id="btn-gen-npc">Draw NPC</button>
+              </div>
+              <div id="gen-npc" class="gen-box muted">—</div>
+            </div>
+            <div class="ref-block">
+              <h3>Location</h3>
+              <div class="btn-row">
+                <button type="button" class="btn primary" id="btn-gen-loc">Draw location</button>
+              </div>
+              <div id="gen-loc" class="gen-box muted">—</div>
+            </div>
+            <div class="ref-block">
+              <h3>Problem</h3>
+              <div class="btn-row">
+                <button type="button" class="btn primary" id="btn-gen-prob">Draw problem</button>
+              </div>
+              <div id="gen-prob" class="gen-box muted">—</div>
+            </div>
+            <div class="ref-block">
+              <h3>Twist</h3>
+              <div class="btn-row">
+                <button type="button" class="btn primary" id="btn-gen-twist">Draw twist</button>
+              </div>
+              <div id="gen-twist" class="gen-box muted">—</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="play" role="tabpanel" hidden>
+          <h2>Oracle</h2>
+          <p>
+            Choose a spread, lay it out at the table, then draw from your physical deck into each slot. If you are
+            online or deck-less, use <strong>Draw digital</strong> to sample a fair random card from a full 78-card
+            list.
+          </p>
+
+          <div class="ref-block">
+            <h3>Physical deck mode (recommended)</h3>
+            <ul>
+              <li>Draw a card for each position.</li>
+              <li>Type the card name into the slot input (autocomplete) and mark “reversed” if needed.</li>
+              <li>The app generates prompts, but your table’s first read wins.</li>
+            </ul>
+          </div>
+
+          <div class="spread-pick" role="radiogroup" aria-label="Spread">
+            <label class="pick"
+              ><input type="radio" name="spread" value="beat" checked /> Three-card beat (scene)</label
+            >
+            <label class="pick"><input type="radio" name="spread" value="act" /> Five-card act (arc)</label>
+            <label class="pick"><input type="radio" name="spread" value="bond" /> Bond spotlight</label>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label for="rev-chance">Reversal chance (digital draw)</label>
+              <input type="number" id="rev-chance" min="0" max="45" value="22" />
+              <p class="muted" style="margin-top: 0.35rem">
+                Percent chance each digital card is reversed. Physical readers: ignore this and read the card you
+                pulled.
+              </p>
+            </div>
+            <div>
+              <p class="muted" style="margin: 0">Actions</p>
+              <div class="btn-row">
+                <button type="button" class="btn primary" id="btn-oracle-draw">Draw digital</button>
+                <button type="button" class="btn ghost" id="btn-oracle-clear">Clear slots</button>
+                <button type="button" class="btn ghost" id="btn-oracle-log">Log this spread</button>
+              </div>
+            </div>
+          </div>
+
+          <datalist id="tarot-card-list"></datalist>
+          <div id="oracle-slots" class="oracle-slots" aria-live="polite"></div>
+
+          <div class="ref-block">
+            <h3>Session log</h3>
+            <p class="muted">Keeps a simple timestamped record in your browser for this device.</p>
+            <div class="btn-row">
+              <button type="button" class="btn ghost" id="btn-log-clear">Clear log</button>
+              <button type="button" class="btn ghost" id="btn-log-export">Export log</button>
+            </div>
+            <ul id="oracle-log" class="oracle-log"></ul>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="reference" role="tabpanel" hidden>
+          <h2>Major Arcana — quick prompts</h2>
+          <p class="muted">Search filters the list. Each entry has a neutral story read plus a Lumora-colored nudge.</p>
+          <label for="ref-search">Filter</label>
+          <input type="text" id="ref-search" placeholder="Star, 13, Fool…" autocomplete="off" />
+          <div id="ref-major-mount" class="ref-block"></div>
+
+          <h3>Minor suits — how to read fast</h3>
+          <ul>
+            <li><strong>Wands:</strong> drive, craft, conflict, initiative.</li>
+            <li><strong>Cups:</strong> emotion, bonds, morale, memory.</li>
+            <li><strong>Swords:</strong> truth, pressure, sharp choices, anxiety.</li>
+            <li><strong>Pentacles:</strong> resources, body, reputation, loot.</li>
+          </ul>
+          <h3>Ranks — story scale</h3>
+          <ul class="mono" style="font-size: 0.82rem; color: var(--muted)">
+            <li>Ace — seed / offer</li>
+            <li>2–4 — tension, alliance, stability</li>
+            <li>5–7 — friction, return, trial</li>
+            <li>8–10 — grind, exhaustion, consequence peak</li>
+            <li>Page — rumor / student</li>
+            <li>Knight — obsession / charge</li>
+            <li>Queen — care with teeth</li>
+            <li>King — authority with cost</li>
+          </ul>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>
+        Open <code>tarot-rpg.html</code> from disk or serve the <code>game</code> folder. This is a prototype
+        companion for tabletop play, not a gambling product.
+      </p>
+      <p><a class="link" href="tarot-rpg-print.html">Printable rules sheet</a></p>
+    </footer>
+
+    <script src="tarot-rpg.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,321 @@
+[gd_scene load_steps=16 format=3 uid="uid://verdant_meadow_rich"]
+
+[ext_resource type="Script" path="res://scripts/player_3d.gd" id="1_player"]
+[ext_resource type="Script" path="res://scripts/zone_exit.gd" id="2_exit"]
+[ext_resource type="Script" path="res://scripts/camera_rig.gd" id="3_cam"]
+[ext_resource type="Script" path="res://scripts/simple_interact.gd" id="4_interact"]
+[ext_resource type="Script" path="res://scripts/harvestable.gd" id="5_harvest"]
+[ext_resource type="Script" path="res://scripts/npc.gd" id="6_npc"]
+[ext_resource type="Script" path="res://scripts/enemy_wisp.gd" id="8_wisp"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.45
+height = 1.9
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(100, 85)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ground"]
+albedo_color = Color(0.16, 0.36, 0.19, 1)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="BoxMesh_tall"]
+size = Vector3(14, 12, 5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_stone"]
+albedo_color = Color(0.4, 0.37, 0.34, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_wide"]
+size = Vector3(22, 5, 6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_medium"]
+size = Vector3(9, 7, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_small"]
+size = Vector3(5, 4, 5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cliff"]
+size = Vector3(32, 5, 8)
+
+[node name="VerdantMeadow" type="Node3D"]
+
+# Large ground
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_ground")
+material_override = SubResource("StandardMaterial3D_ground")
+
+# Player
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -10)
+script = ExtResource("1_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+shape = SubResource("CapsuleShape3D_player")
+
+# Test Scout enemy for combat slice (place near player start)
+[node name="Scout" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 2, -4)
+
+# Note: Attach res://scripts/enemy_scout.gd in the Godot editor for full behavior.
+# The script now auto-adds visuals + collision if missing.
+
+[node name="Wisp" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 2.5, -7)
+script = ExtResource("8_wisp")
+
+[node name="Wisp2" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 2.8, 10)
+script = ExtResource("8_wisp")
+
+# Interaction detection radius
+[node name="InteractionArea" type="Area3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player/InteractionArea"]
+shape = SubResource("CapsuleShape3D_player")
+
+# Camera
+[node name="CameraRig" type="Node3D" parent="."]
+transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 28, 32)
+script = ExtResource("3_cam")
+target = NodePath("../Player")
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+current = true
+fov = 44.0
+
+# Lighting
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.433013, 0.25, 0.5, 0.75, -0.433013, 0, 0.5, 0.866025, 0, 42, 0)
+light_energy = 1.15
+shadow_enabled = true
+
+# === MUCH RICHER LANDMARKS ===
+
+# Large central temple complex
+[node name="CentralTemple_Main" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 6, -22)
+mesh = SubResource("BoxMesh_tall")
+material_override = SubResource("StandardMaterial3D_stone")
+
+[node name="CentralTemple_Wing1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -20)
+mesh = SubResource("BoxMesh_medium")
+material_override = SubResource("StandardMaterial3D_stone")
+
+[node name="CentralTemple_Wing2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.707, 0, 0.707, 0, 1, 0, -0.707, 0, 0.707, 14, 4, -18)
+mesh = SubResource("BoxMesh_medium")
+material_override = SubResource("StandardMaterial3D_stone")
+
+# West elevated area with ruins
+[node name="WestPlateau" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 2.5, -6)
+mesh = SubResource("BoxMesh_cliff")
+material_override = SubResource("StandardMaterial3D_stone")
+
+[node name="WestRuin1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 5, -4)
+mesh = SubResource("BoxMesh_wide")
+material_override = SubResource("StandardMaterial3D_stone")
+
+[node name="WestRuin2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.707, 0, -0.707, 0, 1, 0, 0.707, 0, 0.707, -30, 4.5, 2)
+mesh = SubResource("BoxMesh_medium")
+material_override = SubResource("StandardMaterial3D_stone")
+
+# Scattered interesting ruins
+[node name="Ruin_North" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 3.5, -35)
+mesh = SubResource("BoxMesh_tall")
+material_override = SubResource("StandardMaterial3D_stone")
+
+[node name="Ruin_NorthEast" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.866, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866, 28, 3, -12)
+mesh = SubResource("BoxMesh_wide")
+material_override = SubResource("StandardMaterial3D_stone")
+
+[node name="Ruin_South" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 3, 24)
+mesh = SubResource("BoxMesh_medium")
+material_override = SubResource("StandardMaterial3D_stone")
+
+[node name="Ruin_SouthEast" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.707, 0, -0.707, 0, 1, 0, 0.707, 0, 0.707, 24, 2.8, 20)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_stone")
+
+# === INTERACTABLES (already good, keeping) ===
+[ node name="Workbench" type="Area3D" parent="." ]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -5)
+script = ExtResource("res://scripts/workbench.gd")\nprompt = "Use Workbench"
+
+[ node name="CollisionShape3D" type="CollisionShape3D" parent="Workbench" ]
+shape = SubResource("CapsuleShape3D_player")
+
+[ node name="VerdantCrystal" type="Area3D" parent="." ]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 2, 10)
+script = ExtResource("5_harvest")
+prompt = "Harvest Verdant Crystal"
+material_type = "verdant_crystal"
+amount_per_harvest = 1
+flavor_text = "The living crystal pulses warmly as it merges with the gauntlet."
+
+[ node name="CollisionShape3D" type="CollisionShape3D" parent="VerdantCrystal" ]
+shape = SubResource("CapsuleShape3D_player")
+
+# --- Additional Harvest Nodes (earn your builds) ---
+[ node name="RuinStonePile" type="Area3D" parent="." ]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 2, -1)
+script = ExtResource("5_harvest")
+prompt = "Gather Ruin Stone"
+material_type = "ruin_stone"
+amount_per_harvest = 2
+flavor_text = "Ancient stone, still warm with old stories."
+
+[ node name="CollisionShape3D" type="CollisionShape3D" parent="RuinStonePile" ]
+shape = SubResource("CapsuleShape3D_player")
+
+[ node name="EchoFragmentVein" type="Area3D" parent="." ]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.5, -28)
+script = ExtResource("5_harvest")
+prompt = "Collect Echo Fragment"
+material_type = "echo_fragment"
+amount_per_harvest = 1
+flavor_text = "Whispers of previous Gauntlet runners cling to this shard."
+
+[ node name="CollisionShape3D" type="CollisionShape3D" parent="EchoFragmentVein" ]
+shape = SubResource("CapsuleShape3D_player")
+
+# --- First Story NPC: Velvet ---
+[ node name="Velvet" type="Area3D" parent="." ]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 2, -9)
+script = ExtResource("6_npc")
+npc_name = "Velvet"
+dialogue_lines = PackedStringArray("The Gauntlet doesn't just test your strength. It tests what you're willing to become with the pieces you take.", "Haruto used to say the ruins remember every hand that touched them. I wonder what they're learning from yours.", "Every shard you harvest... the world shifts a little. Build something worthy, or the next runner will have to tear it down.", "If you bring me an Echo Fragment from the high overlook, I'll tell you the story of the first one who ran the Gauntlet... and what they left behind.", "The crystals here remember. Listen long enough and you might hear the original pact.")
+starts_quest = "velvet_echo_fragment"
+quest_complete_lines = PackedStringArray("You brought it... The first runner's name was Lirael. She refused the final pact and shattered the original Gauntlet. The shards still sing her refusal. Here — take these. You'll need them more than I will.")
+
+[ node name="CollisionShape3D" type="CollisionShape3D" parent="Velvet" ]
+shape = SubResource("CapsuleShape3D_player")
+
+# === EXITS ===
+[ node name="EastExit" type="Area3D" parent="." ]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 2, 2)
+script = ExtResource("2_exit")
+target_zone = "forest_ruin_gate"
+
+# Navigation sign pointing toward new areas (world polish)
+[ node name="PathSign_EchoHollow" type="Area3D" parent="." ]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 2, 0)
+script = ExtResource("4_interact")
+prompt = "Follow the path east through the ruins, then south into the misty hollow. Echoes await."
+
+[ node name="CollisionShape3D" type="CollisionShape3D" parent="PathSign_EchoHollow" ]
+shape = SubResource("CapsuleShape3D_player")
+
+[ node name="CollisionShape3D" type="CollisionShape3D" parent="EastExit" ]
+shape = SubResource("CapsuleShape3D_player")
+
+[ node name="NorthExit" type="Area3D" parent="." ]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -38)
+script = ExtResource("2_exit")
+target_zone = "crystal_overlook"
+
+[ node name="CollisionShape3D" type="CollisionShape3D" parent="NorthExit" ]
+shape = SubResource("CapsuleShape3D_player")
+
+
+
+
+
+
+# Atmospheric World Environment
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
+[node name="Environment" type="Environment" parent="WorldEnvironment"]
+background_mode = 2
+ambient_light_color = Color(0.15, 0.22, 0.18, 1)
+ambient_light_energy = 0.35
+fog_enabled = true
+fog_light_color = Color(0.12, 0.18, 0.14, 1)
+fog_light_energy = 0.6
+fog_density = 0.015
+fog_sun_color = Color(0.6, 0.7, 0.5, 1)
+fog_sun_energy = 0.4
+
+
+[node name="WestExit_Aqueduct" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 2, 0)
+script = ExtResource("2_exit")
+target_zone = "collapsed_aqueduct"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WestExit_Aqueduct"]
+shape = SubResource("CapsuleShape3D_player")
+
+# Container for all player-placed objects (persistence system parents restored builds here)
+[node name="PlayerBuilds" type="Node3D" parent="."]
+
+# Additional points of interest
+[node name="GlowingPool" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.8, 0, 0, 0, 1, 0, 0, 0, 0.8, -18, 1.2, -15)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# World polish - more environmental detail
+[node name="RuinCluster_South" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1.8, 0, 0, 0, 0.7, -8, 1.5, 22)
+mesh = SubResource("BoxMesh_medium")
+material_override = SubResource("StandardMaterial3D_stone")
+
+[node name="CrystalOutcrop" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 1.4, 0, 0, 0, 0.6, 22, 1.8, -18)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+[node name="FallenPillar" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.2, 0, 0, 0, 0.8, 0, 0, 0, 0.6, 5, 1.2, 18)
+mesh = SubResource("BoxMesh_medium")
+material_override = SubResource("StandardMaterial3D_stone")
+
+# Additional density and navigation polish
+[node name="RuinWall_East" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 2.5, 0, 0, 0, 3.0, 32, 2.2, 8)
+mesh = SubResource("BoxMesh_medium")
+material_override = SubResource("StandardMaterial3D_stone")
+
+[node name="GlowingMarker_Path" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 1.0, 0, 0, 0, 0.4, 15, 1.5, 3)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+[node name="SmallRuin_NorthEast" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.8, 0, 0, 0, 1.6, 0, 0, 0, 0.8, 25, 1.8, -12)
+mesh = SubResource("BoxMesh_medium")
+material_override = SubResource("StandardMaterial3D_stone")
+
+# More world polish - elevation and navigation
+[node name="RaisedPlatform_North" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.5, 0, 0, 0, 0.4, 0, 0, 0, 1.5, 0, 3.5, -28)
+mesh = SubResource("PlaneMesh_ground")
+material_override = SubResource("StandardMaterial3D_stone")
+
+[node name="PathMarker_West" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.3, 0, 0, 0, 2.0, 0, 0, 0, 0.3, -35, 2.5, 5)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+[node name="BrokenPillarGroup" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.707, 0, -0.707, 0, 1, 0, 0.707, 0, 0.707, 12, 1.5, 12)
+mesh = SubResource("BoxMesh_medium")
+material_override = SubResource("StandardMaterial3D_stone")
+
+# Added for consolidation: exit to the new main hub_city (for dynamic event demo - city siege until chapter complete)
+[node name="SouthExitToHub" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -22)
+script = ExtResource("2_exit")
+target_scene = "res://scenes/hub_city.tscn"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SouthExitToHub"]
+shape = SubResource("CapsuleShape3D_player")

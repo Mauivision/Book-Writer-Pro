@@ -1,0 +1,125 @@
+{
+  "defaultMode": "classic",
+  "order": ["classic", "snappy", "weighty", "combo", "brawler", "glass_dancer"],
+  "modes": {
+    "classic": {
+      "label": "Classic",
+      "tagline": "Zelda-like: brief windup, hit-stop, commit to swings",
+      "type": "standard",
+      "hotkey": "1",
+      "player": {
+        "attackDamage": 3,
+        "attackCooldown": 0.35,
+        "attackWindup": 0.06,
+        "attackActive": 0.14,
+        "attackRecovery": 0.15,
+        "moveSpeed": 7,
+        "attackMovement": "slow"
+      },
+      "melee": { "reach": 1.1, "damageMult": 1.0 },
+      "feedback": { "hitStopSec": 0.055, "cameraShake": 0.12, "onHitStop": true },
+      "enemy": { "windupMult": 1.0, "speedMult": 1.0 }
+    },
+    "snappy": {
+      "label": "Snappy",
+      "tagline": "Instant slashes, no freeze — high tempo, lower damage",
+      "type": "standard",
+      "hotkey": "2",
+      "player": {
+        "attackDamage": 2,
+        "attackCooldown": 0.2,
+        "attackWindup": 0.0,
+        "attackActive": 0.1,
+        "attackRecovery": 0.05,
+        "moveSpeed": 8.5,
+        "attackMovement": "free"
+      },
+      "melee": { "reach": 1.0, "damageMult": 1.0 },
+      "feedback": { "hitStopSec": 0, "cameraShake": 0.06, "onHitStop": false },
+      "enemy": { "windupMult": 0.85, "speedMult": 1.1 }
+    },
+    "weighty": {
+      "label": "Weighty",
+      "tagline": "Heavy windup, long hit-stop — each swing matters",
+      "type": "standard",
+      "hotkey": "3",
+      "player": {
+        "attackDamage": 5,
+        "attackCooldown": 0.55,
+        "attackWindup": 0.22,
+        "attackActive": 0.16,
+        "attackRecovery": 0.28,
+        "moveSpeed": 6,
+        "attackMovement": "lock"
+      },
+      "melee": { "reach": 1.25, "damageMult": 1.0 },
+      "feedback": { "hitStopSec": 0.1, "cameraShake": 0.2, "onHitStop": true },
+      "enemy": { "windupMult": 1.25, "speedMult": 0.9 }
+    },
+    "combo": {
+      "label": "Combo",
+      "tagline": "3-hit chain — stay aggressive, finisher hits hardest",
+      "type": "combo",
+      "hotkey": "4",
+      "comboSteps": 3,
+      "comboResetSec": 0.65,
+      "player": {
+        "attackDamage": 2,
+        "attackCooldown": 0.12,
+        "attackWindup": 0.04,
+        "attackActive": 0.11,
+        "attackRecovery": 0.06,
+        "moveSpeed": 7.5,
+        "attackMovement": "slow"
+      },
+      "melee": {
+        "reach": 1.05,
+        "damageMult": 1.0,
+        "comboDamage": [2, 2, 5],
+        "comboReach": [1.0, 1.05, 1.2]
+      },
+      "feedback": { "hitStopSec": 0.04, "cameraShake": 0.14, "onHitStop": "finisher" },
+      "enemy": { "windupMult": 1.0, "speedMult": 1.0 }
+    },
+    "brawler": {
+      "label": "Brawler",
+      "tagline": "Punch while running — wide arc, stick-and-move",
+      "type": "standard",
+      "hotkey": "5",
+      "player": {
+        "attackDamage": 2,
+        "attackCooldown": 0.28,
+        "attackWindup": 0.03,
+        "attackActive": 0.12,
+        "attackRecovery": 0.04,
+        "moveSpeed": 7.5,
+        "attackMovement": "free"
+      },
+      "melee": { "reach": 1.55, "damageMult": 1.0 },
+      "feedback": { "hitStopSec": 0.02, "cameraShake": 0.08, "onHitStop": false },
+      "enemy": { "windupMult": 0.95, "speedMult": 1.05 }
+    },
+    "glass_dancer": {
+      "label": "Glass Dancer",
+      "tagline": "Long dash i-frames, chip damage — dodge is your weapon",
+      "type": "standard",
+      "hotkey": "6",
+      "player": {
+        "maxHp": 14,
+        "attackDamage": 2,
+        "attackCooldown": 0.24,
+        "attackWindup": 0.05,
+        "attackActive": 0.12,
+        "attackRecovery": 0.08,
+        "dashIframes": 0.38,
+        "dashCost": 22,
+        "hitIframes": 0.35,
+        "moveSpeed": 8,
+        "attackMovement": "free"
+      },
+      "melee": { "reach": 1.0, "damageMult": 1.0 },
+      "feedback": { "hitStopSec": 0, "cameraShake": 0.05, "onHitStop": false },
+      "enemy": { "windupMult": 1.1, "speedMult": 1.08 }
+    }
+  }
+}

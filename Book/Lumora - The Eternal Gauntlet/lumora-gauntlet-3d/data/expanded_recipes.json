@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "description": "Expanded crafting recipes for Phase 1. Use these in Workbench.gd after inventory upgrade.",
+  "recipes": {
+    "wooden_storage_chest": {
+      "name": "Wooden Storage Chest",
+      "ingredients": { "wood": 8, "fiber": 4 },
+      "result": { "item": "storage_chest", "quantity": 1 },
+      "station": ["basic", "player_house"]
+    },
+    "stone_workbench": {
+      "name": "Reinforced Workbench",
+      "ingredients": { "stone": 6, "wood": 4 },
+      "result": { "item": "workbench", "quantity": 1 },
+      "station": ["basic"]
+    },
+    "crystal_lantern": {
+      "name": "Crystal Lantern",
+      "ingredients": { "stone": 3, "crystal_shard": 2, "fiber": 1 },
+      "result": { "item": "crystal_lantern", "quantity": 1 },
+      "station": ["basic", "crystal_forge"]
+    },
+    "verdant_stew": {
+      "name": "Verdant Stew",
+      "ingredients": { "herb": 2, "fiber": 1, "meat": 1 },
+      "result": { "item": "verdant_stew", "quantity": 1, "buff": { "stamina_regen": 25 } },
+      "station": ["basic", "cooking"]
+    },
+    "patch_tea": {
+      "name": "Patch Tea",
+      "ingredients": { "herb": 3, "echo_fragment": 1 },
+      "result": { "item": "patch_tea", "quantity": 1, "buff": { "xp_gain": 15, "story_reveal": true } },
+      "station": ["basic", "cooking"]
+    },
+    "gauntlet_repair_kit": {
+      "name": "Gauntlet Repair Kit",
+      "ingredients": { "crystal_shard": 3, "stone": 2 },
+      "result": { "item": "repair_kit", "quantity": 1 },
+      "station": ["basic", "crystal_forge"]
+    }
+  }
+}

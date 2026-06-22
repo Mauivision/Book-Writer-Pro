@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "description": "Treasure categories and rarities for Lumora. Used by chests, world spawns, and quest rewards.",
+  "treasure_types": {
+    "common_cache": {
+      "display_name": "Common Cache",
+      "rarity": "common",
+      "base_value": 25,
+      "description": "A weathered wooden box or simple stone hollow.",
+      "possible_contents": ["wood", "stone", "fiber", "herb", "meat"],
+      "gem_chance": 0.05,
+      "associated_chests": ["wooden_ruined"]
+    },
+    "ruin_hoard": {
+      "display_name": "Ruin Hoard",
+      "rarity": "uncommon",
+      "base_value": 65,
+      "description": "Old stone containers left by previous civilizations.",
+      "possible_contents": ["stone", "wood", "crystal_shard", "echo_fragment"],
+      "gem_chance": 0.25,
+      "associated_chests": ["stone_relic"]
+    },
+    "crystal_vein": {
+      "display_name": "Crystal Vein Cache",
+      "rarity": "uncommon",
+      "base_value": 90,
+      "description": "Naturally formed crystal formations that have been partially harvested.",
+      "possible_contents": ["crystal_shard", "verdant_gem", "fiber"],
+      "gem_chance": 0.6,
+      "associated_chests": ["crystal_infused"]
+    },
+    "sky_admin_cache": {
+      "display_name": "Sky Admin Cache",
+      "rarity": "rare",
+      "base_value": 140,
+      "description": "Glitched storage left behind by the system itself.",
+      "possible_contents": ["echo_fragment", "crystal_shard", "glitch_gem"],
+      "gem_chance": 0.8,
+      "associated_chests": ["glitched_cache"]
+    },
+    "sunshade_treasure": {
+      "display_name": "Sunshade Hoard",
+      "rarity": "rare",
+      "base_value": 110,
+      "description": "Richly decorated chests from warmer southern regions.",
+      "possible_contents": ["wood", "stone", "sunshade_gem", "crystal_shard"],
+      "gem_chance": 0.4,
+      "associated_chests": ["sunshade_hoard"]
+    },
+    "gauntlet_relic": {
+      "display_name": "Gauntlet Relic",
+      "rarity": "legendary",
+      "base_value": 400,
+      "description": "Extremely rare finds connected directly to the original Crystal Gauntlet.",
+      "possible_contents": ["bloodstone_gem", "echo_gem", "skyward_gem"],
+      "gem_chance": 1.0,
+      "associated_chests": []
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "description": "Chest crafting recipes for Workbench (Phase 2). Add these after Phase 1 resources are integrated.",
+  "recipes": {
+    "craft_wooden_ruined": {
+      "name": "Craft Wooden Ruined Chest",
+      "ingredients": { "wood": 8, "fiber": 4 },
+      "result": { "chest_id": "wooden_ruined", "quantity": 1 },
+      "station": ["basic", "player_house"]
+    },
+    "craft_crystal_infused": {
+      "name": "Craft Crystal Infused Chest",
+      "ingredients": { "wood": 6, "crystal_shard": 3, "fiber": 2 },
+      "result": { "chest_id": "crystal_infused", "quantity": 1 },
+      "station": ["basic", "crystal_forge"]
+    },
+    "craft_stone_relic": {
+      "name": "Craft Stone Relic Chest",
+      "ingredients": { "stone": 10, "wood": 3 },
+      "result": { "chest_id": "stone_relic", "quantity": 1 },
+      "station": ["basic"]
+    },
+    "craft_glitched_cache": {
+      "name": "Craft Glitched Admin Cache",
+      "ingredients": { "stone": 5, "crystal_shard": 5, "echo_fragment": 2 },
+      "result": { "chest_id": "glitched_cache", "quantity": 1 },
+      "station": ["crystal_forge"]
+    },
+    "craft_sunshade_hoard": {
+      "name": "Craft Sunshade Hoard Chest",
+      "ingredients": { "wood": 4, "stone": 8, "crystal_shard": 2 },
+      "result": { "chest_id": "sunshade_hoard", "quantity": 1 },
+      "station": ["basic"]
+    }
+  }
+}

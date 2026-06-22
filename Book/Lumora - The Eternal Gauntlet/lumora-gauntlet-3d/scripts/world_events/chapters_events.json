@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "description": "Story chapters and world-changing events for Lumora. Inspired by dynamic progression like Crimson Desert. Completing a chapter resolves the event and permanently alters the world state until future events.",
+  "chapters": {
+    "ch1_awakening": {
+      "name": "The Awakening",
+      "description": "Player starts in the meadow, basic tutorial.",
+      "resolve_quest": "q_awaken",
+      "world_changes": {
+        "verdant_meadow": { "event_active": false }
+      }
+    },
+    "ch3_demon_summon": {
+      "name": "The Demon Summon",
+      "description": "A meteor-like breach summons a demon in the main hub city. The city is under siege, exits blocked, dangers everywhere. Must complete the chapter to restore access and safety.",
+      "resolve_quest": "banish_demon",
+      "prerequisite_chapters": ["ch1_awakening"],
+      "affected_zones": ["hub_city", "verdant_meadow"],
+      "world_changes_on_activate": {
+        "hub_city": {
+          "event_active": true,
+          "siege_state": "active",
+          "damaged_buildings": true,
+          "enemy_spawns": true,
+          "blocked_exits": ["east", "north"]
+        }
+      },
+      "world_changes_on_complete": {
+        "hub_city": {
+          "event_active": false,
+          "siege_state": "restored",
+          "damaged_buildings": false,
+          "enemy_spawns": false,
+          "blocked_exits": [],
+          "new_content": ["survivor_npcs", "restored_market", "new_quest_giver"]
+        },
+        "verdant_meadow": {
+          "news_spread": true
+        }
+      }
+    }
+  },
+  "events": {
+    "city_demon_summon": {
+      "chapter": "ch3_demon_summon",
+      "trigger": "story_progress",
+      "description": "A rift opens in the city plaza. A demon is summoned. The city gates are sealed by the chaos. Players must gather allies or power in other zones, then return to banish it."
+    }
+  }
+}

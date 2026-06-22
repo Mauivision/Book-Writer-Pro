@@ -1,0 +1,139 @@
+[gd_scene load_steps=9 format=3 uid="uid://forest_ruin_gate_rich"]
+
+[ext_resource type="Script" path="res://scripts/player_3d.gd" id="1_player"]
+[ext_resource type="Script" path="res://scripts/zone_exit.gd" id="2_exit"]
+[ext_resource type="Script" path="res://scripts/camera_rig.gd" id="3_cam"]
+[ext_resource type="Script" path="res://scripts/simple_interact.gd" id="4_interact"]
+[ext_resource type="Script" path="res://scripts/harvestable.gd" id="5_harvest"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.45
+height = 1.9
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(62, 55)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_forest"]
+albedo_color = Color(0.09, 0.18, 0.11, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_tall"]
+size = Vector3(10, 14, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wide"]
+size = Vector3(18, 6, 5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_medium"]
+size = Vector3(8, 9, 4)
+
+[node name="ForestRuinGate" type="Node3D"]
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_ground")
+material_override = SubResource("StandardMaterial3D_forest")
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+script = ExtResource("1_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="CameraRig" type="Node3D" parent="."]
+transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 24, 26)
+script = ExtResource("3_cam")
+target = NodePath("../Player")
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+current = true
+fov = 44.0
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.433013, 0.25, 0.5, 0.75, -0.433013, 0, 0.5, 0.866025, 0, 35, 0)
+light_energy = 0.9
+shadow_enabled = true
+
+# === DENSE, VERTICAL RUINS ===
+
+[node name="CollapsedArch_Main" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 7, -15)
+mesh = SubResource("BoxMesh_tall")
+
+[node name="CollapsedArch_Wing" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.707, 0, 0.707, 0, 1, 0, -0.707, 0, 0.707, -6, 5, -12)
+mesh = SubResource("BoxMesh_wide")
+
+[node name="TowerBase1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.866, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866, 15, 4.5, 4)
+mesh = SubResource("BoxMesh_medium")
+
+[node name="TowerBase2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 5.5, 8)
+mesh = SubResource("BoxMesh_tall")
+
+[node name="Wall_South" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, 14)
+mesh = SubResource("BoxMesh_wide")
+
+# Interactable
+[node name="BrokenTerminal" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 2, 3)
+script = ExtResource("4_interact")
+prompt = "Inspect Broken Terminal"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BrokenTerminal"]
+shape = SubResource("CapsuleShape3D_player")
+
+# West exit back to meadow
+[node name="WestExit" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23, 2, 0)
+script = ExtResource("2_exit")
+target_zone = "verdant_meadow"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WestExit"]
+shape = SubResource("CapsuleShape3D_player")
+
+# New south exit to Echo Hollow (world expansion)
+[node name="SouthExit_EchoHollow" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 18)
+script = ExtResource("2_exit")
+target_zone = "echo_hollow"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SouthExit_EchoHollow"]
+shape = SubResource("CapsuleShape3D_player")
+
+# Atmospheric World Environment (denser fog for ruined forest feel)
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
+[node name="Environment" type="Environment" parent="WorldEnvironment"]
+background_mode = 2
+ambient_light_color = Color(0.1, 0.15, 0.1, 1)
+ambient_light_energy = 0.3
+fog_enabled = true
+fog_light_color = Color(0.08, 0.12, 0.08, 1)
+fog_light_energy = 0.5
+fog_density = 0.022
+
+# Additional points of interest
+[node name="MossyStatue" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.8, 0, 0, 0, 1, 0, 0, 0, 0.8, -5, 2, -6)
+mesh = SubResource("BoxMesh_medium")
+
+[node name="OvergrownPillar" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.707, 0, -0.707, 0, 1, 0, 0.707, 0, 0.707, 8, 3, 10)
+mesh = SubResource("BoxMesh_medium")
+
+# Harvest node in the ruins
+[node name="RuinStoneCluster" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 2, 14)
+script = ExtResource("5_harvest")
+prompt = "Gather Ruin Stone"
+material_type = "ruin_stone"
+amount_per_harvest = 2
+flavor_text = "These stones have outlasted many Gauntlet runners. Take only what you need."
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RuinStoneCluster"]
+shape = SubResource("CapsuleShape3D_player")
+
+# Container for player-placed objects (used by persistence)
+[node name="PlayerBuilds" type="Node3D" parent="."]

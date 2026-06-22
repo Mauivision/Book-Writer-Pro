@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lumora — Patch Duel (card slice)</title>
+    <link rel="stylesheet" href="lumora-cards.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="top-bar">
+      <div class="brand">
+        <span class="brand-mark">◇</span>
+        <div>
+          <h1>Patch Duel</h1>
+          <p class="subtitle">Lumora: The Eternal Gauntlet — Sky Dungeon #7 card slice</p>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a class="link" href="index.html">Story prototype</a>
+        <a class="link" href="tarot-rpg.html">Tarot story RPG</a>
+        <button type="button" id="btn-new-duel" class="btn ghost">New duel</button>
+      </nav>
+    </header>
+
+    <main class="duel">
+      <section class="panel boss-panel" aria-label="Curator">
+        <div class="boss-head">
+          <h2>Sky Dungeon Curator</h2>
+          <p class="role">Starter boss · cheats politely</p>
+        </div>
+        <div class="stat-row">
+          <span>Resolve</span>
+          <div class="bar enemy-hp"><span id="bar-enemy"></span></div>
+        </div>
+        <div class="stat-row mono">
+          <span>Boss Echo</span>
+          <strong id="enemy-echo">0</strong>
+        </div>
+        <div id="enemy-last" class="last-card muted">No card played yet.</div>
+        <div class="deck-pill">Boss deck <span id="enemy-deck-count">0</span></div>
+      </section>
+
+      <section class="panel arena">
+        <div id="verdant-chip" class="verdant-chip hidden">Verdant resonance — your deck remembers teamwork.</div>
+        <div class="arena-art" aria-hidden="true"></div>
+        <div class="hud-grid">
+          <div>
+            <p class="hud-label">Haruto · Echo</p>
+            <p class="hud-big"><span id="player-echo">0</span><span class="hud-cap"> / 10</span></p>
+          </div>
+          <div>
+            <p class="hud-label">HP</p>
+            <div class="bar hp tight"><span id="bar-player-hp"></span></div>
+          </div>
+          <div>
+            <p class="hud-label">Unity</p>
+            <div class="bar unity tight"><span id="bar-unity"></span></div>
+          </div>
+          <div>
+            <p class="hud-label">Jealousy</p>
+            <div class="bar jealousy tight"><span id="bar-jealousy"></span></div>
+          </div>
+        </div>
+        <p id="phase-line" class="phase-line">Your turn — play cards, then end turn.</p>
+        <div class="actions">
+          <div class="stance-row inline">
+            <span class="label">Stance</span>
+            <div class="stance-toggle" role="group" aria-label="Combat stance">
+              <button type="button" id="stance-radiant" class="stance active" data-stance="radiant">Radiant</button>
+              <button type="button" id="stance-veil" class="stance" data-stance="veil">Veil</button>
+            </div>
+          </div>
+          <button type="button" id="btn-end-turn" class="btn primary">End turn</button>
+        </div>
+      </section>
+
+      <section class="panel log-panel">
+        <h2>Patch log</h2>
+        <ul id="patch-log" class="patch-log"></ul>
+        <p class="rules-hint">
+          Twin gods watch the UI. High <strong>Jealousy</strong> makes the Curator’s end-of-turn
+          <em>Swipe</em> hurt more. <strong>Unity</strong> 70+ lights the Verdant chip and powers a few
+          cards.
+        </p>
+      </section>
+    </main>
+
+    <section class="hand-section">
+      <div class="hand-head">
+        <h2>Your hand</h2>
+        <span class="deck-pill">Deck <span id="player-deck-count">0</span></span>
+      </div>
+      <div id="hand" class="hand" role="list"></div>
+    </section>
+
+    <section class="crawl-pull" aria-labelledby="crawl-heading">
+      <div class="crawl-pull-inner panel">
+        <h2 id="crawl-heading">Dungeon crawl draw</h2>
+        <p class="crawl-desc">
+          Pull one random Echo or Curator card and the room you are standing in — table oracle, writing prompt, or
+          “what if the dungeon hated paperwork.”
+        </p>
+        <button type="button" id="btn-crawl-draw" class="btn primary">Pull random card + scene</button>
+        <div id="crawl-result" class="crawl-result" hidden>
+          <div class="crawl-split">
+            <div class="crawl-scene">
+              <p class="crawl-kicker">Scene</p>
+              <h3 id="crawl-scene-title" class="crawl-scene-title"></h3>
+              <p id="crawl-scene-body" class="crawl-scene-body"></p>
+            </div>
+            <div class="crawl-card-column">
+              <p class="crawl-kicker">Card</p>
+              <div id="crawl-card-mount" class="crawl-card-mount"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
+      <div class="overlay-card">
+        <h2 id="overlay-title">Run cleared</h2>
+        <p id="overlay-body"></p>
+        <button type="button" id="overlay-dismiss" class="btn primary">Play again</button>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>
+        Card slice uses the same fantasy beats as <cite>Lumora: The Eternal Gauntlet</cite> — Patch Notes,
+        Radiant/Veil tempo, Unity/Jealousy, and the Curator’s audit humor. Open this file locally or serve the
+        <code>game</code> folder.
+      </p>
+    </footer>
+
+    <script src="lumora-cards.js" defer></script>
+    <script src="lumora-dungeon-pull.js" defer></script>
+  </body>
+</html>

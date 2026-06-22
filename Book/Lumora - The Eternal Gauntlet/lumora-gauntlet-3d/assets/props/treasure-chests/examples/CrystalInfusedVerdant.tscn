@@ -1,0 +1,75 @@
+[gd_scene load_steps=7 format=3 uid="uid://lumora_crystal_chest"]
+
+[ext_resource type="Script" path="res://assets/props/treasure-chests/interactable_chest.gd" id="1_runtime"]
+
+[sub_resource type="BoxMesh" id="BoxBody"]
+size = Vector3(1.25, 0.62, 0.95)
+
+[sub_resource type="StandardMaterial3D" id="MatVerdant"]
+albedo_color = Color(0.18, 0.26, 0.22)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="MatCrystal"]
+albedo_color = Color(0.35, 0.92, 0.78, 0.9)
+emission_enabled = true
+emission = Color(0.3, 0.95, 0.8)
+emission_energy_multiplier = 1.1
+roughness = 0.1
+transparency = 1
+
+[sub_resource type="StandardMaterial3D" id="MatMetalDark"]
+albedo_color = Color(0.48, 0.5, 0.48)
+metallic = 0.75
+roughness = 0.4
+
+[node name="CrystalInfusedVerdant" type="Node3D"]
+script = ExtResource("1_runtime")
+chest_type = 1
+story_beat_on_open = "crystalChestOpened"
+
+[node name="Chest_Body" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxBody")
+surface_material_override/0 = SubResource("MatVerdant")
+
+[node name="Chest_LidRoot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.31, 0)
+
+[node name="Chest_Lid" type="MeshInstance3D" parent="Chest_LidRoot"]
+transform = Transform3D(1, 0, 0, 0, 0.3420, 0.9397, 0, -0.9397, 0.3420, 0, 0.04, -0.04)
+mesh = SubResource("BoxBody")
+surface_material_override/0 = SubResource("MatVerdant")
+
+[node name="Strap_0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.28)
+mesh = SubResource("BoxBody")
+surface_material_override/0 = SubResource("MatMetalDark")
+
+[node name="Strap_1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.28)
+mesh = SubResource("BoxBody")
+surface_material_override/0 = SubResource("MatMetalDark")
+
+[node name="Chest_Lock" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26, 0.5)
+mesh = SubResource("BoxBody")
+surface_material_override/0 = SubResource("MatMetalDark")
+
+[node name="Crystal_Spike_1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.8, 0, 0, 0, 1.1, 0, 0, 0, 0.8, -0.32, 0.45, 0.18)
+mesh = SubResource("BoxBody")
+surface_material_override/0 = SubResource("MatCrystal")
+
+[node name="Crystal_Spike_2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.65, 0, 0, 0, 0.95, 0, 0, 0, 0.65, 0.35, 0.48, -0.22)
+mesh = SubResource("BoxBody")
+surface_material_override/0 = SubResource("MatCrystal")
+
+[node name="Crystal_Spike_3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.55, 0, 0, 0, 0.8, 0, 0, 0, 0.55, 0.12, 0.52, 0.28)
+mesh = SubResource("BoxBody")
+surface_material_override/0 = SubResource("MatCrystal")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxBody")

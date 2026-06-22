@@ -1,0 +1,325 @@
+{
+  "version": 1,
+  "exportedAt": "2026-05-31",
+  "source": "retro-gauntlet/src/game/story/lumoraLore.ts + maps/mapRegistry.ts",
+  "manuscript": "bookwriter-pro/Book/Lumora - The Eternal Gauntlet",
+  "tagline": "Respawn is free. Romance is not.",
+  "protagonist": {
+    "name": "Haruto Takahashi",
+    "title": "The Eternal Player",
+    "ability": "Party Leader Authority"
+  },
+  "camera3d": {
+    "pitchDeg": 58,
+    "yawDeg": 45,
+    "followLead": 0.35,
+    "notes": "Link's Awakening style fixed tilt; movement on XZ plane"
+  },
+  "controls": {
+    "move": ["W", "A", "S", "D"],
+    "dash": "Shift",
+    "attack": "Space",
+    "interact": "E",
+    "craftMenu": "Tab",
+    "buildMode": "B",
+    "rotate": "R",
+    "remove": "X",
+    "hotbar": ["1", "2", "3", "4", "5"]
+  },
+  "zones": {
+    "starting-meadow": {
+      "id": "starting-meadow",
+      "title": "Verdant Leak Meadow",
+      "subtitle": "Sky Dungeon #7 fringe · wrong place to grow",
+      "enemyLabel": "Sky Warden Scout",
+      "defaultEnemy": "scout",
+      "mapFile": "starting-meadow.json"
+    },
+    "forest-ruin-gate": {
+      "id": "forest-ruin-gate",
+      "title": "Forest Ruin Gate",
+      "subtitle": "Glass bridge approach · audit tilework ahead",
+      "enemyLabel": "Verdant Wisp",
+      "defaultEnemy": "wisp",
+      "mapFile": "forest-ruin-gate.json"
+    },
+    "verdant-interrupt": {
+      "id": "verdant-interrupt",
+      "title": "Verdant Interrupt Corridor",
+      "subtitle": "Elara's route · cyan protocol seam",
+      "enemyLabel": "Correction Drone",
+      "defaultEnemy": "wisp",
+      "mapFile": null,
+      "status": "planned",
+      "bookRef": "CHAPTERS/Chapter-17-Verdant-Interrupt.md"
+    }
+  },
+  "exits": [
+    {
+      "from": "starting-meadow",
+      "x": 60,
+      "y": 0,
+      "w": 4,
+      "h": 36,
+      "to": "forest-ruin-gate",
+      "spawnX": 6,
+      "spawnY": 18
+    },
+    {
+      "from": "forest-ruin-gate",
+      "x": 0,
+      "y": 0,
+      "w": 4,
+      "h": 36,
+      "to": "starting-meadow",
+      "spawnX": 58,
+      "spawnY": 18
+    }
+  ],
+  "npcs": [
+    {
+      "mapId": "starting-meadow",
+      "id": "velvet",
+      "x": 16,
+      "y": 10,
+      "storyBeat": "npcVelvet",
+      "speaker": "High Priestess Velvet Dawn"
+    },
+    {
+      "mapId": "verdant-interrupt",
+      "id": "elara",
+      "x": 32,
+      "y": 18,
+      "storyBeat": "elaraInterrupt",
+      "speaker": "Elara Sylvandrel",
+      "status": "planned"
+    }
+  ],
+  "combat": {
+    "player": {
+      "maxHp": 20,
+      "maxStamina": 100,
+      "attackDamage": 3,
+      "attackCooldown": 0.35,
+      "attackWindup": 0.06,
+      "attackActive": 0.14,
+      "attackRecovery": 0.15,
+      "dashSpeed": 16,
+      "dashDuration": 0.14,
+      "dashCost": 28,
+      "dashIframes": 0.22,
+      "hitIframes": 0.45,
+      "staminaRegen": 22,
+      "moveSpeed": 7,
+      "knockbackTaken": 6,
+      "knockbackDealt": 5
+    },
+    "leveling": {
+      "maxLevel": 5,
+      "thresholds": [0, 50, 120, 220, 350, 520]
+    },
+    "feedback": {
+      "hitStopSec": 0.055,
+      "cameraShake": 0.12,
+      "flashDuration": 0.08
+    }
+  },
+  "enemies": {
+    "scout": {
+      "hp": 14,
+      "speed": 62,
+      "color": "#ff4d6d",
+      "xp": 18,
+      "label": "Sky Warden Scout"
+    },
+    "wisp": {
+      "hp": 10,
+      "speed": 88,
+      "color": "#7dffb8",
+      "xp": 14,
+      "label": "Verdant Wisp"
+    },
+    "miniBoss": {
+      "hp": 42,
+      "speed": 48,
+      "color": "#ffd166",
+      "xp": 40,
+      "label": "Sunshade Golem (mini)"
+    }
+  },
+  "quests": [
+    {
+      "id": "q_awaken",
+      "text": "Wake at the Verdant Leak — prove this meadow is not a loading error.",
+      "arc": "Arc 1 · Summoning"
+    },
+    {
+      "id": "q_gather",
+      "text": "Harvest wood, stone, and fiber for mixed-faction starter gear.",
+      "arc": "Arc 2 · Party Formation"
+    },
+    {
+      "id": "q_shelter",
+      "text": "Place a workbench — continuity before Sky Dungeon scouts return.",
+      "arc": "Arc 3 · Sky Dungeon fringe"
+    },
+    {
+      "id": "q_scout",
+      "text": "Defeat a Sky Warden Scout (Sky Dungeon #7 fringe patrol).",
+      "arc": "Arc 3 · first skirmish"
+    },
+    {
+      "id": "q_level",
+      "text": "Reach Level 2 before the System publishes embarrassing Patch Notes.",
+      "arc": "Book 1 · Levels 1–5"
+    },
+    {
+      "id": "q_velvet",
+      "text": "Speak with High Priestess Velvet Dawn (healing purposes, allegedly).",
+      "arc": "Arc 1 · Velvet Arrival"
+    },
+    {
+      "id": "q_gate",
+      "text": "Cross east to the Forest Ruin Gate — Sky Dungeon #7 approach.",
+      "arc": "Arc 2 · Approach to Dungeon"
+    },
+    {
+      "id": "q_miniboss",
+      "text": "Survive the Sunshade Golem mini-phase at the ruin gate.",
+      "arc": "Arc 3 · Mini-Boss"
+    },
+    {
+      "id": "q_elara",
+      "text": "Meet Elara Sylvandrel — Verdant Interrupt (HUD refuses to label her).",
+      "arc": "Bridge · Chapter 17",
+      "status": "planned"
+    }
+  ],
+  "storyBeats": {
+    "intro": {
+      "speaker": "The System",
+      "questId": "q_awaken",
+      "text": "Loading… Welcome, Eternal Player. You are standing in a meadow that should not exist — vines through admin tilework, cyan flecks in the grass. Lumora is fractured. The Crystal Gauntlet on your wrist is not loot. It is an emergency balance organ. Gather. Fight. Build."
+    },
+    "firstHit": {
+      "speaker": "Sunny (Tutorial Entity)",
+      "text": "Great job surviving contact damage! You are all very— Ow. Okay. Pain is a tutorial you did not consent to. The Gauntlet learns from hits. Haruto's beliefs about containers are evolving."
+    },
+    "firstHarvest": {
+      "speaker": "Glyph, Cartographer",
+      "questId": "q_gather",
+      "text": "Wood, stone, fiber — starter economy unlocked. I trade map data for secrets; you trade sweat for walls. Sky Dungeon #7 hates teamwork, but it respects resourcefulness."
+    },
+    "shelter": {
+      "speaker": "Bone Legion Commander",
+      "questId": "q_shelter",
+      "text": "A workbench is not a castle. It is a claim. Craft tools, patch wounds, pretend this leak is home until the Radiant Dominion and Veil Syndicate stop arguing over who owns your respawn point."
+    },
+    "firstKill": {
+      "speaker": "The System",
+      "questId": "q_scout",
+      "text": "Objective updated: Sky Warden Scout — eliminated. Jealousy Aggro +0 (you fought alone; the gods are disappointed but entertained). Quest hint: Clear Sky Dungeon #7. (This meadow is only the tutorial airlock.)"
+    },
+    "levelUp": {
+      "speaker": "Patch Herald",
+      "questId": "q_level",
+      "text": "Level gained. That is not praise — it is permission. Book 1 band: Levels 1–5. Stronger body, sharper blade. Luminos notes your bravery. Umbrax notes your timing."
+    },
+    "npcVelvet": {
+      "speaker": "High Priestess Velvet Dawn",
+      "questId": "q_velvet",
+      "text": "Welcome to Lumora. I can cleanse wounds… and political mistakes. The Radiant Dominion would prefer you choose a side. Haruto would prefer you choose yourself. Build shelter before you cross the gate east."
+    },
+    "zoneTransition": {
+      "speaker": "The System",
+      "questId": "q_gate",
+      "text": "Zone transition: Forest Ruin Gate. Wind claws like a loading spinner. Below is the city. Above is Sky Dungeon #7 — a starter dungeon that quietly cheats. Verdant Wisps detected. Mini-boss probability: rising."
+    },
+    "miniBoss": {
+      "speaker": "Seraphina (distant echo)",
+      "questId": "q_miniboss",
+      "text": "Sunshade Golem — dual phase required. Debuff first, then holy burst. Or, you know, hit it until the tutorial stops lying. The dungeon hates teamwork; prove it wrong later."
+    },
+    "elaraInterrupt": {
+      "speaker": "Elara Sylvandrel",
+      "questId": "q_elara",
+      "text": "Stop. Your HUD is lying by omission. I am not Radiant. I am not Veil. The Gauntlet on your wrist is awake — and the world is about to file a correction.",
+      "status": "planned"
+    },
+    "tarotDraw": {
+      "speaker": "The System",
+      "text": "Tarot milestone unlocked — The Fool reversed: bold moves, questionable landings. Card buff pending integration."
+    },
+    "playerRespawn": {
+      "speaker": "Gravetender Odo",
+      "text": "Respawn complete. Optics debt +1. Tip: dying is free. The gods still charge embarrassment."
+    }
+  },
+  "world": {
+    "twinSuns": ["Solara", "Vespera"],
+    "notes": "Radiant gold daylight; Veil violet twilight; cyan aether at Architect seams"
+  },
+  "gauntlet": {
+    "name": "Crystal Gauntlet",
+    "hand": "right",
+    "verbs": ["Build", "Destroy", "Move", "Overdrive"],
+    "color": "#00d4ff",
+    "notes": "Ethereal cyan cuff — not metal gloves; emergency balance organ"
+  },
+  "symbols": {
+    "steampunkRaven": {
+      "id": "steampunk-raven",
+      "label": "Clockwork Raven",
+      "role": "psychopomp; veil between life and death; time and impermanence",
+      "zones": ["forest-ruin-gate", "sky-dungeon-7"],
+      "artNotes": "Functional brass gears at wing joints; crown as clock face; hyperreal posters, 16-bit silhouette in-game",
+      "status": "art-only"
+    }
+  },
+  "codex": [
+    {
+      "id": "codex-01-first-equinox",
+      "title": "The First Equinox",
+      "hook": "Balance is not peace. It is motion."
+    },
+    {
+      "id": "codex-02-architect-hands",
+      "title": "Architect Hands",
+      "hook": "Build, Destroy, and Move are verbs, not spells."
+    },
+    {
+      "id": "codex-03-selection-protocol",
+      "title": "Selection Protocol",
+      "hook": "The host must be an outsider so the world can recruit across factions."
+    },
+    {
+      "id": "codex-04-sunny-fragment",
+      "title": "Sunny, the Fragment",
+      "hook": "The tutorial smile is a mask; the monitor is afraid of what success unlocks."
+    },
+    {
+      "id": "codex-05-elara-resonance",
+      "title": "Elara Resonance",
+      "hook": "Emerald eyes with cyan flecks stabilize what the Gauntlet cannot hold alone."
+    },
+    {
+      "id": "codex-06-second-equinox",
+      "title": "Second Equinox (Warning)",
+      "hook": "Local rewrite or global renewal — the host pays either way."
+    }
+  ],
+  "loadingQuips": [
+    "Tip: dying is free. Optics are not.",
+    "Respawn is free. Romance is not.",
+    "Gravetender Odo says: try not to make a hobby of this.",
+    "Luminos notes your bravery. Umbrax notes your timing.",
+    "Patch 0.0.7: humility spike when you run it back."
+  ],
+  "patchNotes": [
+    "Patch: Jealousy scaling +3% because the gods are bored.",
+    "Hotfix: Sky Dungeon #7 now cheats slightly less. (Lie.)",
+    "Balance: Found-family buffs are OP; enjoy it while it lasts.",
+    "Verdant route signature detected. The world is paying attention.",
+    "Correction Heat +1. No immediate damage. Just dread."
+  ]
+}

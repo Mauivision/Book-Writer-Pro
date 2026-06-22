@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "description": "When story beats fire in Godot. Text lives in lumora.json storyBeats.",
+  "triggers": [
+    {
+      "beat": "intro",
+      "type": "zone_enter",
+      "zone": "starting-meadow",
+      "once": true,
+      "scene": "res://scenes/meadow.tscn"
+    },
+    {
+      "beat": "firstHarvest",
+      "type": "interact_harvest",
+      "once": true,
+      "notes": "Any harvestable in meadow; completes q_gather"
+    },
+    {
+      "beat": "shelter",
+      "type": "interact_npc",
+      "storyBeat": "shelter",
+      "once": true,
+      "notes": "Workbench node uses npc.gd with story_beat=shelter"
+    },
+    {
+      "beat": "npcVelvet",
+      "type": "interact_npc",
+      "storyBeat": "npcVelvet",
+      "once": true
+    },
+    {
+      "beat": "firstHit",
+      "type": "player_damaged",
+      "once": true,
+      "notes": "First time player HP is reduced"
+    },
+    {
+      "beat": "firstKill",
+      "type": "enemy_killed",
+      "enemyKind": "scout",
+      "once": true
+    },
+    {
+      "beat": "levelUp",
+      "type": "level_reached",
+      "level": 2,
+      "once": true
+    },
+    {
+      "beat": "zoneTransition",
+      "type": "zone_enter",
+      "zone": "forest-ruin-gate",
+      "once": true,
+      "scene": "res://scenes/forest_gate.tscn"
+    },
+    {
+      "beat": "miniBoss",
+      "type": "enemy_kind_set",
+      "enemyKind": "miniBoss",
+      "once": true,
+      "notes": "Forest gate timer promotes wisp to miniBoss"
+    },
+    {
+      "beat": "playerRespawn",
+      "type": "player_respawn",
+      "once": false
+    },
+    {
+      "beat": "elaraInterrupt",
+      "type": "zone_enter",
+      "zone": "verdant-interrupt",
+      "once": true,
+      "status": "planned"
+    },
+    {
+      "beat": "tarotDraw",
+      "type": "milestone",
+      "milestone": "first_tarot",
+      "once": true,
+      "status": "planned"
+    }
+  ]
+}

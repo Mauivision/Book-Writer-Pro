@@ -1,83 +1,34 @@
 # Dependencies
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# Production builds
-.next/
-out/
-build/
-dist/
-
-# Environment variables
+# Environment
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*.local
 
-# IDE files
-.vscode/
+# Build
+.next/
+out/
+dist/
+build/
+
+# Godot (Lumora 3D slice in book tree)
+.godot/
+*.import
+
+# Local Hermes attachments (videos — not for git)
+.hermes/
+
+# IDE
 .idea/
+.vscode/
 *.swp
 *.swo
 
-# OS generated files
+# OS
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
 # Logs
-logs
 *.log
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# nyc test coverage
-.nyc_output
-
-# Dependency directories
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Generated outputs (keep source content)
-Book/pdfs for print/production-status.json
-
-# Temporary files
-*.tmp
-*.temp
+npm-debug.log*

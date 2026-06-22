@@ -1,0 +1,104 @@
+[gd_scene load_steps=12 format=3 uid="uid://lumora_hub_city_demo"]
+
+[ext_resource type="Script" path="res://scripts/player_3d.gd" id="1_player"]
+[ext_resource type="Script" path="res://scripts/zone_exit.gd" id="2_exit"]
+[ext_resource type="Script" path="res://scripts/camera_rig.gd" id="3_cam"]
+[ext_resource type="Script" path="res://scripts/npc.gd" id="4_npc"]
+[ext_resource type="Script" path="res://scripts/enemy_wisp.gd" id="5_wisp"]
+[ext_resource type="Script" path="res://world_events/CityStateController.gd" id="6_city_state"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(60, 50)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ground"]
+albedo_color = Color(0.3, 0.25, 0.2, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_building"]
+size = Vector3(8, 6, 6)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_building"]
+albedo_color = Color(0.45, 0.4, 0.35, 1)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.45
+height = 1.9
+
+[node name="HubCity" type="Node3D"]
+script = ExtResource("6_city_state")
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_ground")
+material_override = SubResource("StandardMaterial3D_ground")
+
+# Central Plaza - will be damaged during event
+[node name="Plaza" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+mesh = SubResource("BoxMesh_building")
+size = Vector3(20, 0.2, 20)
+material_override = SubResource("StandardMaterial3D_building")
+
+# Main City Building (state dependent)
+[node name="TownHall" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -12)
+mesh = SubResource("BoxMesh_building")
+material_override = SubResource("StandardMaterial3D_building")
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("1_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+shape = SubResource("CapsuleShape3D_player")
+
+# Camera
+[node name="CameraRig" type="Node3D" parent="."]
+script = ExtResource("3_cam")
+target = NodePath("../Player")
+
+# Example exit (gated by chapter)
+[node name="NorthExit" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 20)
+script = ExtResource("2_exit")
+target_scene = "res://scenes/verdant_meadow.tscn"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NorthExit"]
+shape = SubResource("CapsuleShape3D_player")
+
+# NPC - changes based on state (e.g. mayor or survivor)
+[node name="Mayor" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, -5)
+script = ExtResource("4_npc")
+story_beat = "mayor_intro"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Mayor"]
+mesh = SubResource("BoxMesh_building")
+size = Vector3(1, 2, 1)
+material_override = SubResource("StandardMaterial3D_building")
+
+# Event enemy spawner placeholder (script will instance during active event)
+[node name="EventEnemies" type="Node" parent="."]
+
+# Barrier for blocked exit during event (script toggles visibility/collision)
+[node name="CityGateBarrier" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 18)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CityGateBarrier"]
+mesh = SubResource("BoxMesh_building")
+size = Vector3(12, 4, 1)
+material_override = SubResource("StandardMaterial3D_building")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CityGateBarrier"]
+shape = SubResource("CapsuleShape3D_player")
+
+# Demo trigger for the event (remove in final - or tie to quest)
+[node name="DemoTrigger" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 1, -10)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DemoTrigger"]
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="Label3D" type="Label3D" parent="DemoTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+text = "Enter to trigger demo city siege event"
+font_size = 24

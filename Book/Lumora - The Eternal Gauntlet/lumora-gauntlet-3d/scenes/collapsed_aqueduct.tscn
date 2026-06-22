@@ -1,0 +1,266 @@
+[gd_scene load_steps=8 format=3 uid="uid://collapsed_aqueduct_rich"]
+
+[ext_resource type="Script" path="res://scripts/player_3d.gd" id="1_player"]
+[ext_resource type="Script" path="res://scripts/zone_exit.gd" id="2_exit"]
+[ext_resource type="Script" path="res://scripts/camera_rig.gd" id="3_cam"]
+[ext_resource type="Script" path="res://scripts/simple_interact.gd" id="4_interact"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.45
+height = 1.9
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_channel"]
+size = Vector2(50, 14)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aqueduct"]
+albedo_color = Color(0.25, 0.23, 0.2, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall"]
+size = Vector3(5, 6, 14)
+
+[node name="CollapsedAqueduct" type="Node3D"]
+
+[node name="MainChannel" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_channel")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+script = ExtResource("1_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="CameraRig" type="Node3D" parent="."]
+transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 18, 18)
+script = ExtResource("3_cam")
+target = NodePath("../Player")
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+current = true
+fov = 46.0
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.433013, 0.25, 0.5, 0.75, -0.433013, 0, 0.5, 0.866025, 0, 25, 0)
+light_energy = 0.95
+shadow_enabled = true
+
+# Broken aqueduct walls for linear, interesting traversal
+[node name="Wall_Left" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 3, 0)
+mesh = SubResource("BoxMesh_wall")
+
+[node name="Wall_Right" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 3, 0)
+mesh = SubResource("BoxMesh_wall")
+
+# Interesting interactable - old water mechanism
+[node name="OldMechanism" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 2, 6)
+script = ExtResource("4_interact")
+prompt = "Examine Old Water Mechanism"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="OldMechanism"]
+shape = SubResource("CapsuleShape3D_player")
+
+# Exit back to meadow
+[node name="Exit" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -20)
+script = ExtResource("2_exit")
+target_zone = "verdant_meadow"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exit"]
+shape = SubResource("CapsuleShape3D_player")
+
+# Additional aqueduct details
+[node name="FallenBeam" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.707, 0, -0.707, 0, 1, 0, 0.707, 0, 0.707, 3, 2, -5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# Extra aqueduct details
+[node name="BrokenPillar" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 1, 0, 0, 0, 0.6, -4, 2, 2)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="MossySection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.8, 0, 0, 0, 1, 0, 0, 0, 0.8, 4, 2, 3)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")
+
+# More aqueduct details
+[node name="SmallBrokenSection" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.7, -2, 2, 5)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("StandardMaterial3D_aqueduct")

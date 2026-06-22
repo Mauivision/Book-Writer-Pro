@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lumora: Sky Dungeon #7 — Prototype</title>
+    <link rel="stylesheet" href="lumora-gauntlet.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="patch-toast" class="patch-toast" aria-live="polite" hidden></div>
+    <div id="loading-overlay" class="loading-overlay">
+      <div class="loading-card">
+        <p class="loading-title">RESPAWNING…</p>
+        <p id="loading-quip" class="loading-quip"></p>
+        <div class="loading-bar"><span id="loading-fill"></span></div>
+      </div>
+    </div>
+
+    <header class="top-bar">
+      <div class="brand">
+        <span class="brand-mark">◇</span>
+        <div>
+          <h1>Sky Dungeon #7</h1>
+          <p class="subtitle">Lumora: The Eternal Gauntlet — playable slice</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a class="header-link" href="hub.html">All games</a>
+        <a class="header-link" href="cards.html">Patch Duel (cards)</a>
+        <a class="header-link" href="tarot-rpg.html">Tarot story RPG</a>
+        <a class="header-link" href="adventure.html">Adventure (autoplay)</a>
+        <button type="button" id="btn-new-run" class="btn ghost">New run</button>
+      </div>
+    </header>
+
+    <main class="layout game-window">
+      <aside class="panel player-panel">
+        <h2>Haruto Takahashi</h2>
+        <p class="role">Eternal Player · Party Leader Authority</p>
+        <div class="bars">
+          <label>HP</label>
+          <div class="bar hp"><span id="bar-hp"></span></div>
+          <label>Unity <span class="hint">(co-op)</span></label>
+          <div class="bar unity"><span id="bar-unity"></span></div>
+          <label>Jealousy <span class="hint">(aggro)</span></label>
+          <div class="bar jealousy"><span id="bar-jealousy"></span></div>
+        </div>
+        <div class="stance-row">
+          <span class="label">Stance</span>
+          <div class="stance-toggle" role="group" aria-label="Combat stance">
+            <button type="button" id="stance-radiant" class="stance active" data-stance="radiant">
+              Radiant
+            </button>
+            <button type="button" id="stance-veil" class="stance" data-stance="veil">Veil</button>
+          </div>
+        </div>
+        <p id="stance-desc" class="stance-desc"></p>
+        <div class="rep">
+          <div><span>Radiant rep</span> <strong id="rep-radiant">50</strong></div>
+          <div><span>Veil rep</span> <strong id="rep-veil">50</strong></div>
+        </div>
+        <p id="debuff-line" class="debuff hidden"></p>
+      </aside>
+
+      <section class="panel stage">
+        <div id="route-chip" class="route-chip hidden">Verdant resonance detected</div>
+        <div id="stage-art" class="stage-art" aria-hidden="true"></div>
+        <h2 id="encounter-title">The Golden Tankard</h2>
+        <p id="encounter-body" class="encounter-body"></p>
+        <div id="lock-ui" class="lock-ui hidden">
+          <p class="lock-label">Light / Shadow lock — enter sequence</p>
+          <div id="lock-sequence" class="lock-sequence"></div>
+          <div class="lock-buttons">
+            <button type="button" class="btn lock L" data-bit="L">Light</button>
+            <button type="button" class="btn lock S" data-bit="S">Shadow</button>
+            <button type="button" class="btn ghost" id="lock-clear">Clear</button>
+            <button type="button" class="btn primary" id="lock-submit">Submit</button>
+          </div>
+        </div>
+        <div id="combat-ui" class="combat-ui hidden">
+          <div class="enemy-block">
+            <span id="enemy-name"></span>
+            <div class="bar enemy-hp"><span id="bar-enemy"></span></div>
+          </div>
+        </div>
+        <div id="choices" class="choices"></div>
+      </section>
+
+      <aside class="panel log-panel">
+        <h2>Quest Log</h2>
+        <ul id="quest-log" class="quest-log"></ul>
+        <h3 class="system-head">System</h3>
+        <ul id="system-log" class="system-log"></ul>
+      </aside>
+    </main>
+
+    <footer class="footer">
+      <p>
+        Based on <cite>Lumora: The Eternal Gauntlet</cite> — twin gods, Patch Notes, and
+        “respawn is free; romance is not.” Open <code>index.html</code> locally in any modern
+        browser.
+      </p>
+    </footer>
+
+    <script src="lumora-gauntlet.js" defer></script>
+  </body>
+</html>

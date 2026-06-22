@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "description": "Data for Phase 2 - Treasure Chests as buildable objects. Costs balanced for the full resource system.",
+  "chests": [
+    {
+      "id": "wooden_ruined",
+      "display_name": "Wooden Ruined Chest",
+      "description": "Basic weathered storage. Good for early game.",
+      "cost": { "wood": 8, "fiber": 4 },
+      "scene_path": "res://scenes/props/treasure_chests/wooden_ruined_chest.tscn",
+      "rarity": "common",
+      "storage_slots": 12
+    },
+    {
+      "id": "crystal_infused",
+      "display_name": "Crystal Infused Chest",
+      "description": "Glowing verdant crystals grow from the wood. Attractive and slightly magical.",
+      "cost": { "wood": 6, "crystal_shard": 3, "fiber": 2 },
+      "scene_path": "res://scenes/props/treasure_chests/crystal_infused_chest.tscn",
+      "rarity": "uncommon",
+      "storage_slots": 16,
+      "special": "slight glow"
+    },
+    {
+      "id": "stone_relic",
+      "display_name": "Stone Relic Chest",
+      "description": "Heavy stone construction. Very durable, fits ruin environments.",
+      "cost": { "stone": 10, "wood": 3 },
+      "scene_path": "res://scenes/props/treasure_chests/stone_relic_chest.tscn",
+      "rarity": "uncommon",
+      "storage_slots": 20
+    },
+    {
+      "id": "glitched_cache",
+      "display_name": "Glitched Admin Cache",
+      "description": "Cyan seams and floating shards. Feels wrong... but useful.",
+      "cost": { "stone": 5, "crystal_shard": 5, "echo_fragment": 2 },
+      "scene_path": "res://scenes/props/treasure_chests/glitched_cache.tscn",
+      "rarity": "rare",
+      "storage_slots": 18,
+      "special": "cyan glow + story potential"
+    },
+    {
+      "id": "sunshade_hoard",
+      "display_name": "Sunshade Hoard Chest",
+      "description": "Warm golden tones with heavy reinforcement. Feels valuable.",
+      "cost": { "wood": 4, "stone": 8, "crystal_shard": 2 },
+      "scene_path": "res://scenes/props/treasure_chests/sunshade_hoard.tscn",
+      "rarity": "rare",
+      "storage_slots": 24
+    }
+  ]
+}

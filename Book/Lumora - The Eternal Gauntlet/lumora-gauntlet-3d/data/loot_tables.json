@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "description": "Loot tables for different treasure sources in Lumora. Used when opening chests or discovering world treasures.",
+  "loot_tables": {
+    "common_cache": {
+      "guaranteed": [
+        { "resource": "wood", "min": 3, "max": 8 },
+        { "resource": "fiber", "min": 2, "max": 5 }
+      ],
+      "possible": [
+        { "resource": "herb", "weight": 30, "min": 1, "max": 3 },
+        { "resource": "meat", "weight": 20, "min": 1, "max": 2 },
+        { "resource": "verdant_gem", "weight": 5, "min": 1, "max": 1 }
+      ]
+    },
+    "ruin_hoard": {
+      "guaranteed": [
+        { "resource": "stone", "min": 4, "max": 10 }
+      ],
+      "possible": [
+        { "resource": "wood", "weight": 25, "min": 2, "max": 6 },
+        { "resource": "crystal_shard", "weight": 35, "min": 1, "max": 3 },
+        { "resource": "echo_fragment", "weight": 15, "min": 1, "max": 1 },
+        { "resource": "sunshade_gem", "weight": 10, "min": 1, "max": 1 }
+      ]
+    },
+    "crystal_vein": {
+      "guaranteed": [
+        { "resource": "crystal_shard", "min": 3, "max": 7 }
+      ],
+      "possible": [
+        { "resource": "verdant_gem", "weight": 40, "min": 1, "max": 2 },
+        { "resource": "skyward_gem", "weight": 15, "min": 1, "max": 1 },
+        { "resource": "echo_gem", "weight": 8, "min": 1, "max": 1 }
+      ]
+    },
+    "sky_admin_cache": {
+      "guaranteed": [
+        { "resource": "echo_fragment", "min": 2, "max": 4 }
+      ],
+      "possible": [
+        { "resource": "crystal_shard", "weight": 30, "min": 2, "max": 5 },
+        { "resource": "glitch_gem", "weight": 25, "min": 1, "max": 2 },
+        { "resource": "echo_gem", "weight": 20, "min": 1, "max": 1 }
+      ]
+    },
+    "gauntlet_relic": {
+      "guaranteed": [
+        { "resource": "bloodstone_gem", "min": 1, "max": 1 }
+      ],
+      "possible": [
+        { "resource": "echo_gem", "weight": 50, "min": 1, "max": 2 },
+        { "resource": "skyward_gem", "weight": 30, "min": 1, "max": 1 },
+        { "resource": "glitch_gem", "weight": 15, "min": 1, "max": 1 }
+      ]
+    }
+  }
+}

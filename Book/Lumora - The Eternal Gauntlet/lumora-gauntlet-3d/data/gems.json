@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "description": "Gems for Lumora - special resources with magical, story, and crafting value. Tied to the Crystal Gauntlet lore.",
+  "gems": {
+    "verdant_gem": {
+      "display_name": "Verdant Heart Gem",
+      "rarity": "uncommon",
+      "description": "A pulsing green crystal that seems to breathe. Favored by those who work the land.",
+      "color": "#2ecc71",
+      "value": 45,
+      "properties": ["growth", "healing", "bond"],
+      "harvest_sources": ["crystal_nodes", "echo_veins"],
+      "crafting_uses": ["crystal_infused_chest", "verdant_stew_upgrade", "gauntlet_reinforcement"]
+    },
+    "echo_gem": {
+      "display_name": "Echo Resonance Gem",
+      "rarity": "rare",
+      "description": "Contains whispers of past events. Used in memory crafting and advanced story progression.",
+      "color": "#9b59b6",
+      "value": 85,
+      "properties": ["memory", "resonance", "story"],
+      "harvest_sources": ["deep_echo_veins", "ruin_altars"],
+      "crafting_uses": ["glitched_cache", "patch_tea_elixir", "companion_bond_items"]
+    },
+    "skyward_gem": {
+      "display_name": "Skyward Sapphire",
+      "rarity": "rare",
+      "description": "Cold blue crystal that hums with altitude. Associated with Sky Wardens and flight-related abilities.",
+      "color": "#3498db",
+      "value": 70,
+      "properties": ["mobility", "clarity", "warden"],
+      "harvest_sources": ["high_crystal_clusters", "sky_dungeon_fringe"],
+      "crafting_uses": ["movement_upgrades", "lanterns", "warden_gear"]
+    },
+    "sunshade_gem": {
+      "display_name": "Sunshade Amber",
+      "rarity": "uncommon",
+      "description": "Warm golden gem that holds sunlight. Popular in the southern factions and with builders.",
+      "color": "#f1c40f",
+      "value": 55,
+      "properties": ["warmth", "endurance", "construction"],
+      "harvest_sources": ["sunlit_ruins", "golden_veins"],
+      "crafting_uses": ["sunshade_hoard_chest", "sturdy_building_materials", "cooking_buffs"]
+    },
+    "glitch_gem": {
+      "display_name": "Glitch Prism",
+      "rarity": "very_rare",
+      "description": "Unstable cyan crystal that flickers between realities. Dangerous but incredibly powerful.",
+      "color": "#00f9ff",
+      "value": 150,
+      "properties": ["instability", "power", "glitch"],
+      "harvest_sources": ["admin_errors", "sky_dungeon_core"],
+      "crafting_uses": ["glitched_cache", "experimental_items", "gauntlet_overclock"]
+    },
+    "bloodstone_gem": {
+      "display_name": "Bloodstone of the Gauntlet",
+      "rarity": "legendary",
+      "description": "Deep red gem said to be a crystallized drop from the original Crystal Gauntlet. Extremely rare.",
+      "color": "#c0392b",
+      "value": 300,
+      "properties": ["life", "sacrifice", "eternal"],
+      "harvest_sources": ["world_bosses", "ancient_altars"],
+      "crafting_uses": ["endgame_items", "resurrection_mechanics", "major_story_choices"]
+    }
+  }
+}

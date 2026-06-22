@@ -1,0 +1,287 @@
+[gd_scene load_steps=8 format=3 uid="uid://crystal_overlook_rich"]
+
+[ext_resource type="Script" path="res://scripts/player_3d.gd" id="1_player"]
+[ext_resource type="Script" path="res://scripts/zone_exit.gd" id="2_exit"]
+[ext_resource type="Script" path="res://scripts/camera_rig.gd" id="3_cam"]
+[ext_resource type="Script" path="res://scripts/simple_interact.gd" id="4_interact"]
+[ext_resource type="Script" path="res://scripts/harvestable.gd" id="5_harvest"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.45
+height = 1.9
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_platform"]
+size = Vector2(42, 35)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_crystal"]
+albedo_color = Color(0.12, 0.48, 0.58, 1)
+roughness = 0.25
+metallic = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_pillar"]
+size = Vector3(3, 10, 3)
+
+[node name="CrystalOverlook" type="Node3D"]
+
+[node name="MainPlatform" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_platform")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+script = ExtResource("1_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="CameraRig" type="Node3D" parent="."]
+transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 22, 22)
+script = ExtResource("3_cam")
+target = NodePath("../Player")
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+current = true
+fov = 45.0
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.433013, 0.25, 0.5, 0.75, -0.433013, 0, 0.5, 0.866025, 0, 30, 0)
+light_energy = 1.1
+shadow_enabled = true
+
+# Elevated crystal pillars for vertical interest
+[node name="CrystalPillar1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 5, -7)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+[node name="CrystalPillar2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 5, 6)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+[node name="CrystalPillar3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.866, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866, -5, 4, 9)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# Special interactable - Echo Stone (harvestable lore node)
+[node name="EchoStone" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 2)
+script = ExtResource("5_harvest")
+prompt = "Listen to the Echo Stone"
+material_type = "echo_fragment"
+amount_per_harvest = 1
+flavor_text = "The stone sings with the voices of those who ran the Gauntlet before you."
+completes_quest = "velvet_echo_fragment"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EchoStone"]
+shape = SubResource("CapsuleShape3D_player")
+
+# Exit back to meadow
+[node name="SouthExit" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -15)
+script = ExtResource("2_exit")
+target_zone = "verdant_meadow"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SouthExit"]
+shape = SubResource("CapsuleShape3D_player")
+
+# Container for player-placed objects (used by persistence)
+[node name="PlayerBuilds" type="Node3D" parent="."]
+
+# Additional high-place details
+[node name="SmallCrystalFormation" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -5, 2, -8)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# Extra high-place details
+[node name="FloatingCrystal1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -4, 3, -10)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+[node name="FloatingCrystal2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 5, 4, 4)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place details
+[node name="CrystalOutcrop" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 6, 2, -7)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")
+
+# More high-place storytelling details
+[node name="AncientMarker" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3, 2, -5)
+mesh = SubResource("BoxMesh_pillar")
+material_override = SubResource("StandardMaterial3D_crystal")

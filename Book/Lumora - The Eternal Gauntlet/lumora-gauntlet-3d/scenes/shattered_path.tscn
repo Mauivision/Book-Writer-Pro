@@ -1,0 +1,259 @@
+[gd_scene load_steps=7 format=3 uid="uid://shattered_path_rich"]
+
+[ext_resource type="Script" path="res://scripts/player_3d.gd" id="1_player"]
+[ext_resource type="Script" path="res://scripts/zone_exit.gd" id="2_exit"]
+[ext_resource type="Script" path="res://scripts/camera_rig.gd" id="3_cam"]
+[ext_resource type="Script" path="res://scripts/simple_interact.gd" id="4_interact"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.45
+height = 1.9
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_platform"]
+size = Vector2(30, 22)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shattered"]
+albedo_color = Color(0.28, 0.22, 0.18, 1)
+roughness = 0.9
+
+[node name="ShatteredPath" type="Node3D"]
+
+[node name="MainPlatform" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_platform")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+script = ExtResource("1_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="CameraRig" type="Node3D" parent="."]
+transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 18, 18)
+script = ExtResource("3_cam")
+target = NodePath("../Player")
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+current = true
+fov = 46.0
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.433013, 0.25, 0.5, 0.75, -0.433013, 0, 0.5, 0.866025, 0, 25, 0)
+light_energy = 0.95
+shadow_enabled = true
+
+# Broken floating segments for interesting traversal
+[node name="BrokenSegment1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 1, 0, 0, 0, 0.6, 0, 1, -6)
+mesh = SubResource("PlaneMesh_platform")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+[node name="BrokenSegment2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.8, 0, 0, 0, 1, 0, 0, 0, 0.5, 0, 1, 5)
+mesh = SubResource("PlaneMesh_platform")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# Interesting interactable
+[node name="FallenStatue" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -1)
+script = ExtResource("4_interact")
+prompt = "Examine Fallen Statue"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FallenStatue"]
+shape = SubResource("CapsuleShape3D_player")
+
+# Exit back to meadow
+[node name="Exit" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -15)
+script = ExtResource("2_exit")
+target_zone = "verdant_meadow"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exit"]
+shape = SubResource("CapsuleShape3D_player")
+
+# Additional broken details
+[node name="BrokenPillar" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 1, 0, 0, 0, 0.6, 4, 2, 3)
+mesh = SubResource("BoxMesh_medium")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# Extra broken details
+[node name="SmallFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -3, 2, 5)
+mesh = SubResource("BoxMesh_medium")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")
+
+# More broken floating details
+[node name="TinyFloatingPiece" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 2, 2, -4)
+mesh = SubResource("BoxMesh_small")
+material_override = SubResource("StandardMaterial3D_shattered")

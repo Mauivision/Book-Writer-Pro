@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "description": "Lumora resource definitions. Used by Harvestable nodes, Inventory, Workbench, and Player House.",
+  "resources": {
+    "wood": {
+      "name": "Verdant Wood",
+      "icon": "wood",
+      "description": "Common timber from the meadow. Basic building material.",
+      "stack_size": 99,
+      "value": 2
+    },
+    "stone": {
+      "name": "Ruin Stone",
+      "icon": "stone",
+      "description": "Salvaged from old tilework and ruins. Sturdy but heavy.",
+      "stack_size": 99,
+      "value": 3
+    },
+    "fiber": {
+      "name": "Sky Fiber",
+      "icon": "fiber",
+      "description": "Tough vines and grass. Used for ropes, cloth, and basic tools.",
+      "stack_size": 99,
+      "value": 1
+    },
+    "crystal_shard": {
+      "name": "Verdant Crystal Shard",
+      "icon": "crystal",
+      "description": "Glowing fragments that leak from the world. Valuable and reactive.",
+      "stack_size": 50,
+      "value": 12,
+      "special": true
+    },
+    "echo_fragment": {
+      "name": "Echo Fragment",
+      "icon": "echo",
+      "description": "Resonant pieces of the world’s memory. Used in advanced crafting and story progression.",
+      "stack_size": 25,
+      "value": 25,
+      "special": true
+    },
+    "meat": {
+      "name": "Wisp Meat",
+      "icon": "meat",
+      "description": "From defeated enemies. Perishable but nourishing.",
+      "stack_size": 20,
+      "value": 4
+    },
+    "herb": {
+      "name": "Patch Herb",
+      "icon": "herb",
+      "description": "Common medicinal plant. Base for teas and stews.",
+      "stack_size": 40,
+      "value": 2
+    }
+  }
+}

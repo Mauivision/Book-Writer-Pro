@@ -1,0 +1,127 @@
+[gd_scene load_steps=9 format=3 uid="uid://echo_hollow_new"]
+
+[ext_resource type="Script" path="res://scripts/player_3d.gd" id="1_player"]
+[ext_resource type="Script" path="res://scripts/zone_exit.gd" id="2_exit"]
+[ext_resource type="Script" path="res://scripts/camera_rig.gd" id="3_cam"]
+[ext_resource type="Script" path="res://scripts/harvestable.gd" id="5_harvest"]
+[ext_resource type="Script" path="res://scripts/enemy_scout.gd" id="6_enemy"]
+[ext_resource type="Script" path="res://scripts/simple_interact.gd" id="7_interact"]
+[ext_resource type="Script" path="res://scripts/enemy_wisp.gd" id="8_wisp"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.45
+height = 1.9
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_platform"]
+size = Vector2(38, 28)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hollow"]
+albedo_color = Color(0.18, 0.22, 0.28, 1)
+roughness = 0.85
+
+[node name="EchoHollow" type="Node3D"]
+
+[node name="MainPlatform" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_platform")
+material_override = SubResource("StandardMaterial3D_hollow")
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 8)
+script = ExtResource("1_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="CameraRig" type="Node3D" parent="."]
+transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 22, 18)
+script = ExtResource("3_cam")
+target = NodePath("../Player")
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+current = true
+fov = 45.0
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.433013, 0.25, 0.5, 0.75, -0.433013, 0, 0.5, 0.866025, 0, 28, 0)
+light_energy = 0.7
+shadow_enabled = true
+
+# Misty echo crystal formations
+[node name="EchoCrystal1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 2.2, 0, 0, 0, 0.7, -8, 1.8, -4)
+mesh = SubResource("PlaneMesh_platform")
+material_override = SubResource("StandardMaterial3D_hollow")
+
+[node name="EchoCrystal2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 3.0, 0, 0, 0, 0.5, 9, 2.5, 3)
+mesh = SubResource("PlaneMesh_platform")
+material_override = SubResource("StandardMaterial3D_hollow")
+
+# Harvest nodes - echo heavy for theme
+[node name="EchoVein1" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -8)
+script = ExtResource("5_harvest")
+prompt = "Harvest Echo Fragment"
+material_type = "echo_fragment"
+amount_per_harvest = 2
+flavor_text = "The hollow sings as you take its voice."
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EchoVein1"]
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="EchoVein2" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 2, 7)
+script = ExtResource("5_harvest")
+prompt = "Harvest Echo Fragment"
+material_type = "echo_fragment"
+amount_per_harvest = 1
+flavor_text = "Faint memories cling to this shard."
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EchoVein2"]
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="VerdantLeak" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 2, 0)
+script = ExtResource("5_harvest")
+prompt = "Harvest Verdant Crystal"
+material_type = "verdant_crystal"
+amount_per_harvest = 1
+flavor_text = "A small living leak in the hollow."
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="VerdantLeak"]
+shape = SubResource("CapsuleShape3D_player")
+
+# Combat opportunities - using the new Scout enemy
+[node name="Scout1" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 2, 2)
+script = ExtResource("6_enemy")
+
+[node name="Scout2" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 2, -5)
+script = ExtResource("6_enemy")
+
+[node name="Wisp1" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 2.5, 6)
+script = ExtResource("8_wisp")
+
+[node name="Wisp2" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 3, -3)
+script = ExtResource("8_wisp")
+
+# North exit back to forest
+[node name="NorthExit" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -12)
+script = ExtResource("2_exit")
+target_zone = "forest_ruin_gate"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NorthExit"]
+shape = SubResource("CapsuleShape3D_player")
+
+# Simple navigation aid
+[node name="OldSign" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 4)
+script = ExtResource("7_interact")
+prompt = "Read weathered sign: 'The pact still echoes here. Take only what you can carry.'"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="OldSign"]
+shape = SubResource("CapsuleShape3D_player")

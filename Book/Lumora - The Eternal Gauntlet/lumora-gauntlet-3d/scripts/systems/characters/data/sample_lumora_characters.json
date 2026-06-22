@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "description": "Starting canon + example generated characters for Lumora. Merge with lumora.json as needed.",
+  "canon_characters": [
+    {
+      "id": "velvet_dawn",
+      "full_name": "High Priestess Velvet Dawn",
+      "title": "of the Verdant Leak",
+      "role": "High Priestess / Healer",
+      "faction": "Independent",
+      "location_tags": ["verdant_meadow", "tavern"],
+      "personality_traits": ["Warm", "Political", "Bond-Hungry"],
+      "voice_style": "Warm",
+      "bond_with_player": 45,
+      "is_recruitable": true,
+      "model_key": "human_priestess",
+      "primary_color": "#c9a0ff",
+      "accent_color": "#2f7d3c"
+    },
+    {
+      "id": "haruto_takahashi",
+      "full_name": "Haruto Takahashi",
+      "title": "The Eternal Player",
+      "role": "Hero",
+      "faction": "Independent",
+      "location_tags": ["everywhere"],
+      "is_recruitable": false,
+      "model_key": "haruto_player"
+    }
+  ],
+  "example_generated": [
+    {
+      "id": "tavern_keeper_4721",
+      "full_name": "Mira Ironroot",
+      "title": "the Patient Ear",
+      "role": "Tavern Keeper",
+      "faction": "Independent",
+      "location_tags": ["tavern", "verdant_meadow"],
+      "personality_traits": ["Observant", "Cynical", "Warm-hearted"],
+      "voice_style": "Sarcastic",
+      "bond_with_player": 12,
+      "is_recruitable": false,
+      "vendor": true,
+      "model_key": "human_rustic"
+    }
+  ]
+}
