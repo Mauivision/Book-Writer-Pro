@@ -29,11 +29,11 @@
 ### Done
 - [x] Volume 1 chapter plan (Arcs 1–5, Ch. 1–35 beats)
 - [x] Ch. 1–17 manuscript exists; Ch. 18–35 scaffolded
-- [x] Godot 4 project: meadow → forest → threshold → **sd7 entrance + tutorial**, verdant interrupt, Planar Shift v0, SunnyControl
-- [x] `lumora.json` canon — 6 playable zones, Arc 1 M04–M06 beats synced to Godot
+- [x] Godot 4 project: meadow → forest → threshold → **sd7 stack through co-op gate**, verdant interrupt, Planar Shift v0, SunnyControl
+- [x] `lumora.json` canon — 8 playable zones, Arc 1 M04–M11 beats synced to Godot
 
 ### In progress
-- [ ] Sky Dungeon upper/mid stack (co-op gates, ch11–13)
+- [ ] Sky Dungeon deep + mirror trial (ch14–16)
 - [ ] Bond / jealousy / Unity mechanics polish (Phase C)
 
 ### Not started

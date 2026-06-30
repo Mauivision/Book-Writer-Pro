@@ -1,6 +1,6 @@
 # OpenClaw — BookWriter Pro / Lumora session brief
 
-**Updated:** 2026-06-22  
+**Updated:** 2026-06-22 (Milestone 4 — SD7 interior)  
 **Repo:** `C:\Users\hawai\.cursor\Agency agents\content\bookwriter-pro`  
 **Branch:** `2026-03-24-eqd2` (pushed; base `main`)  
 **OpenClaw workspace:** `C:\Users\hawai\.openclaw\workspace` (see `CURSOR_PROJECTS.md`)
@@ -32,8 +32,15 @@ Manuscript + game design pack live under:
 
 ## Recent git (bookwriter-pro)
 
+- `41b924e` — MASTER_PLAN: SD7 entrance + tutorial milestone
+- `a41855b` — MASTER_PLAN threshold milestone
+- `f87cc3b` — OPENCLAW-BRIEF (3D ship target)
 - `e0f3f70` — Lumora mission specs ch16–35 + `game/README.md`
-- `c9f035d` — Full Lumora tree: manuscript, codex, protocols, Godot sources
+
+**3D repo (`lumora-gauntlet-3d`, local `main`):**
+
+- `34e2bc4` — SD7 entrance + tutorial floor + SunnyControl
+- `6a67437` — Sky Dungeon threshold + Planar Shift v0
 
 Do **not** commit `.godot/` cache or `.hermes/desktop-attachments/` videos.
 
@@ -41,11 +48,21 @@ Do **not** commit `.godot/` cache or `.hermes/desktop-attachments/` videos.
 
 ## Priority next actions (3D ship lane)
 
-1. **`sky-dungeon-threshold` scene** — JSON + exits exist; no `scenes/sky_dungeon_threshold.tscn` yet. Port beats from 2D: Sunny traps, cyan seam (Planar Shift), Radiant Seal (`veilKeyTease`).
-2. **Planar Shift in Godot** — Implement per `game/PROTOCOLS/Architecture-Spec-Planar-Shift.md` (`StoryDirector` + zone layer toggle).
-3. **Forest gate east routing** — Wire east exit to threshold (south/east already splits to `verdant-interrupt` in JSON).
-4. **MASTER_PLAN refresh** — Mark missions ch01–35 done; note 3D as sole ship engine.
-5. **Canon sync** — Keep `lumora-game-data/lumora.json` and `data/lumora.json` aligned after beat/quest adds.
+**Playable chain (8 zones):**
+
+```text
+meadow → forest_gate → (north) sky_dungeon_threshold → (east, q_veil_key) sd7_entrance → sd7_tutorial
+  → (unity gate) sd7_entrance → (north, tutorial cleared) sd7_upper → sd7_mid → (co-op gate) east exit
+forest_gate → (east) verdant_interrupt
+```
+
+1. **`sd7-deep` zone** — Deep run + Sunny box (M14–M15) per `Locations.md`.
+2. **Mirror trial room** — M16 unity trial puzzle.
+3. **Bond / jealousy polish** — Ch. 13 rivalry mechanic.
+4. **Canon sync** — Keep `lumora-game-data/lumora.json` aligned after beat/quest adds.
+5. **CI sync script** — BookWriter ↔ Godot JSON export (Phase E).
+
+**Controls (3D):** WASD · Shift dash · Space attack · **E** interact · **B** build · **Q** Planar Shift (cyan seam) · Tab craft
 
 ---
 
@@ -91,7 +108,7 @@ Return: git branch, last commit, retro-gauntlet type-check, openclaw channels st
 Repo: C:\Users\hawai\.cursor\Agency agents\products\lumora-gauntlet-3d
 Design: C:\Users\hawai\.cursor\Agency agents\content\bookwriter-pro\Book\Lumora - The Eternal Gauntlet\game\
 
-Goal: Build sky-dungeon-threshold.tscn + Planar Shift v0 per Architecture-Spec-Planar-Shift.md
+Goal: Build sd7-upper.tscn + co-op gate stub per game/MISSIONS/ch11-first-real-coop-gate.md
 
 Constraints:
 - Follow STORY_PROGRESSION.md + story_triggers.json patterns
