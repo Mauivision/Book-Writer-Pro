@@ -4,7 +4,7 @@
 
 **North star:** A playable 3D top-down adventure that feels like walking through Volume 1 — System UI as antagonist, messy party politics as mechanics, Sky Dungeon #7 as the long arc.
 
-**Last updated:** 2026-05-31
+**Last updated:** 2026-06-22
 
 ---
 
@@ -13,7 +13,7 @@
 | Layer | Target | Engine |
 |-------|--------|--------|
 | **Ship target** | 20–40 min vertical slice → 3–5 hr Act 1 demo | **Godot 4** (`lumora-gauntlet-3d/`) |
-| **Reference / rapid iteration** | 2D Phaser slice (quests, beats, map data) | `products/retro-gauntlet/` |
+| **Reference only** | Mechanics prototyping | `products/retro-gauntlet/` (2D, not ship) |
 | **Narrative source of truth** | 35-chapter Volume 1 + series bible | `Book/Lumora - The Eternal Gauntlet/` |
 | **Web prototypes** | Cards, dungeon pull, narrative JS | `game/*.html` + `game/lumora-*.js` |
 | **Design pack (this folder)** | GDD, missions, bibles, schedule | `GAME/` |
@@ -29,10 +29,11 @@
 ### Done
 - [x] Volume 1 chapter plan (Arcs 1–5, Ch. 1–35 beats)
 - [x] Ch. 1–17 manuscript exists; Ch. 18–35 scaffolded
-- [x] Godot 4 project: 6 zones, harvest/build loop, persistence, basic combat, Velvet NPC
-- [x] 2D Phaser v0.2: quests, story beats, map registry, patch toasts
-- [x] `lumora_zones.json` — zone graph aligned to book names
-- [x] Blender / PropGenerator art pipeline started
+- [x] Godot 4 project: meadow, forest gate, verdant interrupt, **sky-dungeon-threshold**, harvest/build, combat, Planar Shift v0
+- [x] 2D Phaser reference slice (not ship target): quests, beats, map registry
+- [x] `GAME/MISSIONS/` ch01–ch35 mission specs
+- [x] Planar Shift protocol (`PROTOCOLS/Architecture-Spec-Planar-Shift.md`)
+- [x] `lumora.json` canon — 4 zones, threshold quests/beats synced to Godot
 
 ### In progress
 - [ ] Quest system wired to book beats (partial — Velvet quest only)
