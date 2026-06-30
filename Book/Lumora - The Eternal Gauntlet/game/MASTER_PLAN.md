@@ -29,21 +29,14 @@
 ### Done
 - [x] Volume 1 chapter plan (Arcs 1–5, Ch. 1–35 beats)
 - [x] Ch. 1–17 manuscript exists; Ch. 18–35 scaffolded
-- [x] Godot 4 project: meadow, forest gate, verdant interrupt, **sky-dungeon-threshold**, harvest/build, combat, Planar Shift v0
-- [x] 2D Phaser reference slice (not ship target): quests, beats, map registry
-- [x] `GAME/MISSIONS/` ch01–ch35 mission specs
-- [x] Planar Shift protocol (`PROTOCOLS/Architecture-Spec-Planar-Shift.md`)
-- [x] `lumora.json` canon — 4 zones, threshold quests/beats synced to Godot
+- [x] Godot 4 project: meadow → forest → threshold → **sd7 entrance + tutorial**, verdant interrupt, Planar Shift v0, SunnyControl
+- [x] `lumora.json` canon — 6 playable zones, Arc 1 M04–M06 beats synced to Godot
 
 ### In progress
-- [ ] Quest system wired to book beats (partial — Velvet quest only)
-- [ ] Combat vertical slice (arc attack + Scout/Wisp — needs polish + mini-boss)
-- [ ] Chapter → mission conversion docs (`GAME/MISSIONS/` empty)
+- [ ] Sky Dungeon upper/mid stack (co-op gates, ch11–13)
+- [ ] Bond / jealousy / Unity mechanics polish (Phase C)
 
 ### Not started
-- [ ] Sunny tutorial UI antagonist in Godot
-- [ ] Bond / jealousy / Unity mechanics affecting gameplay
-- [ ] Sky Dungeon #7 as distinct zone stack
 - [ ] BookWriter ↔ Godot JSON sync in CI
 - [ ] Windows + web export linked from BookWriter hub
 
@@ -105,27 +98,18 @@ Town / meadow hub
 
 ---
 
-### Phase B — Vertical slice (Weeks 3–6)
+### Phase B — Vertical slice (Weeks 3–6) ✓
 
 **Goal:** 20–40 minutes of shippable Godot gameplay = **Arc 1 compressed** (Summoning + Tutorial Dungeon).
 
-**Playable beat list (slice):**
-
-1. Awakening in Verdant Meadow (Ch. 1 tone — System UI boot)
-2. Meet Velvet + first harvest quest (`q_awaken`, `q_gather`)
-3. Scout combat + first kill (`q_scout`)
-4. Forest Ruin Gate transition (`q_gate`)
-5. Sunny appears — wrong advice, trap trigger (Ch. 5 beat)
-6. Veil Key tease / east path blocked until co-op flag (Ch. 6 hook)
-
 **Engine tasks:**
 
-- [ ] QuestManager singleton (JSON-driven from `data/quests.json`)
-- [ ] StoryDialog + PatchToast UI (port from `retro-gauntlet` / `lumoraLore.ts`)
-- [ ] SunnyControl node — overrides tooltip text, triggers trap on bad follow
-- [ ] Sunshade Golem mini-boss at Forest Ruin Gate
-- [ ] Title screen + save slot (zone, quests, inventory)
-- [ ] `RUN_GAME.bat` → stable Windows build
+- [x] QuestManager singleton (JSON-driven from `data/missions_arc1.json`)
+- [x] StoryDialog + PatchToast UI
+- [x] SunnyControl node — misleading tips, trap on bad follow
+- [x] Sunshade Golem mini-boss in Echo Hollow (behind co-op gate)
+- [x] Title screen + save slot (zone, quests, inventory, flags)
+- [x] `RUN_GAME.bat` → stable Windows build
 
 **Exit criteria:** New player completes slice in one session; all quest IDs trace to mission docs; no greybox dead ends.
 
