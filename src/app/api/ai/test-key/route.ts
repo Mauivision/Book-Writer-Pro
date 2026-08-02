@@ -1,26 +1,47 @@
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { testAIProviderConnection } from '@/utils/aiGateway';
+import type { AIProviderConfig } from '@/utils/aiProvider';
+
+interface TestConnectionRequest {
+  apiKey?: string;
+  providerConfig?: Partial<AIProviderConfig>;
+}
 
 export async function POST(request: Request) {
   try {
-    const { apiKey } = await request.json();
+    const { apiKey, providerConfig } =
+      (await request.json()) as TestConnectionRequest;
 
-    if (!apiKey) {
+    const effectiveConfig: Partial<AIProviderConfig> | undefined = apiKey
+      ? {
+          type: 'openai',
+          baseUrl: providerConfig?.baseUrl || 'https://api.openai.com/v1',
+          model: providerConfig?.model || 'gpt-4o-mini',
+          apiKey,
+        }
+      : providerConfig;
+
+    if (!effectiveConfig && !process.env.OPENAI_API_KEY) {
       return NextResponse.json(
-        { error: 'API key is required' },
+        {
+          error:
+            'No provider configured. Choose Ollama/local model or provide an API key.',
+        },
         { status: 400 }
       );
     }
 
-    // Test the API key with a simple request
-    const openai = new OpenAI({ apiKey });
-    await openai.models.list();
+    const result = await testAIProviderConnection(effectiveConfig);
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+      provider: result.provider,
+      model: result.model,
+    });
   } catch (error) {
-    console.error('Error testing API key:', error);
+    console.error('Error testing AI provider:', error);
     return NextResponse.json(
-      { error: 'Invalid API key' },
+      { error: error instanceof Error ? error.message : 'Connection failed' },
       { status: 401 }
     );
   }

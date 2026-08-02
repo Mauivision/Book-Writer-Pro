@@ -1,13 +1,18 @@
 import { NextResponse } from 'next/server'
-import { OpenAI } from 'openai'
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-})
+import { generateAIText, parseAIJson } from '@/utils/aiGateway'
+import type { AIProviderConfig } from '@/utils/aiProvider'
 
 export async function POST(request: Request) {
   try {
-    const { genre, chapterId, characters, type, context } = await request.json()
+    const { genre, chapterId, characters, type, context, providerConfig } =
+      (await request.json()) as {
+        genre: string
+        chapterId?: string
+        characters?: string[]
+        type?: string
+        context?: string
+        providerConfig?: Partial<AIProviderConfig>
+      }
 
     const prompt = `Generate a ${type || 'major'} timeline event for a ${genre} story.
 ${context ? `Context: ${context}\n` : ''}
@@ -30,22 +35,16 @@ Format the response as a JSON object with these fields:
   "type": "${type || 'major'}"
 }`
 
-    const completion = await openai.chat.completions.create({
-      messages: [
-        {
-          role: "system",
-          content: "You are a creative writing assistant specializing in story development and timeline creation."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
-      model: "gpt-4-turbo-preview",
-      response_format: { type: "json_object" }
+    const responseText = await generateAIText({
+      systemPrompt:
+        'You are a creative writing assistant specializing in story development and timeline creation.',
+      userPrompt: prompt,
+      providerConfig,
+      temperature: 0.7,
+      maxTokens: 1000,
     })
 
-    const response = JSON.parse(completion.choices[0].message.content || '{}')
+    const response = parseAIJson(responseText)
 
     return NextResponse.json(response)
   } catch (error) {

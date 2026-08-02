@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { getOpenAIClient } from '@/utils/openai'
+import { generateAIText } from '@/utils/aiGateway'
+import type { AIProviderConfig } from '@/utils/aiProvider'
 
 interface RewriteChapterParams {
   content: string
@@ -27,12 +28,12 @@ interface RewriteChapterParams {
     genre?: string
     theme?: string
   }
+  providerConfig?: Partial<AIProviderConfig>
 }
 
 export async function POST(request: Request) {
   try {
-    const openai = getOpenAIClient()
-    const { content, instructions, style = 'professional', tone = 'engaging', context } = await request.json() as RewriteChapterParams
+    const { content, instructions, style = 'professional', tone = 'engaging', context, providerConfig } = await request.json() as RewriteChapterParams
 
     // Build context-aware prompt
     let contextPrompt = ''
@@ -75,26 +76,13 @@ Please provide the rewritten content that:
 
 Return only the rewritten content without any additional commentary or formatting.`
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
-      messages: [
-        {
-          role: "system",
-          content: systemPrompt
-        },
-        {
-          role: "user",
-          content: userPrompt
-        }
-      ],
+    const response = await generateAIText({
+      systemPrompt,
+      userPrompt,
+      providerConfig,
       temperature: 0.7,
-      max_tokens: 4000
+      maxTokens: 4000,
     })
-
-    const response = completion.choices[0].message.content
-    if (!response) {
-      throw new Error('No response from OpenAI')
-    }
 
     return NextResponse.json({ 
       content: response,

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { generateRandomName, generateRandomTitle, generateRandomTheme } from '@/utils/nameGenerator';
+import { getDefaultConfig } from '@/utils/aiProvider';
 
 export default function SettingsPage() {
   const [apiKey, setApiKey] = useState('');
@@ -36,8 +37,17 @@ export default function SettingsPage() {
       // Test the API key
       const response = await fetch('/api/ai/test-key', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ apiKey })
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          apiKey,
+          providerConfig: {
+            ...getDefaultConfig('openai'),
+            apiKey,
+          },
+        })
       });
 
       if (!response.ok) {
