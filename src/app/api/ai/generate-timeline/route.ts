@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server'
-import OpenAI from 'openai'
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-})
+import { generateAIText, parseAIJson } from '@/utils/aiGateway'
+import type { AIProviderConfig } from '@/utils/aiProvider'
 
 interface GenerateTimelineParams {
   chapters: Array<{
@@ -25,11 +22,12 @@ interface GenerateTimelineParams {
     characters: string[]
   }>
   count?: number
+  providerConfig?: Partial<AIProviderConfig>
 }
 
 export async function POST(req: Request) {
   try {
-    const { chapters, characters, existingEvents, count = 3 } = await req.json() as GenerateTimelineParams
+    const { chapters, characters, existingEvents, count = 3, providerConfig } = await req.json() as GenerateTimelineParams
 
     // Create a context-aware prompt
     const prompt = `Given the following story context, generate ${count} new timeline events that fit naturally into the narrative:
@@ -60,29 +58,16 @@ Format each event as JSON with:
   "chapterId": "relevant chapter id"
 }`
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
-      messages: [
-        {
-          role: "system",
-          content: "You are a creative writing assistant that generates story events that fit naturally into existing narratives."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
+    const response = await generateAIText({
+      systemPrompt:
+        'You are a creative writing assistant that generates story events that fit naturally into existing narratives.',
+      userPrompt: prompt,
+      providerConfig,
       temperature: 0.7,
-      max_tokens: 1000
+      maxTokens: 1000,
     })
 
-    const response = completion.choices[0].message.content
-    if (!response) {
-      throw new Error('No response from OpenAI')
-    }
-
-    // Parse the response into an array of events
-    const events = JSON.parse(response)
+    const events = parseAIJson(response)
 
     return NextResponse.json({ events })
   } catch (error) {

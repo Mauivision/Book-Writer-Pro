@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import OpenAI from 'openai'
-import { getOpenAIClient } from '@/utils/openai'
+import { generateAIText, parseAIJson } from '@/utils/aiGateway'
+import type { AIProviderConfig } from '@/utils/aiProvider'
 
 interface GenerateStoryParams {
   genre: string
@@ -8,12 +8,12 @@ interface GenerateStoryParams {
   complexity: 'beginner' | 'intermediate' | 'advanced'
   length: 'short' | 'medium' | 'long'
   customPrompt?: string
+  providerConfig?: Partial<AIProviderConfig>
 }
 
 export async function POST(request: Request) {
   try {
     const params: GenerateStoryParams = await request.json()
-    const openai = getOpenAIClient()
 
     const lengthDescription = {
       short: 'approximately 3-5 chapters',
@@ -74,31 +74,19 @@ export async function POST(request: Request) {
 
     Make sure the story is engaging, well-structured, and appropriate for the specified complexity level. The chapters should have actual content, not just placeholders.`
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a creative writing assistant that generates engaging, well-structured stories. Always respond with valid JSON that matches the exact structure requested.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
+    const responseContent = await generateAIText({
+      systemPrompt:
+        'You are a creative writing assistant that generates engaging, well-structured stories. Always respond with valid JSON that matches the exact structure requested.',
+      userPrompt: prompt,
+      providerConfig: params.providerConfig,
       temperature: 0.7,
-      max_tokens: 4000,
+      maxTokens: 4000,
     })
-
-    const responseContent = completion.choices[0].message.content
-    if (!responseContent) {
-      throw new Error('No response from OpenAI')
-    }
 
     // Try to parse the JSON response
     let story
     try {
-      story = JSON.parse(responseContent)
+      story = parseAIJson(responseContent)
     } catch (parseError) {
       console.error('Failed to parse JSON response:', parseError)
       console.error('Raw response:', responseContent)

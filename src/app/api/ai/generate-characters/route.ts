@@ -1,17 +1,18 @@
 import { NextResponse } from 'next/server'
-import { getOpenAIClient } from '@/utils/openai'
+import { generateAIText, parseAIJson } from '@/utils/aiGateway'
+import type { AIProviderConfig } from '@/utils/aiProvider'
 
 interface GenerateCharacterParams {
   genre: string
   count: number
   context: string
   role?: 'protagonist' | 'antagonist' | 'supporting'
+  providerConfig?: Partial<AIProviderConfig>
 }
 
 export async function POST(request: Request) {
   try {
-    const openai = getOpenAIClient()
-    const { genre, count, context, role } = await request.json() as GenerateCharacterParams
+    const { genre, count, context, role, providerConfig } = await request.json() as GenerateCharacterParams
 
     const prompt = `Generate ${count} characters for a ${genre} story with the following context:
 ${context}
@@ -46,28 +47,16 @@ Format each character as a JSON object with these fields:
   "conflicts": ["string (list of character's internal and external conflicts)"]
 }`
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
-      messages: [
-        {
-          role: "system",
-          content: "You are a creative writing assistant that generates well-developed and memorable characters."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
+    const response = await generateAIText({
+      systemPrompt:
+        'You are a creative writing assistant that generates well-developed and memorable characters.',
+      userPrompt: prompt,
+      providerConfig,
       temperature: 0.7,
-      max_tokens: 2000
+      maxTokens: 2000,
     })
 
-    const response = completion.choices[0].message.content
-    if (!response) {
-      throw new Error('No response from OpenAI')
-    }
-
-    const characters = JSON.parse(response)
+    const characters = parseAIJson(response)
     return NextResponse.json(characters)
   } catch (error) {
     console.error('Error generating characters:', error)
