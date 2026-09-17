@@ -2,12 +2,25 @@
 
 Working title project workspace for the **Lumina-Umbra** novel.
 
+## Status
+
+Act I in draft. Dual-POV opening is in place through the public-lie ritual and first descent into living Umbra.
+
 ## Current Package
 
 - `BOOK_METADATA.md` - positioning, themes, and story promise
 - `PLOT_OUTLINE.md` - chapter-by-chapter structure
 - `CHARACTER_PROFILES.md` - core cast and arc intent
-- `CHAPTERS/chapter-1-the-divide-light.md` - opening chapter draft
+- `WORLD_BUILDING.md` - Light Council doctrine, Umbra map, Engine rules
+- `CONTEXT_PLACEMENT_GUIDE.md` - where to file raw notes
+- `CHAPTERS/` - drafted chapters
+
+## Drafted Chapters
+
+1. `chapter-1-the-divide-light.md` - Liora POV
+2. `chapter-2-the-smugglers-concord.md` - Cael POV
+3. `chapter-3-clarity-ceremony.md` - Liora POV
+4. `chapter-4-below-the-umbra.md` - Cael POV
 
 ## Story Premise
 
@@ -15,10 +28,10 @@ In a city physically split between perpetual daylight and engineered night, a me
 
 ## Next Writing Steps
 
-1. Draft Chapter 2 (The Smuggler's Concord)
-2. Define the governing doctrine of the Light Council
-3. Expand the Umbra undercity map and faction alliances
-4. Plant Book 1 midpoint twist clues in Chapter 1 revisions
+1. Draft Chapter 5 (Border Fracture)
+2. Capture Cael's mentor before the arrest so the loss lands
+3. Seed Helio Key Prime as a fragment, not a named object
+4. Continuity pass: Selene Kes timeline vs Liora's age-nine death record
 
 ## Tone + Genre Targets
 

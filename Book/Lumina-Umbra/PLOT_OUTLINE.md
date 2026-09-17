@@ -20,14 +20,14 @@
 - Cael identifies Curator Serev's signature encryption.
 
 ### Chapter 4: Below the Umbra
-- Liora enters Umbra for the first time.
+- Cael takes Liora deeper into Umbra, past checkpoint markets into living districts.
 - Nima Ro introduces shadow theater records as uneditable memory.
 - First emotional rupture: Liora sees children reciting erased family names.
 
 ### Chapter 5: Border Fracture
-- Military patrol seizes a courier cell.
-- Cael's old mentor is captured and disappears into Lumen.
-- Liora and Cael argue over strategy: leak now or collect proof.
+- Military patrol seizes Ilen's courier cell at the west tiers.
+- Cael's mentor is loaded into a Lumen coherence wagon.
+- Liora and Cael argue over strategy: leak now or collect a chorus of proof.
 
 ### Chapter 6: The Third Archive
 - Hidden vault under the border contains pre-division city maps.

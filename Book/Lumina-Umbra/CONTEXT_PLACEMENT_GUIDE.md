@@ -17,7 +17,7 @@ Goal: decide where each item belongs before drafting.
 | 1 - The Divide of Light | Hook + collision | Border imagery, contradictory records, tension beats |
 | 2 - The Smuggler's Concord | Alliance terms | Forensic clues, trust friction, tactical planning |
 | 3 - Clarity Ceremony | Public lie mechanism | Ritual language, propaganda lines, crowd behavior |
-| 4 - Below the Umbra | Perspective inversion | Street culture, lived detail, memory testimonies |
+| 4 - Below the Umbra | Perspective inversion | Street culture, spoken names, Nima's rules, heat-dump worldbuilding |
 | 5 - Border Fracture | Escalation cost | Arrest records, pursuit scenes, ethical conflict |
 | 6 - The Third Archive | Act break reveal | Pre-division maps, founding doctrine contradictions |
 | 7-13 (Act II) | Pressure + betrayal | Operational setbacks, faction agendas, emotional reversals |

@@ -30,7 +30,9 @@ The High Curator's office.
 
 Liora swallowed and looked up. Around her, other archivists worked with serene faces, their sleeves crisp, their eyes lit by pale data glow. No one seemed to notice the blood rushing in her ears.
 
-She copied the file hash to a private slate, then froze when a soft chime sounded from the hall entrance.
+She copied the file hash to a private slate. The riot's district code matched the housing block where she had lived until she was nine. That was why she had volunteered for the excerpt. Curiosity dressed as diligence.
+
+A soft chime sounded from the hall entrance.
 
 "Evening audit?" asked Supervisor Yen, appearing at the edge of Liora's station. He carried his calm like armor.
 

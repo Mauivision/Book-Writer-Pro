@@ -76,7 +76,15 @@ Nima collects spoken memories in performance form so they cannot be cleanly edit
 
 ---
 
-## 5) The Helio Engine (System Character)
+## 5) Ilen
+
+- **Role:** Umbra courier, Cael's mentor in plate-reading
+- **Function in Story:** First personal cost of the investigation; captured at the start of Chapter 5
+- **Note:** Stored the second hash from Concord House. Taken in a coherence wagon toward Lumen.
+
+---
+
+## 6) The Helio Engine (System Character)
 
 - **Role:** City-scale day/night control lattice
 - **Function in Story:** Environmental pressure, mystery source, eventual reveal
