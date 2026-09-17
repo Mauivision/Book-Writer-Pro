@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { getOpenAIClient } from '@/utils/openai'
+import { generateAIText } from '@/utils/aiGateway'
+import type { AIProviderConfig } from '@/utils/aiProvider'
 
 interface AutoCompleteParams {
   currentText: string
@@ -29,12 +30,12 @@ interface AutoCompleteParams {
   }
   completionType: 'sentence' | 'paragraph' | 'scene' | 'dialogue'
   maxWords?: number
+  providerConfig?: Partial<AIProviderConfig>
 }
 
 export async function POST(request: Request) {
   try {
-    const openai = getOpenAIClient()
-    const { currentText, context, completionType, maxWords = 50 } = await request.json() as AutoCompleteParams
+    const { currentText, context, completionType, maxWords = 50, providerConfig } = await request.json() as AutoCompleteParams
 
     // Build context-aware prompt
     const characterContext = context.characters.map(char => 
@@ -84,26 +85,14 @@ Requirements:
 
 Provide only the completion text, starting immediately after the current text.`
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a creative writing assistant that provides intelligent, context-aware story completions. Always respond with natural, flowing text that continues the story seamlessly.'
-        },
-        {
-          role: 'user',
-          content: prompt
-        }
-      ],
+    const responseContent = await generateAIText({
+      systemPrompt:
+        'You are a creative writing assistant that provides intelligent, context-aware story completions. Always respond with natural, flowing text that continues the story seamlessly.',
+      userPrompt: prompt,
+      providerConfig,
       temperature: 0.7,
-      max_tokens: Math.min(maxWords * 2, 500), // Estimate tokens needed
+      maxTokens: Math.min(maxWords * 2, 500),
     })
-
-    const responseContent = completion.choices[0].message.content
-    if (!responseContent) {
-      throw new Error('No response from OpenAI')
-    }
 
     return NextResponse.json({
       completion: responseContent.trim(),

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { getOpenAIClient } from '@/utils/openai'
+import { generateAIText, parseAIJson } from '@/utils/aiGateway'
+import type { AIProviderConfig } from '@/utils/aiProvider'
 
 interface GenerateChapterParams {
   title: string
@@ -16,12 +17,21 @@ interface GenerateChapterParams {
     theme?: string
     previousChapters?: string[]
   }
+  providerConfig?: Partial<AIProviderConfig>
 }
 
 export async function POST(request: Request) {
   try {
-    const openai = getOpenAIClient()
-    const { title, prompt, style = 'professional', tone = 'formal', pov = 'third', length = 1000, context } = await request.json() as GenerateChapterParams
+    const {
+      title,
+      prompt,
+      style = 'professional',
+      tone = 'formal',
+      pov = 'third',
+      length = 1000,
+      context,
+      providerConfig,
+    } = await request.json() as GenerateChapterParams
 
     // Build context-aware prompt
     let contextPrompt = ''
@@ -80,28 +90,15 @@ Please provide the chapter in this JSON format:
   "conflicts": ["string (conflicts present or resolved in this chapter)"]
 }`
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
-      messages: [
-        {
-          role: "system",
-          content: systemPrompt
-        },
-        {
-          role: "user",
-          content: userPrompt
-        }
-      ],
+    const response = await generateAIText({
+      systemPrompt,
+      userPrompt,
+      providerConfig,
       temperature: 0.7,
-      max_tokens: 4000
+      maxTokens: 4000,
     })
 
-    const response = completion.choices[0].message.content
-    if (!response) {
-      throw new Error('No response from OpenAI')
-    }
-
-    const chapter = JSON.parse(response)
+    const chapter = parseAIJson(response)
     return NextResponse.json(chapter)
   } catch (error) {
     console.error('Error generating chapter:', error)

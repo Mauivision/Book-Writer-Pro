@@ -9,6 +9,11 @@ import Placeholder from '@tiptap/extension-placeholder'
 import { useEffect, useState, useCallback } from 'react'
 import { useBookStore } from '@/store/useBookStore'
 import { FaMagic, FaSpinner, FaLightbulb, FaKeyboard } from 'react-icons/fa'
+import {
+  attachProviderConfig,
+  getAIAuthToken,
+  getClientAIProviderConfig,
+} from '@/utils/clientAIRequest'
 
 export interface RichTextEditorProps {
   initialContent: string
@@ -52,6 +57,17 @@ export default function RichTextEditor({ initialContent, onChange, chapterId }: 
       onChange(editor.getHTML())
     },
   })
+
+  const buildAIRequest = useCallback((payload: Record<string, unknown>) => {
+    const providerConfig = getClientAIProviderConfig()
+    return {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getAIAuthToken(providerConfig)}`,
+      },
+      body: JSON.stringify(attachProviderConfig(payload)),
+    }
+  }, [])
 
   useEffect(() => {
     if (editor && initialContent !== editor.getHTML()) {
@@ -128,8 +144,7 @@ export default function RichTextEditor({ initialContent, onChange, chapterId }: 
     try {
       const response = await fetch('/api/ai/autocomplete', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        ...buildAIRequest({
           currentText: analysis.currentText,
           context: {
             ...context,
@@ -174,7 +189,7 @@ export default function RichTextEditor({ initialContent, onChange, chapterId }: 
     } finally {
       setIsAutoCompleting(false)
     }
-  }, [editor, chapterId, characters, plot, setting, metadata, getCurrentChapterContext, analyzeContext])
+  }, [editor, chapterId, characters, plot, setting, metadata, getCurrentChapterContext, analyzeContext, buildAIRequest])
 
   // Generate writing suggestions
   const generateSuggestions = useCallback(async () => {
@@ -208,8 +223,7 @@ export default function RichTextEditor({ initialContent, onChange, chapterId }: 
         try {
           const response = await fetch('/api/ai/autocomplete', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
+            ...buildAIRequest({
               currentText: analysis.currentText,
               context: {
                 ...context,
@@ -260,7 +274,7 @@ export default function RichTextEditor({ initialContent, onChange, chapterId }: 
     } finally {
       setIsAutoCompleting(false)
     }
-  }, [editor, chapterId, characters, plot, setting, metadata, getCurrentChapterContext, analyzeContext])
+  }, [editor, chapterId, characters, plot, setting, metadata, getCurrentChapterContext, analyzeContext, buildAIRequest])
 
   const insertSuggestion = useCallback((suggestion: string) => {
     if (!editor) return

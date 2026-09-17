@@ -1,17 +1,18 @@
 import { NextResponse } from 'next/server';
-import { getOpenAIClient } from '@/utils/openai';
+import { generateAIText, parseAIJson } from '@/utils/aiGateway';
+import type { AIProviderConfig } from '@/utils/aiProvider';
 
 interface GeneratePlotParams {
   genre: string;
   theme: string;
   complexity: 'beginner' | 'intermediate' | 'advanced';
   includeSubplots: boolean;
+  providerConfig?: Partial<AIProviderConfig>;
 }
 
 export async function POST(request: Request) {
   try {
-    const openai = getOpenAIClient();
-    const { genre, theme, complexity, includeSubplots } = await request.json() as GeneratePlotParams;
+    const { genre, theme, complexity, includeSubplots, providerConfig } = await request.json() as GeneratePlotParams;
 
     const prompt = `Generate a plot outline for a ${genre} story with the following specifications:
 Theme: ${theme}
@@ -54,28 +55,16 @@ Format the response as a JSON object with these fields:
   }
 }`;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
-      messages: [
-        {
-          role: "system",
-          content: "You are a creative writing assistant that generates engaging and well-structured plot outlines."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
+    const response = await generateAIText({
+      systemPrompt:
+        'You are a creative writing assistant that generates engaging and well-structured plot outlines.',
+      userPrompt: prompt,
+      providerConfig,
       temperature: 0.7,
-      max_tokens: 2000
+      maxTokens: 2000,
     });
 
-    const response = completion.choices[0].message.content;
-    if (!response) {
-      throw new Error('No response from OpenAI');
-    }
-
-    const plot = JSON.parse(response);
+    const plot = parseAIJson(response);
     return NextResponse.json(plot);
   } catch (error) {
     console.error('Error generating plot:', error);

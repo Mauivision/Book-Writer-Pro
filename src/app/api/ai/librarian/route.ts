@@ -1,19 +1,27 @@
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { generateAIText } from '@/utils/aiGateway';
+import type { AIProviderConfig } from '@/utils/aiProvider';
 
-// Check if API key is available
-const apiKey = process.env.OPENAI_API_KEY;
-if (!apiKey) {
-  console.error('OPENAI_API_KEY is not set in environment variables');
+interface LibrarianRequest {
+  message: string;
+  context?: {
+    bookTitle?: string;
+    chapterCount?: number;
+    characterCount?: number;
+    genres?: string[];
+    conversationHistory?: string;
+    currentStage?: string;
+    userExperience?: string;
+    intent?: string;
+    entities?: string[];
+  };
+  providerConfig?: Partial<AIProviderConfig>;
 }
-
-const openai = apiKey ? new OpenAI({
-  apiKey: apiKey,
-}) : null;
 
 export async function POST(request: Request) {
   try {
-    const { message, context } = await request.json();
+    const { message, context = {}, providerConfig } =
+      (await request.json()) as LibrarianRequest;
 
     console.log('Librarian API - Received request:', { message, context });
 
@@ -24,30 +32,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if OpenAI is configured
-    if (!openai) {
-      return NextResponse.json({
-        response: `I'd love to help you with your writing! However, I need to be properly configured first. 
-
-To get me working:
-1. Create a file called '.env.local' in your project root
-2. Add your OpenAI API key: OPENAI_API_KEY=your_api_key_here
-3. Restart the development server
-
-For now, here are some general writing tips:
-• Start with a clear concept and outline
-• Develop compelling characters with clear motivations
-• Show, don't tell - use action and dialogue
-• Write regularly, even if just a little each day
-• Don't worry about perfection in your first draft
-
-What kind of story are you thinking about writing? I'd love to hear your ideas!`
-      });
-    }
-
     // Build conversation history for context
     let conversationHistory = '';
-    if (context.conversationHistory && context.conversationHistory.length > 0) {
+    if (context.conversationHistory?.length) {
       conversationHistory = '\n\nPrevious conversation:\n' + context.conversationHistory;
     }
 
@@ -91,58 +78,28 @@ Consider the user's experience level and current writing stage when providing gu
 
     console.log('Librarian API - System prompt:', systemPrompt);
 
-    const completion = await openai.chat.completions.create({
-      model: process.env.OPENAI_MODEL || "gpt-4-turbo-preview",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: message }
-      ],
+    const response = await generateAIText({
+      systemPrompt,
+      userPrompt: message,
+      providerConfig,
       temperature: 0.7,
-      max_tokens: 1000,
+      maxTokens: 1000,
     });
-
-    const response = completion.choices[0]?.message?.content;
-
-    console.log('Librarian API - OpenAI response:', response);
-
-    if (!response) {
-      throw new Error('No response from OpenAI');
-    }
 
     return NextResponse.json({ response });
   } catch (error) {
     console.error('Librarian API - Error:', error);
-    
-    // Handle specific error cases
-    if (error instanceof Error) {
-      if (error.message.includes('API key') || error.message.includes('authentication')) {
-        return NextResponse.json({
-          response: `I'm having trouble connecting to my AI services right now. This usually means the OpenAI API key isn't configured properly.
 
-To fix this:
-1. Get an OpenAI API key from https://platform.openai.com/api-keys
-2. Create a file called '.env.local' in your project root
-3. Add: OPENAI_API_KEY=your_api_key_here
-4. Restart the development server
-
-For now, here are some writing tips:
-• Start with a simple outline of your story
-• Write your first draft without worrying about perfection
-• Read widely in your chosen genre
-• Join a writing group for feedback and motivation
-
-What's your story about? I'd love to hear your ideas!`
-        });
-      }
-      if (error.message.includes('rate limit')) {
-        return NextResponse.json({
-          response: "I'm getting a lot of requests right now. Please wait a moment and try again. In the meantime, here are some writing prompts to get you started:\n\n• What if your main character discovered a secret that changed everything?\n• Write a scene where two characters meet for the first time\n• Describe a place that feels both familiar and strange"
-        });
-      }
+    if (error instanceof Error && error.message.toLowerCase().includes('ollama')) {
+      return NextResponse.json({
+        response:
+          "I couldn't reach your local model yet. If you're using Ollama, make sure it's running (`ollama serve`) and that your model is available (for example, `ollama pull llama3.1`). Then try again.",
+      });
     }
 
     return NextResponse.json({
-      response: "I'm having some technical difficulties right now, but I'm still here to help! Here are some writing tips:\n\n• Write every day, even if just for 15 minutes\n• Don't edit while you're writing your first draft\n• Read your work aloud to catch awkward phrasing\n• Take breaks when you feel stuck\n\nWhat would you like to work on today?"
+      response:
+        "I'm having trouble connecting to your configured AI provider right now. Please check your provider settings and try again. If you're using a local model, confirm Ollama is running and the selected model is installed.",
     });
   }
 } 
