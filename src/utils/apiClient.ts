@@ -64,8 +64,13 @@ class ApiClient {
   private async request(endpoint: string, options: RequestInit = {}): Promise<any> {
     const url = `${this.baseUrl}${endpoint}`;
     
-    // Check if we're online
-    if (!this.isOnline) {
+    // Local models still work without internet. Cloud providers do not.
+    if (!this.isOnline && this.shouldAttachAIProvider(endpoint)) {
+      const providerConfig = getClientAIProviderConfig();
+      if (providerConfig.type !== 'ollama') {
+        throw new ApiError('No internet connection. Please check your connection and try again.');
+      }
+    } else if (!this.isOnline) {
       throw new ApiError('No internet connection. Please check your connection and try again.');
     }
 

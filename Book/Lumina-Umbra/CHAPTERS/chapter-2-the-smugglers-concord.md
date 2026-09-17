@@ -111,19 +111,15 @@ For a heartbeat she closed her eyes.
 
 "I need to see linked records," she said. "Anyone named with Vael. Especially district legal kin."
 
-"You think this connects to your mother."
-
-She opened her eyes again. "I don't think. I audit. Pull the kin index."
-
 Cael routed through an offline cache and built a local chain from the plate's relation tags. Names unfolded in branching lines. Most were anonymized by policy masking. One line remained partially intact:
 
 SELENE KES - relocation denial, petition sealed.
 
 Liora went still.
 
-"Selene Kes was your mother?" he asked softly.
+Cael read the line twice. "You know that name."
 
-"She was listed deceased from transit fever when I was nine."
+"Selene Kes." Her voice had gone flat, filing-cabinet precise. "She was listed deceased from transit fever when I was nine."
 
 Cael looked from the line to her face. "This says petition sealed three years later."
 

@@ -31,7 +31,7 @@ In a city physically split between perpetual daylight and engineered night, a me
 1. Draft Chapter 5 (Border Fracture)
 2. Capture Cael's mentor before the arrest so the loss lands
 3. Seed Helio Key Prime as a fragment, not a named object
-4. Continuity pass: Selene Kes timeline vs Liora's age-nine death record
+4. Continuity pass: Selene Kes is discovered on the plate, not guessed by Cael
 
 ## Tone + Genre Targets
 
