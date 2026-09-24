@@ -34,6 +34,9 @@
     ".next",
     "out",
     "dist",
-    "build"
+    "build",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "src/__tests__"
   ]
 }

@@ -4,11 +4,7 @@ import { useState } from 'react'
 import { useBookStore } from '@/store/useBookStore'
 import { Character } from '@/types'
 import { generateCharacterName } from '@/utils/nameGenerator'
-import {
-  attachProviderConfig,
-  getAIAuthToken,
-  getClientAIProviderConfig,
-} from '@/utils/clientAIRequest'
+import { attachProviderConfig } from '@/utils/clientAIRequest'
 
 // Types
 type CharacterRole = 'protagonist' | 'antagonist' | 'supporting' | 'minor'
@@ -66,12 +62,11 @@ export default function CharacterForm({ characterId, onClose }: CharacterFormPro
     try {
       setIsGenerating(true)
       const generatedName = generateCharacterName()
-      const providerConfig = getClientAIProviderConfig()
       const response = await fetch('/api/ai/generate-characters', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${getAIAuthToken(providerConfig)}`,
         },
         body: JSON.stringify(attachProviderConfig({
           genre: 'fiction',

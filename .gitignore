@@ -6,6 +6,7 @@ yarn-error.log*
 
 # Production builds
 .next/
+tsconfig.tsbuildinfo
 out/
 build/
 dist/

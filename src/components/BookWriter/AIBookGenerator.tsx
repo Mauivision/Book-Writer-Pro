@@ -2,6 +2,11 @@
 
 import React, { useState } from 'react';
 import { saveAs } from 'file-saver';
+import OllamaAI, { genreConfigs } from '@/utils/ollamaAI';
+import LocalAI from '@/utils/localAI';
+
+const ollama = new OllamaAI();
+const localAI = new LocalAI();
 
 interface Chapter {
   id: string;
@@ -22,6 +27,20 @@ interface Story {
   plotPoints: string[];
   createdAt: Date;
   updatedAt: Date;
+}
+
+function toAppChapters(
+  chapters: Array<{ title: string; content: string; wordCount: number }>
+): Chapter[] {
+  const now = new Date();
+  return chapters.map((chapter, index) => ({
+    id: `chapter-${now.getTime()}-${index + 1}`,
+    title: chapter.title,
+    content: chapter.content,
+    wordCount: chapter.wordCount,
+    createdAt: now,
+    updatedAt: now,
+  }));
 }
 
 interface AIBookGeneratorProps {
@@ -141,10 +160,10 @@ As they accepted their award and looked out at the lunar landscape that was now 
       
       // Try Ollama first, fallback to LocalAI
       try {
-        chapters = await ollama.createBook(config);
+        chapters = toAppChapters(await ollama.createBook(config));
       } catch (ollamaError) {
         console.log('Ollama not available, using LocalAI fallback');
-        chapters = await localAI.createBook(config);
+        chapters = toAppChapters(await localAI.createBook(config));
       }
       
       setGeneratedChapters(chapters);

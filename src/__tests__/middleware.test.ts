@@ -1,175 +1,86 @@
+/**
+ * @jest-environment node
+ */
 import { NextRequest } from 'next/server';
 import { middleware } from '@/middleware';
-import { middlewareConfig } from '@/config/middleware';
+import { ACCESS_COOKIE_NAME, accessTokenFromPassword } from '@/utils/accessGate';
 
-// Mock the Next.js request environment
-const createMockRequest = (path: string, authHeader?: string | string[]) => {
+function createMockRequest(
+  path: string,
+  options: { cookie?: string; host?: string } = {}
+) {
   const headers = new Headers();
-  if (authHeader) {
-    if (Array.isArray(authHeader)) {
-      authHeader.forEach(header => headers.append('authorization', header));
-    } else {
-      headers.set('authorization', authHeader);
-    }
+  if (options.cookie) {
+    headers.set('cookie', options.cookie);
   }
-  
   const url = new URL(`http://localhost${path}`);
-  return new NextRequest(url, {
-    headers,
-  });
-};
+  return new NextRequest(url, { headers });
+}
 
-describe('Middleware', () => {
-  it('should allow requests with valid API key', async () => {
-    const request = createMockRequest(
-      `${middlewareConfig.api.routes.prefix}/test`,
-      `${middlewareConfig.api.routes.authScheme} valid-api-key`
+describe('Access-gate middleware', () => {
+  const originalPassword = process.env.APP_PASSWORD;
+
+  afterEach(() => {
+    if (originalPassword === undefined) {
+      delete process.env.APP_PASSWORD;
+    } else {
+      process.env.APP_PASSWORD = originalPassword;
+    }
+  });
+
+  it('lets every page and API through when APP_PASSWORD is unset', async () => {
+    delete process.env.APP_PASSWORD;
+    const home = await middleware(createMockRequest('/'));
+    const api = await middleware(createMockRequest('/api/ai/status'));
+    expect(home.status).toBe(200);
+    expect(api.status).toBe(200);
+    expect(home.headers.get('location')).toBeNull();
+  });
+
+  it('redirects pages to login when the gate is on and there is no cookie', async () => {
+    process.env.APP_PASSWORD = 'studio-secret';
+    const response = await middleware(createMockRequest('/settings'));
+    expect(response.status).toBe(307);
+    expect(response.headers.get('location')).toContain('/login?next=%2Fsettings');
+  });
+
+  it('rejects API calls without a cookie when the gate is on', async () => {
+    process.env.APP_PASSWORD = 'studio-secret';
+    const response = await middleware(createMockRequest('/api/ai/status'));
+    expect(response.status).toBe(401);
+    await expect(response.json()).resolves.toEqual({
+      error: 'Sign in required. This hosted copy is private.',
+    });
+  });
+
+  it('leaves the login routes public', async () => {
+    process.env.APP_PASSWORD = 'studio-secret';
+    const page = await middleware(createMockRequest('/login'));
+    const api = await middleware(createMockRequest('/api/auth/login'));
+    expect(page.status).toBe(200);
+    expect(api.status).toBe(200);
+  });
+
+  it('allows a valid access cookie through', async () => {
+    process.env.APP_PASSWORD = 'studio-secret';
+    const token = await accessTokenFromPassword('studio-secret');
+    const response = await middleware(
+      createMockRequest('/api/ai/generate-chapter', {
+        cookie: `${ACCESS_COOKIE_NAME}=${token}`,
+      })
     );
-    const response = await middleware(request);
     expect(response.status).toBe(200);
   });
 
-  it('should reject requests without API key', async () => {
-    const request = createMockRequest(`${middlewareConfig.api.routes.prefix}/test`);
-    const response = await middleware(request);
-    expect(response.status).toBe(middlewareConfig.api.errors.unauthorized.status);
-    
-    const data = await response.json();
-    expect(data).toBe(middlewareConfig.api.errors.unauthorized.message);
-  });
-
-  it('should reject requests with invalid authorization format', async () => {
-    const request = createMockRequest(
-      `${middlewareConfig.api.routes.prefix}/test`,
-      'InvalidFormat'
+  it('rejects a cookie minted for a different password', async () => {
+    process.env.APP_PASSWORD = 'studio-secret';
+    const token = await accessTokenFromPassword('old-password');
+    const response = await middleware(
+      createMockRequest('/', {
+        cookie: `${ACCESS_COOKIE_NAME}=${token}`,
+      })
     );
-    const response = await middleware(request);
-    expect(response.status).toBe(middlewareConfig.api.errors.unauthorized.status);
-    
-    const data = await response.json();
-    expect(data).toBe(middlewareConfig.api.errors.unauthorized.message);
+    expect(response.status).toBe(307);
+    expect(response.headers.get('location')).toContain('/login');
   });
-
-  it('should not intercept non-API routes', async () => {
-    const request = createMockRequest('/some-other-route');
-    const response = await middleware(request);
-    expect(response.status).toBe(200);
-  });
-
-  it('should handle empty authorization header', async () => {
-    const request = createMockRequest(
-      `${middlewareConfig.api.routes.prefix}/test`,
-      ''
-    );
-    const response = await middleware(request);
-    expect(response.status).toBe(middlewareConfig.api.errors.unauthorized.status);
-  });
-
-  it('should handle malformed authorization header', async () => {
-    const request = createMockRequest(
-      `${middlewareConfig.api.routes.prefix}/test`,
-      'Bearer'
-    );
-    const response = await middleware(request);
-    expect(response.status).toBe(middlewareConfig.api.errors.unauthorized.status);
-  });
-
-  // Test cases for API key formats
-  describe('API Key Formats', () => {
-    it('should accept standard API key format', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        `${middlewareConfig.api.routes.authScheme} sk-1234567890abcdef`
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(200);
-    });
-
-    it('should accept API key with special characters', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        `${middlewareConfig.api.routes.authScheme} sk-123!@#$%^&*()_+`
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(200);
-    });
-
-    it('should accept API key with spaces', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        `${middlewareConfig.api.routes.authScheme} sk-123 456 789`
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(200);
-    });
-  });
-
-  // Test cases for case sensitivity
-  describe('Case Sensitivity', () => {
-    it('should accept lowercase bearer scheme', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        'bearer valid-api-key'
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(200);
-    });
-
-    it('should accept uppercase bearer scheme', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        'BEARER valid-api-key'
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(200);
-    });
-
-    it('should accept mixed case bearer scheme', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        'BeArEr valid-api-key'
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(200);
-    });
-  });
-
-  // New test cases for multiple authorization headers
-  describe('Multiple Authorization Headers', () => {
-    it('should use the first authorization header', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        [
-          `${middlewareConfig.api.routes.authScheme} valid-api-key`,
-          `${middlewareConfig.api.routes.authScheme} invalid-api-key`
-        ]
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(200);
-    });
-
-    it('should handle multiple invalid headers', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        [
-          'InvalidFormat1',
-          'InvalidFormat2'
-        ]
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(middlewareConfig.api.errors.unauthorized.status);
-    });
-
-    it('should handle mix of valid and invalid headers', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        [
-          'InvalidFormat',
-          `${middlewareConfig.api.routes.authScheme} valid-api-key`
-        ]
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(200);
-    });
-  });
-}); 
+});

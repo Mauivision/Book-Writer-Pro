@@ -72,8 +72,8 @@ Format each chapter as a JSON object with these fields:
   } catch (error) {
     console.error('Error generating chapters:', error)
     return NextResponse.json(
-      { error: 'Failed to generate chapters' },
-      { status: 500 }
+      { error: error instanceof Error ? error.message : 'Failed to generate chapters' },
+      { status: 502 }
     )
   }
 } 

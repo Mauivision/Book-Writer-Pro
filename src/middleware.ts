@@ -1,44 +1,44 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import {
+  ACCESS_COOKIE_NAME,
+  isAccessGateEnabled,
+  isPublicPath,
+  isValidAccessToken,
+  safeNextPath,
+} from '@/utils/accessGate';
 
-/**
- * Extracts the API key from the authorization header
- * @param authHeader The authorization header value
- * @returns The API key or null if invalid
- */
-function extractApiKey(authHeader: string | null): string | null {
-  if (!authHeader) return null;
-  
-  const [scheme, key] = authHeader.split(' ');
-  if (!scheme || !key) return null;
-  
-  if (scheme.toLowerCase() !== 'bearer') return null;
-  
-  return key;
-}
-
-/**
- * Middleware function to handle API authentication
- * @param request The incoming request
- * @returns NextResponse
- */
-export function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith('/api/ai')) {
-    const authHeader = request.headers.get('authorization');
-    const apiKey = extractApiKey(authHeader);
-    
-    if (!apiKey) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+export async function middleware(request: NextRequest) {
+  if (!isAccessGateEnabled()) {
+    return NextResponse.next();
   }
 
-  return NextResponse.next();
+  const { pathname } = request.nextUrl;
+  if (isPublicPath(pathname)) {
+    return NextResponse.next();
+  }
+
+  const token = request.cookies.get(ACCESS_COOKIE_NAME)?.value;
+  if (await isValidAccessToken(token)) {
+    return NextResponse.next();
+  }
+
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.json(
+      { error: 'Sign in required. This hosted copy is private.' },
+      { status: 401 }
+    );
+  }
+
+  const loginUrl = request.nextUrl.clone();
+  loginUrl.pathname = '/login';
+  loginUrl.search = '';
+  loginUrl.searchParams.set('next', safeNextPath(pathname));
+  return NextResponse.redirect(loginUrl);
 }
 
-// Configure which routes the middleware should run on
 export const config = {
-  matcher: ['/api/ai/:path*']
-}; 
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
+  ],
+};

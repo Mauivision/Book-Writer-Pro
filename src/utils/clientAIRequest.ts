@@ -1,10 +1,9 @@
 import type { AIProviderConfig } from '@/utils/aiProvider';
-import { getDefaultConfig, loadProviderConfig } from '@/utils/aiProvider';
-
-function getLegacyOpenAIKey(): string {
-  if (typeof window === 'undefined') return '';
-  return localStorage.getItem('openai_api_key')?.trim() || '';
-}
+import {
+  getDefaultConfig,
+  loadProviderConfig,
+  sanitizeClientProviderConfig,
+} from '@/utils/aiProvider';
 
 export function getClientAIProviderConfig(): AIProviderConfig {
   if (typeof window === 'undefined') {
@@ -12,30 +11,22 @@ export function getClientAIProviderConfig(): AIProviderConfig {
   }
 
   const config = loadProviderConfig();
-  const legacyOpenAIKey = getLegacyOpenAIKey();
-  const hasModernConfig = !!localStorage.getItem('ai-provider-config');
-
-  if (!hasModernConfig && legacyOpenAIKey) {
-    return {
-      ...getDefaultConfig('openai'),
-      apiKey: legacyOpenAIKey,
-    };
-  }
-
-  if ((config.type === 'openai' || config.type === 'custom') && !config.apiKey && legacyOpenAIKey) {
-    return { ...config, apiKey: legacyOpenAIKey };
-  }
-
-  return config;
+  const sanitized = sanitizeClientProviderConfig(config);
+  return {
+    ...getDefaultConfig(sanitized?.type ?? config.type ?? 'ollama'),
+    ...sanitized,
+  };
 }
 
-export function getAIAuthToken(config: AIProviderConfig): string {
-  return config.apiKey?.trim() || 'local-model';
+export function getAIAuthToken(_config?: AIProviderConfig): string {
+  return 'local-session';
 }
 
-export function attachProviderConfig<T extends Record<string, unknown>>(payload: T) {
+export function attachProviderConfig<T extends Record<string, unknown>>(
+  payload: T
+) {
   return {
     ...payload,
-    providerConfig: getClientAIProviderConfig(),
+    providerConfig: sanitizeClientProviderConfig(getClientAIProviderConfig()),
   };
 }
