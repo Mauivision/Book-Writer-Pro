@@ -6,23 +6,45 @@ There are two setups. Use the Windows PC as the main one. Use Vercel only when t
 
 API keys stay on the server. The browser never receives `XAI_API_KEY` or `APP_PASSWORD`.
 
+## This PC (already checked)
+
+| Item | What is on the machine |
+| --- | --- |
+| OS | Windows 11 Home |
+| GPU / RAM | RTX 5080 (16 GB VRAM), 31 GB RAM |
+| Node / Git | Node v24.19.0, Git 2.53.0 |
+| Ollama | 0.34.4, listening on `127.0.0.1:11434` only (`OLLAMA_HOST` is unset — keep it that way) |
+| Models already pulled | `gemma4:latest` (default), `qwen3:8b`, `llama3.1:8b` |
+| Tailscale | Not installed yet |
+
+That GPU/RAM is a good fit for 8B–14B models. Stay in that range. Do not pull 30B+ models.
+
 ## A. Main: Windows PC + Ollama (free, private)
 
-This is the everyday setup. The writing app and the AI both run on your PC. Phones and other computers reach the app through Tailscale.
+The writing app and Ollama both stay on this PC. Ollama stays bound to localhost so nothing on the network can talk to it. Other devices reach **only** the Next.js app through Tailscale Serve.
 
-### 1. Install the tools
+### 1. Confirm the tools
 
-1. Install [Node.js LTS](https://nodejs.org/).
-2. Install [Ollama](https://ollama.com/) and keep the Ollama app running, or run `ollama serve` in a terminal.
-3. In a terminal:
+Node, Git, and Ollama are already installed. Keep the Ollama app running (or `ollama serve` in a terminal). Leave `OLLAMA_HOST` unset so Ollama remains on `127.0.0.1:11434`.
+
+Default model (already on the machine):
 
 ```bat
-ollama pull llama3.1
+ollama list
 ```
 
-Use another model name if you prefer. Then set `OLLAMA_MODEL` to that name.
+You should see `gemma4:latest`. That is what the app uses unless you change `OLLAMA_MODEL`.
 
-4. Clone this repo (or open the folder you already have).
+Optional upgrades to pull and test (12B–14B, still fine on 16 GB VRAM). Pick one, not both at once:
+
+```bat
+ollama pull qwen3:14b
+ollama pull gemma3:12b
+```
+
+Then set `OLLAMA_MODEL` to `qwen3:14b` or `gemma3:12b` in `.env.local` and restart the app. Skip anything 30B or larger.
+
+Open the project folder in a terminal if you have not already.
 
 ### 2. Start the writing app
 
@@ -38,7 +60,7 @@ npm run dev
 
 On this PC, leave `APP_PASSWORD` empty so you are not asked to log in.
 
-Open the app at [http://localhost:3003](http://localhost:3003).
+The app listens on this machine only: [http://127.0.0.1:3003](http://127.0.0.1:3003).
 
 To run the built app instead of the developer server:
 
@@ -47,26 +69,49 @@ npm run build
 npm run start
 ```
 
-### 3. Reach it from your other devices (Tailscale)
+### 3. Reach it from your other devices (install Tailscale, then Serve)
 
-1. Install Tailscale on the Windows PC and on the phone/laptop you want to write from. Sign both into the same Tailscale account.
-2. On the PC, copy the Tailscale IP (it looks like `100.x.x.x`).
-3. On the other device, open `http://100.x.x.x:3003`.
+Do not open Ollama to the LAN or Tailscale. Do not set `OLLAMA_HOST=0.0.0.0`. Other devices should never call port `11434`.
 
-The other device talks only to the writing app. The app talks to Ollama on `localhost`, so you do not expose Ollama itself.
+1. Install Tailscale on this Windows PC from [https://tailscale.com/download/windows](https://tailscale.com/download/windows).
+2. Install Tailscale on the phone or laptop you want to write from.
+3. Sign both devices into the same Tailscale account and turn Tailscale on.
+4. On the PC, with the writing app already running on port `3003`, open a terminal and run:
 
-If the page does not load from another device:
+```bat
+tailscale serve 3003
+```
 
-- Confirm `npm run dev` or `npm run start` is still running.
-- In Windows Firewall, allow Node.js on port `3003` for private/Tailscale networks.
-- Use the Tailscale IP, not `localhost`, on the other device.
+That command proxies **only** `http://127.0.0.1:3003` (the Next.js app) onto your private Tailscale network. Ollama stays on localhost.
+
+5. Copy the `https://….ts.net` URL that Tailscale prints. On the other device (also on Tailscale), open that URL.
+
+To keep Serve running after you close the terminal:
+
+```bat
+tailscale serve --bg 3003
+```
+
+To stop sharing:
+
+```bat
+tailscale serve reset
+```
+
+Do not use `tailscale funnel`. Funnel would put the app on the public internet.
+
+If the other device cannot load the page:
+
+- Confirm `npm run dev` or `npm run start` is still running on the PC.
+- Confirm Tailscale is connected on both devices.
+- Confirm `tailscale serve 3003` is still running and you used the `https://….ts.net` URL, not `localhost`.
 
 ### Useful env vars on the PC
 
 ```env
 AI_PROVIDER=ollama
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=llama3.1
+OLLAMA_BASE_URL=http://127.0.0.1:11434
+OLLAMA_MODEL=gemma4:latest
 ```
 
 If Ollama is not running, the app shows a clear error instead of a generic failure.
@@ -117,6 +162,6 @@ The Settings page and the in-app AI settings panel can remember a local Ollama U
 
 ## Security notes
 
-- On the PC, skip `APP_PASSWORD` so Tailscale devices can open the app.
+- On the PC, skip `APP_PASSWORD`. Only your Tailscale devices can open the Next.js URL, and Ollama is not on that network.
 - On Vercel, always set `APP_PASSWORD`. Every page and API route is blocked until you sign in.
 - Book files in the `Book` folder (including Lumina-Umbra) stay in the repo. This setup does not delete or rewrite them.

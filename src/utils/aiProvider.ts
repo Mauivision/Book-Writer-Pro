@@ -10,8 +10,8 @@ export interface AIProviderConfig {
 /** Safe config the browser may hold. Never includes an API key. */
 export type PublicAIProviderConfig = Omit<AIProviderConfig, 'apiKey'>;
 
-export const DEFAULT_OLLAMA_BASE_URL = 'http://localhost:11434';
-export const DEFAULT_OLLAMA_MODEL = 'llama3.1';
+export const DEFAULT_OLLAMA_BASE_URL = 'http://127.0.0.1:11434';
+export const DEFAULT_OLLAMA_MODEL = 'gemma4:latest';
 export const DEFAULT_XAI_BASE_URL = 'https://api.x.ai/v1';
 export const DEFAULT_XAI_MODEL = 'grok-4.7';
 export const DEFAULT_OPENAI_BASE_URL = 'https://api.openai.com/v1';

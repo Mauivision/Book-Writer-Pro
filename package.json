@@ -5,9 +5,9 @@
   "description": "A comprehensive book writing application",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev -H 0.0.0.0 -p 3003",
+    "dev": "next dev -H 127.0.0.1 -p 3003",
     "build": "next build",
-    "start": "next start -H 0.0.0.0 -p 3003",
+    "start": "next start -H 127.0.0.1 -p 3003",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "format": "prettier --write .",

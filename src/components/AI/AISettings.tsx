@@ -118,7 +118,7 @@ const AISettings: React.FC<AISettingsProps> = ({ onClose }) => {
               value={config.baseUrl}
               onChange={(event) => setConfig({ ...config, baseUrl: event.target.value })}
               className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
-              placeholder="http://localhost:11434"
+              placeholder="http://127.0.0.1:11434"
             />
           </div>
 
@@ -129,7 +129,7 @@ const AISettings: React.FC<AISettingsProps> = ({ onClose }) => {
               value={config.model}
               onChange={(event) => setConfig({ ...config, model: event.target.value })}
               className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
-              placeholder={config.type === 'xai' ? 'grok-4.7' : 'llama3.1'}
+              placeholder={config.type === 'xai' ? 'grok-4.7' : 'gemma4:latest'}
             />
           </div>
 

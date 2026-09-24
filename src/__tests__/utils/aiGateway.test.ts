@@ -8,7 +8,11 @@ import {
   resolveServerProviderConfig,
   testAIProviderConnection,
 } from '@/utils/aiGateway';
-import { DEFAULT_XAI_MODEL } from '@/utils/aiProvider';
+import {
+  DEFAULT_OLLAMA_BASE_URL,
+  DEFAULT_OLLAMA_MODEL,
+  DEFAULT_XAI_MODEL,
+} from '@/utils/aiProvider';
 
 const ORIGINAL_ENV = process.env;
 
@@ -168,17 +172,17 @@ describe('AI provider selection', () => {
 
     await expect(testAIProviderConnection()).resolves.toMatchObject({
       provider: 'ollama',
-      model: 'llama3.1',
+      model: DEFAULT_OLLAMA_MODEL,
     });
-    expect(global.fetch).toHaveBeenCalledWith('http://localhost:11434/api/tags');
+    expect(global.fetch).toHaveBeenCalledWith(`${DEFAULT_OLLAMA_BASE_URL}/api/tags`);
   });
 
   it('builds a readable unreachable error', () => {
     const error = describeProviderUnreachable(
       {
         type: 'ollama',
-        baseUrl: 'http://localhost:11434',
-        model: 'llama3.1',
+        baseUrl: DEFAULT_OLLAMA_BASE_URL,
+        model: DEFAULT_OLLAMA_MODEL,
       },
       new Error('ECONNREFUSED')
     );
