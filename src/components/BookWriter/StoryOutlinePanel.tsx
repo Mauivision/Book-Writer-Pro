@@ -1,32 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-
-interface Chapter {
-  id: string;
-  title: string;
-  content: string;
-  wordCount: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface Story {
-  id: string;
-  title: string;
-  genre: string;
-  description: string;
-  chapters: Chapter[];
-  characters: string[];
-  plotPoints: string[];
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { checkContinuity, generateStoryOutline } from '@/utils/aiWriting';
+import { nowIso } from '@/utils/manuscriptStorage';
+import type { ManuscriptChapter, ManuscriptStory } from '@/types/manuscript';
 
 interface StoryOutlinePanelProps {
-  story: Story | null;
-  chapters: Chapter[];
-  onUpdateStory: (story: Story | null) => void;
+  story: ManuscriptStory | null;
+  chapters: ManuscriptChapter[];
+  onUpdateStory: (story: ManuscriptStory | null) => void;
 }
 
 const StoryOutlinePanel: React.FC<StoryOutlinePanelProps> = ({
@@ -35,7 +17,62 @@ const StoryOutlinePanel: React.FC<StoryOutlinePanelProps> = ({
   onUpdateStory
 }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedStory, setEditedStory] = useState<Story | null>(story);
+  const [editedStory, setEditedStory] = useState<ManuscriptStory | null>(story);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [aiNote, setAiNote] = useState<string | null>(null);
+
+  const persistStory = (next: ManuscriptStory) => {
+    onUpdateStory(next);
+    setEditedStory(next);
+  };
+
+  const handleGenerateOutline = async () => {
+    setAiBusy(true);
+    setAiError(null);
+    setAiNote(null);
+    try {
+      const title = story?.title || 'Untitled Story';
+      const outline = await generateStoryOutline(
+        title,
+        story?.genre || 'Fiction',
+        story?.description || chapters.map((chapter) => chapter.title).join(', ')
+      );
+      const points = outline
+        .split('\n')
+        .map((line) => line.replace(/^\s*\d+[.)]\s*/, '').trim())
+        .filter(Boolean);
+      persistStory({
+        id: story?.id || `story-${Date.now()}`,
+        title,
+        genre: story?.genre || 'Fiction',
+        description: story?.description || '',
+        characters: story?.characters || [],
+        plotPoints: points.length ? points : [outline],
+        createdAt: story?.createdAt || nowIso(),
+        updatedAt: nowIso(),
+      });
+      setAiNote('Outline generated and saved.');
+    } catch (error) {
+      setAiError(error instanceof Error ? error.message : 'Could not generate an outline.');
+    } finally {
+      setAiBusy(false);
+    }
+  };
+
+  const handleCheckContinuity = async () => {
+    setAiBusy(true);
+    setAiError(null);
+    setAiNote(null);
+    try {
+      const note = await checkContinuity(chapters);
+      setAiNote(note);
+    } catch (error) {
+      setAiError(error instanceof Error ? error.message : 'Could not check continuity.');
+    } finally {
+      setAiBusy(false);
+    }
+  };
 
   const handleSaveStory = () => {
     if (editedStory) {
@@ -142,7 +179,39 @@ const StoryOutlinePanel: React.FC<StoryOutlinePanelProps> = ({
           🗺️ Story Outline
         </h2>
 
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <button
+            onClick={handleGenerateOutline}
+            disabled={aiBusy}
+            style={{
+              padding: '10px 16px',
+              backgroundColor: aiBusy ? '#94a3b8' : '#4f46e5',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: aiBusy ? 'not-allowed' : 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            {aiBusy ? 'Working…' : 'Generate Outline'}
+          </button>
+          <button
+            onClick={handleCheckContinuity}
+            disabled={aiBusy || chapters.length === 0}
+            style={{
+              padding: '10px 16px',
+              backgroundColor: aiBusy ? '#94a3b8' : '#0f766e',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: aiBusy ? 'not-allowed' : 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            Check Continuity
+          </button>
           {isEditing ? (
             <>
               <button
@@ -195,6 +264,30 @@ const StoryOutlinePanel: React.FC<StoryOutlinePanelProps> = ({
           )}
         </div>
       </div>
+
+      {aiError && (
+        <div style={{
+          marginBottom: '16px',
+          padding: '10px 12px',
+          backgroundColor: '#fef2f2',
+          color: '#b91c1c',
+          borderRadius: '8px'
+        }}>
+          {aiError}
+        </div>
+      )}
+      {aiNote && (
+        <div style={{
+          marginBottom: '16px',
+          padding: '10px 12px',
+          backgroundColor: '#ecfeff',
+          color: '#155e75',
+          borderRadius: '8px',
+          whiteSpace: 'pre-wrap'
+        }}>
+          {aiNote}
+        </div>
+      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
         {/* Left Column - Story Overview */}

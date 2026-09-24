@@ -1,6 +1,6 @@
-﻿﻿'use client';
+﻿'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ThemeSwitcher } from '../Theme/ThemeSwitcher';
 import SimpleBookWriter from './SimpleBookWriter';
 import AIBookGenerator from './AIBookGenerator';
@@ -11,50 +11,93 @@ import ChapterManager from './ChapterManager';
 import WritingStats from './WritingStats';
 import EditorialTeamPanel from '../AI/EditorialTeamPanel';
 import AISettings from '../AI/AISettings';
-
-interface Chapter {
-  id: string;
-  title: string;
-  content: string;
-  wordCount: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface Story {
-  id: string;
-  title: string;
-  genre: string;
-  description: string;
-  chapters: Chapter[];
-  characters: string[];
-  plotPoints: string[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const defaultChapter = (): Chapter => ({
-  id: `chapter-${Date.now()}`,
-  title: 'Chapter 1',
-  content: '',
-  wordCount: 0,
-  createdAt: new Date(),
-  updatedAt: new Date()
-});
+import ProviderStatusBadge from '../AI/ProviderStatusBadge';
+import {
+  countWords,
+  createEmptyChapter,
+  loadManuscript,
+  nowIso,
+  saveManuscript,
+} from '@/utils/manuscriptStorage';
+import { syncManuscriptToBookStore } from '@/utils/manuscriptSync';
+import type {
+  ManuscriptChapter,
+  ManuscriptSaveStatus,
+  ManuscriptStory,
+} from '@/types/manuscript';
 
 const BookWriterApp: React.FC = () => {
-  const [activeView, setActiveView] = useState<'writer' | 'ai' | 'outline' | 'chapters' | 'team'>('writer');
-  const [currentStory, setCurrentStory] = useState<Story | null>(null);
-  const [chapters, setChapters] = useState<Chapter[]>(() => [defaultChapter()]);
+  const [activeView, setActiveView] = useState<'writer' | 'ai' | 'outline' | 'chapters' | 'team'>(
+    'writer'
+  );
+  const [currentStory, setCurrentStory] = useState<ManuscriptStory | null>(null);
+  const [chapters, setChapters] = useState<ManuscriptChapter[]>(() => [createEmptyChapter()]);
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
   const [totalWordCount, setTotalWordCount] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showStats, setShowStats] = useState(false);
   const [showPrompts, setShowPrompts] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<ManuscriptSaveStatus>('idle');
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  const handleChaptersGenerated = (newChapters: Chapter[]) => {
+  useEffect(() => {
+    const loaded = loadManuscript();
+    setChapters(loaded.state.chapters);
+    setCurrentStory(loaded.state.currentStory);
+    setCurrentChapterIndex(loaded.state.currentChapterIndex);
+    setTotalWordCount(loaded.state.chapters.reduce((sum, chapter) => sum + chapter.wordCount, 0));
+    if (loaded.error) {
+      setSaveError(loaded.error);
+      setSaveStatus('error');
+    }
+    if (loaded.recovered) {
+      syncManuscriptToBookStore(loaded.state);
+    }
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+
+    setSaveStatus('saving');
+    const result = saveManuscript({
+      version: 1,
+      chapters,
+      currentStory,
+      currentChapterIndex,
+      lastSaved: nowIso(),
+    });
+
+    if (result.ok) {
+      setSaveStatus('saved');
+      setSaveError(null);
+      syncManuscriptToBookStore({
+        version: 1,
+        chapters,
+        currentStory,
+        currentChapterIndex,
+        lastSaved: result.lastSaved || nowIso(),
+      });
+      return;
+    }
+
+    setSaveStatus('error');
+    setSaveError(result.error || 'Could not save the manuscript.');
+  }, [chapters, currentStory, currentChapterIndex, hydrated]);
+
+  const handleChaptersGenerated = (
+    newChapters: ManuscriptChapter[],
+    story?: ManuscriptStory | null
+  ) => {
+    if (!newChapters.length) return;
     setChapters(newChapters);
+    setCurrentChapterIndex(0);
+    setTotalWordCount(newChapters.reduce((sum, chapter) => sum + chapter.wordCount, 0));
+    if (story) {
+      setCurrentStory(story);
+    }
     setActiveView('writer');
   };
 
@@ -68,48 +111,50 @@ const BookWriterApp: React.FC = () => {
     }
   };
 
-  const updateWordCount = (count: number) => {
-    setTotalWordCount(count);
-  };
-
   const addChapter = () => {
-    const newChapter: Chapter = {
-      id: `chapter-${Date.now()}`,
-      title: `Chapter ${chapters.length + 1}`,
-      content: '',
-      wordCount: 0,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+    const newChapter = createEmptyChapter(`Chapter ${chapters.length + 1}`);
     setChapters([...chapters, newChapter]);
     setCurrentChapterIndex(chapters.length);
   };
 
   const updateChapter = (index: number, content: string) => {
+    const current = chapters[index];
+    if (!current) return;
     const updatedChapters = [...chapters];
     updatedChapters[index] = {
-      ...updatedChapters[index],
+      ...current,
       content,
-      wordCount: content.split(/\s+/).filter(word => word.length > 0).length,
-      updatedAt: new Date()
+      wordCount: countWords(content),
+      updatedAt: nowIso(),
     };
     setChapters(updatedChapters);
-    updateWordCount(updatedChapters.reduce((total, ch) => total + ch.wordCount, 0));
+    setTotalWordCount(updatedChapters.reduce((total, chapter) => total + chapter.wordCount, 0));
+  };
+
+  const updateChapterTitle = (index: number, title: string) => {
+    const current = chapters[index];
+    if (!current) return;
+    const updatedChapters = [...chapters];
+    updatedChapters[index] = {
+      ...current,
+      title,
+      updatedAt: nowIso(),
+    };
+    setChapters(updatedChapters);
   };
 
   const deleteChapter = (index: number) => {
-    if (chapters.length > 1) {
-      const updatedChapters = chapters.filter((_, i) => i !== index);
-      setChapters(updatedChapters);
-      if (currentChapterIndex >= updatedChapters.length) {
-        setCurrentChapterIndex(updatedChapters.length - 1);
-      }
-    }
+    if (chapters.length <= 1) return;
+    const updatedChapters = chapters.filter((_, i) => i !== index);
+    setChapters(updatedChapters);
+    setCurrentChapterIndex(Math.min(currentChapterIndex, updatedChapters.length - 1));
+    setTotalWordCount(updatedChapters.reduce((total, chapter) => total + chapter.wordCount, 0));
   };
 
   const reorderChapters = (fromIndex: number, toIndex: number) => {
     const updatedChapters = [...chapters];
     const [movedChapter] = updatedChapters.splice(fromIndex, 1);
+    if (!movedChapter) return;
     updatedChapters.splice(toIndex, 0, movedChapter);
     setChapters(updatedChapters);
     setCurrentChapterIndex(toIndex);
@@ -127,30 +172,28 @@ const BookWriterApp: React.FC = () => {
             className="p-2 rounded-lg hover:bg-white/10 transition-colors text-white/90"
             aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
           >
-            {sidebarOpen ? (
-              <span className="text-lg">â—€</span>
-            ) : (
-              <span className="text-lg">â–¶</span>
-            )}
+            {sidebarOpen ? <span className="text-lg">◀</span> : <span className="text-lg">▶</span>}
           </button>
-          {sidebarOpen && (
-            <h2 className="font-semibold text-lg tracking-tight">NovelCraft</h2>
-          )}
+          {sidebarOpen && <h2 className="font-semibold text-lg tracking-tight">Book Writer</h2>}
         </div>
 
         {sidebarOpen && (
           <nav className="flex flex-col gap-1 px-3 flex-1">
-            {[
-              { id: 'writer' as const, label: 'Write', icon: 'âœï¸' },
-              { id: 'outline' as const, label: 'Outline', icon: 'ðŸ—ºï¸' },
-              { id: 'chapters' as const, label: 'Chapters', icon: 'ðŸ“–' },
-              { id: 'ai' as const, label: 'AI Tools', icon: 'ðŸ¤–' },
-              { id: 'team' as const, label: 'Team Review', icon: '\uD83D\uDC65' },
-            ].map(({ id, label, icon }) => (
+            {(
+              [
+                { id: 'writer' as const, label: 'Write', icon: '✎' },
+                { id: 'outline' as const, label: 'Outline', icon: '☰' },
+                { id: 'chapters' as const, label: 'Chapters', icon: '📖' },
+                { id: 'ai' as const, label: 'AI Tools', icon: '✦' },
+                { id: 'team' as const, label: 'Team Review', icon: '👥' },
+              ] as const
+            ).map(({ id, label, icon }) => (
               <button
                 key={id}
                 onClick={() => setActiveView(id)}
-                className={`sidebar-nav-item w-full text-left flex items-center gap-3 ${activeView === id ? 'active' : 'text-white/80 hover:text-white'}`}
+                className={`sidebar-nav-item w-full text-left flex items-center gap-3 ${
+                  activeView === id ? 'active' : 'text-white/80 hover:text-white'
+                }`}
               >
                 <span>{icon}</span>
                 <span>{label}</span>
@@ -161,22 +204,35 @@ const BookWriterApp: React.FC = () => {
 
             <button
               onClick={() => setShowStats(!showStats)}
-              className={`sidebar-nav-item w-full text-left flex items-center gap-3 ${showStats ? 'active' : 'text-white/80 hover:text-white'}`}
+              className={`sidebar-nav-item w-full text-left flex items-center gap-3 ${
+                showStats ? 'active' : 'text-white/80 hover:text-white'
+              }`}
             >
-              <span>ðŸ“Š</span>
+              <span>📊</span>
               <span>Stats</span>
             </button>
             <button
               onClick={() => setShowPrompts(!showPrompts)}
-              className={`sidebar-nav-item w-full text-left flex items-center gap-3 ${showPrompts ? 'active' : 'text-white/80 hover:text-white'}`}
+              className={`sidebar-nav-item w-full text-left flex items-center gap-3 ${
+                showPrompts ? 'active' : 'text-white/80 hover:text-white'
+              }`}
             >
-              <span>ðŸŽ¯</span>
+              <span>🎯</span>
               <span>Prompts</span>
             </button>
 
             <div className="mt-auto pt-4 px-3 border-t border-white/10 text-xs text-white/60 space-y-1">
               <p>{totalWordCount.toLocaleString()} words</p>
-              <p>{chapters.length} chapter{chapters.length !== 1 ? 's' : ''}</p>
+              <p>
+                {chapters.length} chapter{chapters.length !== 1 ? 's' : ''}
+              </p>
+              <p>
+                {saveStatus === 'saving'
+                  ? 'Saving…'
+                  : saveStatus === 'error'
+                    ? 'Save failed'
+                    : 'Saved on this device'}
+              </p>
             </div>
           </nav>
         )}
@@ -191,10 +247,14 @@ const BookWriterApp: React.FC = () => {
       <div className="flex flex-col flex-1 min-w-0">
         <header className="shrink-0 bg-white border-b border-slate-200/80 px-6 py-4 shadow-sm">
           <div className="flex items-center justify-between gap-4">
-            <h1 className="text-xl font-semibold text-slate-800 truncate">
-              {currentStory?.title || 'My Story'}
-            </h1>
+            <div>
+              <h1 className="text-xl font-semibold text-slate-800 truncate">
+                {currentStory?.title || 'My Story'}
+              </h1>
+              {saveError && <p className="text-xs text-red-600 mt-1">{saveError}</p>}
+            </div>
             <div className="flex items-center gap-3">
+              <ProviderStatusBadge />
               <button
                 onClick={() => setShowSettings(true)}
                 className="px-3 py-2 rounded-lg border border-slate-200 text-slate-600 text-sm hover:bg-slate-50 transition-colors"
@@ -213,57 +273,67 @@ const BookWriterApp: React.FC = () => {
         </header>
 
         <main className="flex-1 overflow-auto p-6 bg-slate-50">
-          {activeView === 'writer' && (
-            <SimpleBookWriter
-              chapters={chapters}
-              currentChapterIndex={currentChapterIndex}
-              onChapterUpdate={updateChapter}
-              onWordCountUpdate={updateWordCount}
-              onAddChapter={addChapter}
-              storyContext={currentStory}
-              onPromptSelect={(prompt) => console.log('Prompt selected:', prompt)}
-              onPromptInsert={(text) => console.log('Prompt inserted:', text)}
-              showPrompts={showPrompts}
-            />
-          )}
+          {!hydrated ? (
+            <div className="rounded-lg border border-slate-200 bg-white p-6 text-slate-600">
+              Loading your manuscript…
+            </div>
+          ) : (
+            <>
+              {activeView === 'writer' && (
+                <SimpleBookWriter
+                  chapters={chapters}
+                  currentChapterIndex={currentChapterIndex}
+                  onChapterUpdate={updateChapter}
+                  onWordCountUpdate={setTotalWordCount}
+                  onAddChapter={addChapter}
+                  storyContext={currentStory}
+                  onPromptSelect={(prompt) => console.log('Prompt selected:', prompt)}
+                  onPromptInsert={(text) => console.log('Prompt inserted:', text)}
+                  showPrompts={showPrompts}
+                  saveStatus={saveStatus}
+                  saveError={saveError}
+                />
+              )}
 
-          {activeView === 'outline' && (
-            <StoryOutlinePanel
-              story={currentStory}
-              chapters={chapters}
-              onUpdateStory={setCurrentStory}
-            />
-          )}
+              {activeView === 'outline' && (
+                <StoryOutlinePanel
+                  story={currentStory}
+                  chapters={chapters}
+                  onUpdateStory={setCurrentStory}
+                />
+              )}
 
-          {activeView === 'chapters' && (
-            <ChapterManager
-              chapters={chapters}
-              currentChapterIndex={currentChapterIndex}
-              onChapterSelect={setCurrentChapterIndex}
-              onChapterDelete={deleteChapter}
-              onChapterReorder={reorderChapters}
-            />
-          )}
+              {activeView === 'chapters' && (
+                <ChapterManager
+                  chapters={chapters}
+                  currentChapterIndex={currentChapterIndex}
+                  onChapterSelect={setCurrentChapterIndex}
+                  onChapterDelete={deleteChapter}
+                  onChapterReorder={reorderChapters}
+                  onChapterTitleChange={updateChapterTitle}
+                />
+              )}
 
-          {activeView === 'ai' && (
-            <AIBookGenerator
-              onChaptersGenerated={handleChaptersGenerated}
-              currentStory={currentStory}
-            />
-          )}
+              {activeView === 'ai' && (
+                <AIBookGenerator
+                  onChaptersGenerated={handleChaptersGenerated}
+                  currentStory={currentStory}
+                />
+              )}
 
-          {activeView === 'team' && (
-            <EditorialTeamPanel
-              chapterContent={chapters[currentChapterIndex]?.content || ''}
-              chapterTitle={chapters[currentChapterIndex]?.title}
-              genre={currentStory?.genre}
-              characters={currentStory?.characters}
-              plotPoints={currentStory?.plotPoints}
-            />
+              {activeView === 'team' && (
+                <EditorialTeamPanel
+                  chapterContent={chapters[currentChapterIndex]?.content || ''}
+                  chapterTitle={chapters[currentChapterIndex]?.title}
+                  genre={currentStory?.genre}
+                  characters={currentStory?.characters}
+                  plotPoints={currentStory?.plotPoints}
+                />
+              )}
+            </>
           )}
         </main>
 
-        {/* Stats Panel */}
         {showStats && (
           <WritingStats
             totalWords={totalWordCount}
@@ -273,14 +343,12 @@ const BookWriterApp: React.FC = () => {
         )}
       </div>
 
-      {/* AI Writing Assistant */}
       <WritingAssistant
         currentChapter={chapters[currentChapterIndex]?.content}
         wordCount={totalWordCount}
         onSuggestion={handleSuggestion}
       />
 
-      {/* Tools Reference */}
       <ToolsReference />
 
       {showSettings && <AISettings onClose={() => setShowSettings(false)} />}

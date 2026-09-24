@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -44,7 +43,7 @@ interface WritingPrompt {
   id: string;
   title: string;
   description: string;
-  category: 'character' | 'plot' | 'setting' | 'dialogue' | 'genre' | 'challenge';
+  category: 'character' | 'plot' | 'setting' | 'dialogue' | 'genre' | 'challenge' | 'custom';
   difficulty: 'easy' | 'medium' | 'hard';
   estimatedTime: number; // in minutes
   tags: string[];

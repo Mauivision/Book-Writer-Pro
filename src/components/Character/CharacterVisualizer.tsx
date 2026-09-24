@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -274,12 +273,11 @@ export default function CharacterVisualizer({
       // Arrange in family tree structure
       const protagonist = nodes.find(n => n.type === 'protagonist');
       if (protagonist) {
-        setNodes(prev => prev.map(node => {
-          if (node.type === 'family') {
-            return { ...node, x: protagonist.x + 100, y: protagonist.y + 100 };
-          }
-          return node;
-        }));
+        setNodes(prev => prev.map(node =>
+          node.id === protagonist.id
+            ? node
+            : { ...node, x: protagonist.x + 100, y: protagonist.y + 100 }
+        ));
       }
     } else if (mode === 'conflict') {
       // Arrange by conflict relationships

@@ -6,8 +6,9 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'NovelCraft AI - Professional AI Writing Studio',
-  description: 'Generate a book in one click with AI. Professional AI writing studio for authors.',
+  title: 'Book Writer Pro',
+  description:
+    'Private book-writing studio for Aaron Vanderpool. Published by A.C.C. L.L.C. Local Ollama by default, xAI Grok as a backup.',
 };
 
 export default function RootLayout({

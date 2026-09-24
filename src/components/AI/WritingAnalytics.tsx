@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -109,7 +108,7 @@ export default function WritingAnalytics() {
       averageSessionLength: averageWordsPerChapter,
       favoriteWritingTime: 'Morning', // Placeholder
       productivityScore,
-      genreDistribution: { [metadata.genres[0] || 'General']: 100 },
+      genreDistribution: { [metadata.genres?.[0] || 'General']: 100 },
       characterDevelopment,
       plotComplexity
     };
@@ -458,7 +457,7 @@ export default function WritingAnalytics() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Primary Genre:</span>
-                  <span className="font-medium">{metadata.genres[0] || 'General'}</span>
+                  <span className="font-medium">{metadata.genres?.[0] || 'General'}</span>
                 </div>
               </div>
             </div>

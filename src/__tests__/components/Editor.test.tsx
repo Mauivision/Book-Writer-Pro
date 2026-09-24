@@ -1,7 +1,7 @@
-import { Editor } from '@/components/Editor';
+import FullRichTextEditor from '@/components/BookWriter/FullRichTextEditor';
 
-describe('Editor module', () => {
-  it('exports the chapter editor', () => {
-    expect(Editor).toEqual(expect.any(Function));
+describe('live editor module', () => {
+  it('exports the rich text editor used by the writer', () => {
+    expect(FullRichTextEditor).toEqual(expect.any(Function));
   });
 });

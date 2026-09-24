@@ -10,12 +10,33 @@ import {
   stripClientApiKey,
 } from '@/utils/aiProvider';
 
+export const DEFAULT_AI_TIMEOUT_MS = 120_000;
+
 interface GenerateAITextOptions {
   systemPrompt: string;
   userPrompt: string;
   providerConfig?: Partial<AIProviderConfig>;
   temperature?: number;
   maxTokens?: number;
+  timeoutMs?: number;
+}
+
+function isAbortError(error: unknown): boolean {
+  return error instanceof Error && error.name === 'AbortError';
+}
+
+async function fetchWithTimeout(
+  url: string,
+  init: RequestInit,
+  timeoutMs: number
+): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 function cleanBaseUrl(url: string): string {
@@ -162,24 +183,34 @@ async function generateWithOllama(
   systemPrompt: string,
   userPrompt: string,
   temperature: number,
-  maxTokens: number
+  maxTokens: number,
+  timeoutMs: number
 ): Promise<string> {
   let response: Response;
   try {
-    response = await fetch(`${config.baseUrl}/api/generate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: config.model,
-        prompt: `${systemPrompt}\n\n${userPrompt}`,
-        stream: false,
-        options: {
-          temperature,
-          num_predict: maxTokens,
-        },
-      }),
-    });
+    response = await fetchWithTimeout(
+      `${config.baseUrl}/api/generate`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: config.model,
+          prompt: `${systemPrompt}\n\n${userPrompt}`,
+          stream: false,
+          options: {
+            temperature,
+            num_predict: maxTokens,
+          },
+        }),
+      },
+      timeoutMs
+    );
   } catch (error) {
+    if (isAbortError(error)) {
+      throw new Error(
+        `Ollama timed out after ${Math.round(timeoutMs / 1000)}s at ${config.baseUrl}. The previous draft was not changed.`
+      );
+    }
     throw describeProviderUnreachable(config, error);
   }
 
@@ -205,7 +236,8 @@ async function generateWithOpenAICompatible(
   systemPrompt: string,
   userPrompt: string,
   temperature: number,
-  maxTokens: number
+  maxTokens: number,
+  timeoutMs: number
 ): Promise<string> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -217,20 +249,29 @@ async function generateWithOpenAICompatible(
 
   let response: Response;
   try {
-    response = await fetch(`${config.baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        model: config.model,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt },
-        ],
-        temperature,
-        max_tokens: maxTokens,
-      }),
-    });
+    response = await fetchWithTimeout(
+      `${config.baseUrl}/chat/completions`,
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          model: config.model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt },
+          ],
+          temperature,
+          max_tokens: maxTokens,
+        }),
+      },
+      timeoutMs
+    );
   } catch (error) {
+    if (isAbortError(error)) {
+      throw new Error(
+        `${providerDisplayName(config.type)} timed out after ${Math.round(timeoutMs / 1000)}s. The previous draft was not changed.`
+      );
+    }
     throw describeProviderUnreachable(config, error);
   }
 
@@ -253,12 +294,18 @@ async function generateWithOpenAICompatible(
   return text;
 }
 
+function defaultTimeoutMs(): number {
+  const raw = Number(readEnv('AI_REQUEST_TIMEOUT_MS'));
+  return Number.isFinite(raw) && raw > 0 ? raw : DEFAULT_AI_TIMEOUT_MS;
+}
+
 export async function generateAIText({
   systemPrompt,
   userPrompt,
   providerConfig,
   temperature = 0.7,
   maxTokens = 2000,
+  timeoutMs = defaultTimeoutMs(),
 }: GenerateAITextOptions): Promise<string> {
   const config = resolveServerProviderConfig(providerConfig);
 
@@ -268,7 +315,8 @@ export async function generateAIText({
       systemPrompt,
       userPrompt,
       temperature,
-      maxTokens
+      maxTokens,
+      timeoutMs
     );
   }
 
@@ -277,7 +325,8 @@ export async function generateAIText({
     systemPrompt,
     userPrompt,
     temperature,
-    maxTokens
+    maxTokens,
+    timeoutMs
   );
 }
 
@@ -330,8 +379,11 @@ export async function testAIProviderConnection(
   if (config.type === 'ollama') {
     let response: Response;
     try {
-      response = await fetch(`${config.baseUrl}/api/tags`);
+      response = await fetchWithTimeout(`${config.baseUrl}/api/tags`, {}, 15_000);
     } catch (error) {
+      if (isAbortError(error)) {
+        throw new Error(`Ollama timed out while checking ${config.baseUrl}/api/tags.`);
+      }
       throw describeProviderUnreachable(config, error);
     }
     if (!response.ok) {
@@ -349,7 +401,8 @@ export async function testAIProviderConnection(
     'You are a connectivity check assistant.',
     'Reply with exactly: "Connection successful."',
     0,
-    40
+    40,
+    20_000
   );
   return { provider: config.type, model: config.model, baseUrl: config.baseUrl };
 }

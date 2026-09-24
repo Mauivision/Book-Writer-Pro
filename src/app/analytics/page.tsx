@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { useBookStore } from '@/store/useBookStore';
 import WritingAnalytics from '@/components/AI/WritingAnalytics';
 import DailyChallenges from '@/components/AI/DailyChallenges';
@@ -15,6 +15,7 @@ import AmbientSounds from '@/components/Writing/AmbientSounds';
 import PomodoroTimer from '@/components/Writing/PomodoroTimer';
 import ThemeSelector from '@/components/Writing/ThemeSelector';
 import { Achievement } from '@/types/achievements';
+import { hydrateBookStoreFromManuscript } from '@/utils/manuscriptSync';
 import { 
   FaChartLine, 
   FaTrophy, 
@@ -30,13 +31,25 @@ import {
   FaPalette
 } from 'react-icons/fa';
 
+type AnalyticsTab =
+  | 'overview'
+  | 'challenges'
+  | 'streak'
+  | 'characters'
+  | 'writing'
+  | 'plot'
+  | 'visualizer'
+  | 'prompts'
+  | 'environment';
+
 export default function AnalyticsPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'challenges' | 'streak' | 'characters' | 'writing' | 'plot' | 'visualizer' | 'prompts' | 'environment'>('overview');
+  const [activeTab, setActiveTab] = useState<AnalyticsTab>('overview');
   const [newAchievement, setNewAchievement] = useState<Achievement | null>(null);
   
   const { achievements = [], checkAchievements } = useBookStore();
 
   useEffect(() => {
+    hydrateBookStoreFromManuscript();
     // Check for new achievements when component mounts
     checkAchievements();
     
@@ -51,7 +64,12 @@ export default function AnalyticsPage() {
     setNewAchievement(null);
   };
 
-  const tabs = [
+  const tabs: Array<{
+    id: AnalyticsTab;
+    label: string;
+    icon: ReactNode;
+    description: string;
+  }> = [
     {
       id: 'overview',
       label: 'Overview',
@@ -144,7 +162,7 @@ export default function AnalyticsPage() {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
                   activeTab === tab.id
                     ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'

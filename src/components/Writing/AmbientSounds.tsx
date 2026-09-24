@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -147,6 +146,7 @@ export default function AmbientSounds() {
       icon: <FaWater />,
       url: '/sounds/ocean.mp3',
       duration: 600,
+      volume: 0.6,
       isPlaying: false,
       isFavorite: true,
       isCustom: false,

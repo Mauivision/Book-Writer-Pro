@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -493,7 +492,7 @@ export default function PlotHoleDetector() {
         behaviorPatterns.forEach(pattern => {
           const matches = context.match(pattern);
           if (matches) {
-            matches.forEach(match => {
+            matches.forEach((match: string) => {
               patterns.push({
                 behavior: match.toLowerCase(),
                 chapter: chapter.title || 'Unknown',

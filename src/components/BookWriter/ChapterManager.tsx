@@ -1,23 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FaGripVertical, FaEdit, FaTrash, FaPlus, FaSave, FaTimes } from 'react-icons/fa';
-
-interface Chapter {
-  id: string;
-  title: string;
-  content: string;
-  wordCount: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { FaGripVertical, FaEdit, FaTrash, FaSave, FaTimes, FaPlus } from 'react-icons/fa';
+import type { ManuscriptChapter } from '@/types/manuscript';
 
 interface ChapterManagerProps {
-  chapters: Chapter[];
+  chapters: ManuscriptChapter[];
   currentChapterIndex: number;
   onChapterSelect: (index: number) => void;
   onChapterDelete: (index: number) => void;
   onChapterReorder: (fromIndex: number, toIndex: number) => void;
+  onChapterTitleChange: (index: number, title: string) => void;
 }
 
 const ChapterManager: React.FC<ChapterManagerProps> = ({
@@ -25,7 +18,8 @@ const ChapterManager: React.FC<ChapterManagerProps> = ({
   currentChapterIndex,
   onChapterSelect,
   onChapterDelete,
-  onChapterReorder
+  onChapterReorder,
+  onChapterTitleChange,
 }) => {
   const [editingChapter, setEditingChapter] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
@@ -38,8 +32,10 @@ const ChapterManager: React.FC<ChapterManagerProps> = ({
 
   const handleSaveEdit = () => {
     if (editingChapter && editingTitle.trim()) {
-      // This would need to be implemented in the parent component
-      // For now, we'll just cancel the edit
+      const index = chapters.findIndex((chapter) => chapter.id === editingChapter);
+      if (index >= 0) {
+        onChapterTitleChange(index, editingTitle.trim());
+      }
       setEditingChapter(null);
       setEditingTitle('');
     }
@@ -244,7 +240,7 @@ const ChapterManager: React.FC<ChapterManagerProps> = ({
                       📝 {chapter.wordCount} words
                     </span>
                     <span>
-                      📅 {chapter.updatedAt.toLocaleDateString()}
+                      📅 {new Date(chapter.updatedAt).toLocaleDateString()}
                     </span>
                     <span style={{
                       backgroundColor: currentChapterIndex === index ? '#4a90e2' : '#e2e8f0',

@@ -4,6 +4,7 @@ interface SpeechRecognition extends EventTarget {
   lang: string;
   onresult: ((event: SpeechRecognitionEvent) => void) | null;
   onerror: ((event: Event) => void) | null;
+  onstart: ((event: Event) => void) | null;
   onend: (() => void) | null;
   start(): void;
   stop(): void;

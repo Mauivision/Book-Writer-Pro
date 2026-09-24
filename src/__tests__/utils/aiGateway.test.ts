@@ -174,7 +174,25 @@ describe('AI provider selection', () => {
       provider: 'ollama',
       model: DEFAULT_OLLAMA_MODEL,
     });
-    expect(global.fetch).toHaveBeenCalledWith(`${DEFAULT_OLLAMA_BASE_URL}/api/tags`);
+    expect(global.fetch).toHaveBeenCalledWith(
+      `${DEFAULT_OLLAMA_BASE_URL}/api/tags`,
+      expect.any(Object)
+    );
+  });
+
+  it('explains when a request times out', async () => {
+    resetEnv();
+    const abortError = new Error('The operation was aborted');
+    abortError.name = 'AbortError';
+    global.fetch = jest.fn().mockRejectedValue(abortError);
+
+    await expect(
+      generateAIText({
+        systemPrompt: 'sys',
+        userPrompt: 'hello',
+        timeoutMs: 10,
+      })
+    ).rejects.toThrow(/timed out/i);
   });
 
   it('builds a readable unreachable error', () => {
