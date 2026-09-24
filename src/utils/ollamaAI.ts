@@ -18,7 +18,7 @@ class OllamaAI {
   private baseUrl: string;
   private model: string;
 
-  constructor(baseUrl: string = 'http://localhost:11434', model: string = 'llama3.1') {
+  constructor(baseUrl: string = 'http://127.0.0.1:11434', model: string = 'gemma4:latest') {
     this.baseUrl = baseUrl;
     this.model = model;
   }
@@ -45,7 +45,7 @@ class OllamaAI {
       return data.response || '';
     } catch (error) {
       console.error('Error generating chapter:', error);
-      throw new Error('Failed to generate chapter. Make sure Ollama is running on localhost:11434');
+      throw new Error('Failed to generate chapter. Make sure Ollama is running on 127.0.0.1:11434');
     }
   }
 
@@ -180,4 +180,5 @@ export const genreConfigs = {
   }
 };
 
+export const ollama = new OllamaAI();
 export default OllamaAI;

@@ -91,6 +91,10 @@ interface BookActions {
 
   // Network status
   isOnline: () => boolean;
+
+  // Compatibility aliases used by older panels
+  deleteCharacter: (id: string) => void;
+  updateBook: (metadata: Partial<BookMetadata>) => void;
 }
 
 // Store implementation
@@ -166,6 +170,8 @@ export const useBookStore = create<BookState & BookActions>()(
         }
       ],
       currentChapterId: null,
+      currentChapter: null,
+      book: undefined,
       lastSaved: null,
       version: '1.0.0',
       plot: {
@@ -204,29 +210,31 @@ export const useBookStore = create<BookState & BookActions>()(
 
       // Metadata actions
       updateMetadata: (metadata) =>
-        set((state) => ({
-          metadata: { ...state.metadata, ...metadata },
-        })),
+        set((state) => {
+          const next = { ...state.metadata, ...metadata };
+          return {
+            metadata: next,
+            book: next,
+          };
+        }),
 
       createBook: (metadata) =>
         set(() => ({
           metadata,
+          book: metadata,
           chapters: [],
           characters: [],
           plot: {
-            mainPlot: '',
+            summary: '',
+            outline: [],
             subplots: [],
-            themes: [],
-            conflicts: [],
-            resolution: '',
           },
           setting: {
-            timePeriod: '',
-            location: '',
-            atmosphere: '',
-            worldbuilding: [],
+            description: '',
+            worldBuilding: '',
           },
           currentChapter: null,
+          currentChapterId: null,
         })),
 
       // Chapter actions
@@ -267,9 +275,24 @@ export const useBookStore = create<BookState & BookActions>()(
         set({ chapters }),
 
       setCurrentChapter: (id) =>
-        set(() => ({
+        set((state) => ({
           currentChapterId: id,
+          currentChapter: state.chapters.find((chapter) => chapter.id === id) || null,
         })),
+
+      deleteCharacter: (id) =>
+        set((state) => ({
+          characters: state.characters.filter((character) => character.id !== id),
+        })),
+
+      updateBook: (metadata) =>
+        set((state) => {
+          const next = { ...state.metadata, ...metadata };
+          return {
+            metadata: next,
+            book: next,
+          };
+        }),
 
       // Character actions
       addCharacter: (character) =>
@@ -456,7 +479,7 @@ export const useBookStore = create<BookState & BookActions>()(
               })),
               plot: get().plot,
               setting: get().setting,
-              genre: get().metadata.genres[0] || 'Fantasy',
+              genre: get().metadata.genres?.[0] || 'Fantasy',
               theme: get().metadata.description || 'Adventure'
             }
           });
@@ -506,7 +529,7 @@ export const useBookStore = create<BookState & BookActions>()(
                 worldBuilding: get().setting.worldBuilding || '' 
               },
               previousContent: context,
-              genre: get().metadata.genres[0] || 'Fantasy',
+              genre: get().metadata.genres?.[0] || 'Fantasy',
               theme: get().metadata.description || 'Adventure'
             },
             completionType: 'dialogue',
@@ -538,7 +561,7 @@ export const useBookStore = create<BookState & BookActions>()(
                 worldBuilding: get().setting.worldBuilding || '' 
               },
               previousContent: text,
-              genre: get().metadata.genres[0] || 'Fantasy',
+              genre: get().metadata.genres?.[0] || 'Fantasy',
               theme: get().metadata.description || 'Adventure'
             },
             completionType: 'paragraph',

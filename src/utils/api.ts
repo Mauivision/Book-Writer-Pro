@@ -29,17 +29,12 @@ export async function fetchWithRetry(
   
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      const apiKey = localStorage.getItem('openai_api_key');
-      if (!apiKey) {
-        throw new ApiError('API key not found. Please configure it in settings.', 401);
-      }
-
       const response = await fetch(url, {
         ...options,
+        credentials: 'same-origin',
         headers: {
           ...options.headers,
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
         }
       });
 
@@ -47,8 +42,7 @@ export async function fetchWithRetry(
         const errorData = await response.json().catch(() => ({}));
         throw new ApiError(
           errorData.error || 'API request failed',
-          response.status,
-          errorData
+          String(response.status)
         );
       }
 

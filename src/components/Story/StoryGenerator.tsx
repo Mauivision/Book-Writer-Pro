@@ -21,7 +21,7 @@ export default function StoryGenerator({ onComplete }: StoryGeneratorProps) {
   
   // Story generation parameters
   const [storyParams, setStoryParams] = useState({
-    genre: metadata.genres[0] || 'Fantasy',
+    genre: metadata.genres?.[0] || 'Fantasy',
     theme: metadata.description || 'Adventure',
     complexity: 'intermediate' as 'beginner' | 'intermediate' | 'advanced',
     length: 'medium' as 'short' | 'medium' | 'long',
@@ -197,7 +197,7 @@ export default function StoryGenerator({ onComplete }: StoryGeneratorProps) {
         <div className="text-sm text-secondary space-y-1">
           <p><strong>Title:</strong> {metadata.title || 'Untitled'}</p>
           <p><strong>Author:</strong> {metadata.author || 'Unknown'}</p>
-          <p><strong>Genres:</strong> {metadata.genres.join(', ') || 'None specified'}</p>
+          <p><strong>Genres:</strong> {(metadata.genres ?? []).join(', ') || 'None specified'}</p>
           <p><strong>Description:</strong> {metadata.description || 'No description'}</p>
         </div>
       </div>

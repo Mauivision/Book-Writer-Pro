@@ -199,7 +199,7 @@ export default function ChapterRewriter({ chapterId, onClose }: ChapterRewriterP
         <div className="p-4 bg-blue-50 rounded-lg">
           <h4 className="text-sm font-medium text-blue-800 mb-2">Story Context:</h4>
           <div className="text-sm text-blue-700 space-y-1">
-            <p><strong>Genre:</strong> {metadata.genres[0] || 'Not specified'}</p>
+            <p><strong>Genre:</strong> {metadata.genres?.[0] || 'Not specified'}</p>
             <p><strong>Characters:</strong> {characters.length} available</p>
             {plot.summary && <p><strong>Plot:</strong> {plot.summary.substring(0, 100)}...</p>}
           </div>

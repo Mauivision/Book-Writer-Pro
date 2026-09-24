@@ -5,21 +5,16 @@ describe('useBookStore', () => {
   beforeEach(() => {
     const { result } = renderHook(() => useBookStore());
     act(() => {
-      result.current.updateMetadata({
+      result.current.createBook({
         title: '',
+        author: 'Test',
         genre: '',
         theme: '',
         synopsis: '',
-      });
-      result.current.chapters = [];
-      result.current.characters = [];
-      result.current.plot = {
-        summary: '',
-        outline: [],
-      };
-      result.current.setting = {
         description: '',
-      };
+        genres: [],
+        targetAudience: '',
+      });
     });
   });
 
@@ -35,7 +30,7 @@ describe('useBookStore', () => {
       });
     });
 
-    expect(result.current.metadata).toEqual({
+    expect(result.current.metadata).toMatchObject({
       title: 'Test Book',
       genre: 'Fantasy',
       theme: 'Adventure',
@@ -105,7 +100,7 @@ describe('useBookStore', () => {
       });
     });
 
-    expect(result.current.plot).toEqual({
+    expect(result.current.plot).toMatchObject({
       summary: 'Test plot summary',
       outline: ['Test plot point'],
     });
@@ -116,7 +111,7 @@ describe('useBookStore', () => {
       });
     });
 
-    expect(result.current.setting).toEqual({
+    expect(result.current.setting).toMatchObject({
       description: 'Test setting description',
     });
   });

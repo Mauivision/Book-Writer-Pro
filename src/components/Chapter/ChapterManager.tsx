@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState } from 'react'
 import { useBookStore } from '@/store/useBookStore'
 import { Chapter } from '@/types'

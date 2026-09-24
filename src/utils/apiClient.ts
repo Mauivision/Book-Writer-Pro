@@ -1,4 +1,6 @@
 import { ApiError } from './api';
+import type { PublicAIProviderConfig } from './aiProvider';
+import { getClientAIProviderConfig } from './clientAIRequest';
 
 interface ApiResponse<T = any> {
   data?: T;
@@ -29,21 +31,61 @@ class ApiClient {
     }
   }
 
+  private shouldAttachAIProvider(endpoint: string): boolean {
+    return endpoint.startsWith('/api/ai') || endpoint.startsWith('/api/generate/');
+  }
+
+  private attachProviderToBody(
+    body: BodyInit | null | undefined,
+    providerConfig: PublicAIProviderConfig
+  ): BodyInit {
+    if (!body) {
+      return JSON.stringify({ providerConfig });
+    }
+
+    if (typeof body !== 'string') {
+      return body;
+    }
+
+    try {
+      const parsed = JSON.parse(body);
+      if (parsed && typeof parsed === 'object') {
+        return JSON.stringify({ ...parsed, providerConfig });
+      }
+      return body;
+    } catch {
+      return body;
+    }
+  }
+
   private async request(endpoint: string, options: RequestInit = {}): Promise<any> {
     const url = `${this.baseUrl}${endpoint}`;
     
-    // Check if we're online
-    if (!this.isOnline) {
+    // Local models still work without internet. Cloud providers do not.
+    if (!this.isOnline && this.shouldAttachAIProvider(endpoint)) {
+      const providerConfig = getClientAIProviderConfig();
+      if (providerConfig.type !== 'ollama') {
+        throw new ApiError('No internet connection. Please check your connection and try again.');
+      }
+    } else if (!this.isOnline) {
       throw new ApiError('No internet connection. Please check your connection and try again.');
     }
 
     try {
+      const headers = new Headers(options.headers);
+      headers.set('Content-Type', 'application/json');
+      let requestBody = options.body;
+
+      if (this.shouldAttachAIProvider(endpoint)) {
+        const providerConfig = getClientAIProviderConfig();
+        requestBody = this.attachProviderToBody(options.body, providerConfig);
+      }
+
       const response = await fetch(url, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
         ...options,
+        headers,
+        body: requestBody,
+        credentials: 'same-origin',
       });
 
       if (!response.ok) {

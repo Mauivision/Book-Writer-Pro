@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useBookStore } from '@/store/useBookStore'
 import { Character } from '@/types'
 import { generateCharacterName } from '@/utils/nameGenerator'
+import { attachProviderConfig } from '@/utils/clientAIRequest'
 
 // Types
 type CharacterRole = 'protagonist' | 'antagonist' | 'supporting' | 'minor'
@@ -63,12 +64,20 @@ export default function CharacterForm({ characterId, onClose }: CharacterFormPro
       const generatedName = generateCharacterName()
       const response = await fetch('/api/ai/generate-characters', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(attachProviderConfig({
+          genre: 'fiction',
+          count: 1,
           role: formData.role,
-          existingCharacters: characters,
-          name: generatedName
-        })
+          name: generatedName,
+          existingCharacters: characters.map(character => ({
+            name: character.name,
+            role: character.role,
+            description: character.description,
+          })),
+        }))
       })
 
       if (!response.ok) {
@@ -76,15 +85,19 @@ export default function CharacterForm({ characterId, onClose }: CharacterFormPro
       }
 
       const data = await response.json()
-      const generatedCharacter = data.characters[0]
+      const generatedCharacter = Array.isArray(data.characters)
+        ? data.characters[0]
+        : data
+      if (!generatedCharacter) {
+        throw new Error('Failed to generate character')
+      }
 
       setFormData(prev => ({
         ...prev,
-        name: generatedName,
-        description: generatedCharacter.description,
-        background: generatedCharacter.background,
-        personality: generatedCharacter.personality,
-        goals: generatedCharacter.goals,
+        name: generatedCharacter.name || generatedName,
+        description: generatedCharacter.description || prev.description,
+        background: generatedCharacter.background || prev.background,
+        motivations: generatedCharacter.motivations || generatedCharacter.goals || prev.motivations,
         relationships: prev.relationships // Preserve existing relationships
       }))
     } catch (error) {

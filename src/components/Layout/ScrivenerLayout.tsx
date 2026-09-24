@@ -32,9 +32,7 @@ import {
   FaExpand,
   FaCompress,
   FaBars,
-  FaTimes,
-  FaChevronDown,
-  FaChevronRight
+  FaTimes
 } from 'react-icons/fa';
 
 interface ScrivenerLayoutProps {
@@ -384,6 +382,7 @@ export default function ScrivenerLayout({ children }: ScrivenerLayoutProps) {
                 </Button>
               )}
             </div>
+          </div>
           
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-500">
