@@ -28,11 +28,26 @@ const AISettings: React.FC<AISettingsProps> = ({ onClose }) => {
     setConfig(loadProviderConfig());
     fetch('/api/ai/status')
       .then((response) => (response.ok ? response.json() : null))
-      .then((data: { lockedByEnv?: boolean } | null) => {
-        if (data?.lockedByEnv) {
+      .then(
+        (
+          data: {
+            lockedByEnv?: boolean;
+            provider?: AIProviderType;
+            baseUrl?: string;
+            model?: string;
+          } | null
+        ) => {
+          if (!data?.lockedByEnv || !data.provider) {
+            return;
+          }
           setLockedByEnv(true);
+          setConfig({
+            type: data.provider,
+            baseUrl: data.baseUrl || getDefaultConfig(data.provider).baseUrl,
+            model: data.model || getDefaultConfig(data.provider).model,
+          });
         }
-      })
+      )
       .catch(() => {
         // Settings still work from local defaults.
       });
