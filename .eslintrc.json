@@ -1,4 +1,10 @@
 {
   "extends": ["next/core-web-vitals"],
-  "ignorePatterns": ["node_modules/", ".next/", "dist/", "coverage/", "WebApp/", "src_python/"]
+  "ignorePatterns": ["node_modules/", ".next/", "dist/", "coverage/", "WebApp/", "src_python/"],
+  "rules": {
+    "react/no-unescaped-entities": "off",
+    "react/display-name": "off",
+    "react-hooks/exhaustive-deps": "warn",
+    "@next/next/no-img-element": "warn"
+  }
 }

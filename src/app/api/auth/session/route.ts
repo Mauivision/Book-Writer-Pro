@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 import {
   ACCESS_COOKIE_NAME,
   isAccessGateEnabled,
