@@ -2,10 +2,41 @@ import { ApiError } from './api';
 import type { PublicAIProviderConfig } from './aiProvider';
 import { getClientAIProviderConfig } from './clientAIRequest';
 
-interface ApiResponse<T = any> {
+interface ApiResponse<T = unknown> {
   data?: T;
   error?: string;
   success: boolean;
+}
+
+export interface GeneratedStoryChapter {
+  title: string;
+  content: string;
+  summary?: string;
+}
+
+export interface GeneratedStoryCharacter {
+  name: string;
+  role: string;
+  description: string;
+  background: string;
+  motivations?: string[];
+  relationships?: Array<{ characterId: string; type: string }>;
+}
+
+export interface GeneratedStory {
+  title?: string;
+  synopsis?: string;
+  chapters?: GeneratedStoryChapter[];
+  characters?: GeneratedStoryCharacter[];
+  plot?: {
+    summary?: string;
+    outline?: string[];
+    subplots?: string[];
+  };
+  setting?: {
+    description?: string;
+    worldBuilding?: string;
+  };
 }
 
 class ApiClient {
@@ -58,7 +89,7 @@ class ApiClient {
     }
   }
 
-  private async request(endpoint: string, options: RequestInit = {}): Promise<any> {
+  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
     
     // Local models still work without internet. Cloud providers do not.
@@ -89,7 +120,7 @@ class ApiClient {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorData = (await response.json().catch(() => ({}))) as { error?: string };
         throw new ApiError(
           errorData.error || `HTTP ${response.status}: ${response.statusText}`
         );
@@ -125,7 +156,7 @@ class ApiClient {
     length: 'short' | 'medium' | 'long';
     customPrompt?: string;
   }) {
-    return this.request('/api/ai/generate-story', {
+    return this.request<GeneratedStory>('/api/ai/generate-story', {
       method: 'POST',
       body: JSON.stringify(params),
     });
@@ -148,10 +179,13 @@ class ApiClient {
       previousChapters?: string[];
     };
   }) {
-    return this.request('/api/ai/generate-chapter', {
-      method: 'POST',
-      body: JSON.stringify(params),
-    });
+    return this.request<{ title?: string; content?: string; summary?: string }>(
+      '/api/ai/generate-chapter',
+      {
+        method: 'POST',
+        body: JSON.stringify(params),
+      }
+    );
   }
 
   // Chapter rewriting
@@ -182,7 +216,7 @@ class ApiClient {
       theme?: string;
     };
   }) {
-    return this.request('/api/ai/rewrite-chapter', {
+    return this.request<{ content: string }>('/api/ai/rewrite-chapter', {
       method: 'POST',
       body: JSON.stringify(params),
     });
@@ -197,7 +231,16 @@ class ApiClient {
     personalityTraits?: string[];
     setting?: string;
   }) {
-    return this.request('/api/ai/generate-characters', {
+    return this.request<
+      Array<{
+        name: string;
+        role: string;
+        description: string;
+        background: string;
+        motivations?: string[];
+        relationships?: Array<{ characterId: string; type: string }>;
+      }>
+    >('/api/ai/generate-characters', {
       method: 'POST',
       body: JSON.stringify(params),
     });
@@ -212,7 +255,7 @@ class ApiClient {
     plotTwist?: boolean;
     actStructure?: 'three' | 'five' | 'hero';
   }) {
-    return this.request('/api/ai/generate-plot', {
+    return this.request<string[] | string>('/api/ai/generate-plot', {
       method: 'POST',
       body: JSON.stringify(params),
     });
@@ -226,7 +269,7 @@ class ApiClient {
     culturalInfluences?: string[];
     climate?: string;
   }) {
-    return this.request('/api/ai/generate-setting', {
+    return this.request<string[] | string>('/api/ai/generate-setting', {
       method: 'POST',
       body: JSON.stringify(params),
     });
@@ -262,7 +305,7 @@ class ApiClient {
     completionType: 'sentence' | 'paragraph' | 'scene' | 'dialogue';
     maxWords?: number;
   }) {
-    return this.request('/api/ai/autocomplete', {
+    return this.request<{ completion?: string }>('/api/ai/autocomplete', {
       method: 'POST',
       body: JSON.stringify(params),
     });
@@ -285,7 +328,7 @@ class ApiClient {
   }) {
     console.log('API Client - askLibrarian called with:', params);
     
-    const result = await this.request('/api/ai/librarian', {
+    const result = await this.request<{ response?: string }>('/api/ai/librarian', {
       method: 'POST',
       body: JSON.stringify(params),
     });

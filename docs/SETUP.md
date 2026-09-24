@@ -1,6 +1,6 @@
 # How Aaron runs Book Writer
 
-The real app is the Next.js project at the repo root (`npm run dev`). The `WebApp` folder and the Python files (`src_python`, `ollama_book_generator.py`) are older extras. You do not need them for daily writing.
+The real app is the Next.js project at the repo root (`npm run dev` on port 3003). There is no separate WebApp or Python Ollama helper. Daily writing uses this Next.js app only.
 
 There are two setups. Use the Windows PC as the main one. Use Vercel only when the PC is off.
 

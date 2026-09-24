@@ -104,7 +104,8 @@ export const useBookStore = create<BookState & BookActions>()(
       // Initial state
       metadata: {
         title: 'The Lost City of Eldara',
-        author: 'Aaron Writer',
+        author: 'Aaron Vanderpool',
+        publisher: 'A.C.C. L.L.C.',
         genre: 'Fantasy',
         targetAudience: 'Young Adult',
         wordCountGoal: 80000,
@@ -398,7 +399,23 @@ export const useBookStore = create<BookState & BookActions>()(
 
       generateCharacterIdeas: async ({ genre, count = 3, role, archetype, personalityTraits, setting }) => {
         try {
-          return await apiClient.generateCharacters({ genre, count, role, archetype, personalityTraits, setting });
+          const generated = await apiClient.generateCharacters({
+            genre,
+            count,
+            role,
+            archetype,
+            personalityTraits,
+            setting,
+          });
+          return generated.map((character) => ({
+            id: crypto.randomUUID(),
+            name: character.name,
+            role: character.role,
+            description: character.description,
+            background: character.background,
+            motivations: character.motivations || [],
+            relationships: character.relationships || [],
+          }));
         } catch (error) {
           console.error('Error generating character ideas:', error);
           throw error;
@@ -450,7 +467,7 @@ export const useBookStore = create<BookState & BookActions>()(
             completionType: 'sentence',
             maxWords: 50
           });
-          return result.completion || result;
+          return result.completion || '';
         } catch (error) {
           console.error('Error auto-completing text:', error);
           throw error;
@@ -485,16 +502,21 @@ export const useBookStore = create<BookState & BookActions>()(
           });
 
           const updatedContent = result.content;
+          const updatedChapter: Chapter = {
+            ...chapter,
+            content: updatedContent,
+            lastModified: new Date().toISOString(),
+          };
           
           set(state => ({
             chapters: state.chapters.map(c => 
               c.id === chapterId 
-                ? { ...c, content: updatedContent, lastModified: new Date().toISOString() }
+                ? updatedChapter
                 : c
             )
           }));
           
-          return updatedContent;
+          return updatedChapter;
         } catch (error) {
           console.error('Error rewriting chapter:', error);
           throw error;
@@ -536,7 +558,7 @@ export const useBookStore = create<BookState & BookActions>()(
             maxWords: 100
           });
           
-          return result.completion || result;
+          return result.completion || '';
         } catch (error) {
           console.error('Error generating dialogue:', error);
           throw error;
@@ -568,7 +590,7 @@ export const useBookStore = create<BookState & BookActions>()(
             maxWords: text.split(' ').length + 50
           });
           
-          return result.completion || result;
+          return result.completion || '';
         } catch (error) {
           console.error('Error improving writing:', error);
           throw error;
@@ -627,17 +649,17 @@ export const useBookStore = create<BookState & BookActions>()(
               genres: params.genre ? [params.genre] : state.metadata.genres,
               description: story.synopsis || state.metadata.description,
             },
-            chapters: story.chapters?.map((chapter: any, index: number) => ({
+            chapters: story.chapters?.map((chapter, index: number) => ({
               id: crypto.randomUUID(),
               title: chapter.title,
               content: chapter.content,
               summary: chapter.summary || `Chapter ${index + 1}: ${chapter.title}`,
               wordCount: chapter.content.split(/\s+/).length,
               order: index,
-              status: 'draft',
+              status: 'draft' as const,
               lastModified: new Date().toISOString(),
             })) || [],
-            characters: story.characters?.map((character: any) => ({
+            characters: story.characters?.map((character) => ({
               id: crypto.randomUUID(),
               name: character.name,
               role: character.role,

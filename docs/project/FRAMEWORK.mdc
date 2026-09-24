@@ -23,11 +23,11 @@ React 18 + TypeScript
 
 ### AI Integration
 ```
-Ollama (Local AI)
-├── llama3.1 (Primary Model)
-├── Python Backend (ollama_book_generator.py)
-├── TypeScript Frontend (ollamaAI.ts)
-└── REST API Integration
+Ollama (default, local)
+├── gemma4:latest on 127.0.0.1:11434
+├── Server module: src/utils/aiGateway.ts
+├── Writing helpers: src/utils/aiWriting.ts
+└── Hosted backup: xAI Grok via XAI_API_KEY
 ```
 
 ### File Structure
@@ -35,9 +35,8 @@ Ollama (Local AI)
 src/
 ├── components/
 │   ├── BookWriter/          # Core writing components
-│   ├── Chapters/            # Chapter management
 │   ├── AI/                  # AI assistants and tools
-│   ├── Layout/              # UI layouts
+│   ├── Theme/               # Theme provider and switcher
 │   └── ui/                  # Reusable components
 ├── store/                   # State management
 ├── utils/                   # Utility functions

@@ -2,35 +2,13 @@
 
 import React, { useState } from 'react';
 import { saveAs } from 'file-saver';
-import { genreConfigs, ollama } from '@/utils/ollamaAI';
-import LocalAI from '@/utils/localAI';
-
-const localAI = new LocalAI();
-
-interface Chapter {
-  id: string;
-  title: string;
-  content: string;
-  wordCount: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface Story {
-  id: string;
-  title: string;
-  genre: string;
-  description: string;
-  chapters: Chapter[];
-  characters: string[];
-  plotPoints: string[];
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { generateBookChapters, genreConfigs } from '@/utils/aiWriting';
+import { nowIso } from '@/utils/manuscriptStorage';
+import type { ManuscriptChapter, ManuscriptStory } from '@/types/manuscript';
 
 interface AIBookGeneratorProps {
-  onChaptersGenerated: (chapters: Chapter[]) => void;
-  currentStory?: Story | null;
+  onChaptersGenerated: (chapters: ManuscriptChapter[], story?: ManuscriptStory | null) => void;
+  currentStory?: ManuscriptStory | null;
 }
 
 const AIBookGenerator: React.FC<AIBookGeneratorProps> = ({
@@ -51,77 +29,9 @@ const AIBookGenerator: React.FC<AIBookGeneratorProps> = ({
   });
 
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedChapters, setGeneratedChapters] = useState<Chapter[]>([]);
+  const [progress, setProgress] = useState<string | null>(null);
+  const [generatedChapters, setGeneratedChapters] = useState<ManuscriptChapter[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [selectedModel, setSelectedModel] = useState('ollama');
-
-  // Mock AI generation for now - in real implementation this would connect to actual AI
-  const mockAIGeneration = async (config: any): Promise<Chapter[]> => {
-    await new Promise(resolve => setTimeout(resolve, 3000)); // Simulate processing time
-
-    return [
-      {
-        id: `chapter-${Date.now()}-1`,
-        title: `${config.title} - Chapter 1`,
-        content: `In the year 2056, the world had changed dramatically. The Satellite City Station orbited Earth like a silent sentinel, its gleaming metal hull reflecting the harsh light of the sun. ${config.characters[0]} stared out at the lunar surface below, her mind racing with thoughts of the mysterious invitation that had arrived that morning.
-
-The invitation was unlike anything she had ever seen. It spoke of a race across the lunar surface, a competition that promised not just glory, but access to technology that could change the fate of humanity. ${config.characters[1]} had been skeptical at first, but as they examined the data chip that accompanied the message, their doubts began to fade.
-
-"This is incredible," ${config.characters[1]} whispered, their eyes wide with wonder as they scrolled through the technical specifications. "If even half of this is real, we're looking at faster-than-light travel capabilities."
-
-${config.characters[0]} nodded, her hand instinctively reaching for the controls of their shuttle. "Then we have no choice. We enter the race, and we win. The future of humanity depends on it."
-
-As they began their descent toward the lunar surface, neither of them could shake the feeling that they were being watched. The stars above seemed to pulse with an otherworldly energy, and somewhere in the shadows of the moon's craters, their destiny awaited.
-
-${config.plotPoints[0]} had set them on this path, but what dangers lay ahead? Only time would tell.`,
-        wordCount: 350,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: `chapter-${Date.now()}-2`,
-        title: `${config.title} - Chapter 2`,
-        content: `The lunar surface was both beautiful and terrifying. Craters scarred the landscape like ancient wounds, and the low gravity made every movement feel like a dream. ${config.characters[0]} and ${config.characters[1]} moved carefully across the regolith, their suits gleaming in the starlight.
-
-${config.plotPoints[1]} came when they least expected it. As they approached the starting line of the race, a sudden explosion rocked the ground beneath their feet. Alarms blared in their helmets as they dove for cover.
-
-"What was that?" ${config.characters[0]} shouted, her voice barely audible over the communications system.
-
-${config.characters[1]} scanned the area with their enhanced optics. "Sabotage. Someone doesn't want us in this race." They pointed to a group of shadowy figures retreating into the distance. "And I think I know who."
-
-The race organizers appeared moments later, their faces hidden behind reflective visors. They assured the competitors that the incident was under control, but ${config.characters[0]} wasn't convinced. There was something about the way they moved, the way they spoke, that set off every alarm in her trained instincts.
-
-${config.plotPoints[2]} would have to wait. First, they needed to survive the race itself. As the starting signal blared and the other competitors surged forward, ${config.characters[0]} and ${config.characters[1]} exchanged a determined look.
-
-"Stay close," ${config.characters[0]} said. "And watch your back. This race is about more than just winning—it's about survival."
-
-As they accelerated across the lunar surface, the true nature of the competition began to reveal itself. Hidden dangers lurked in every shadow, and the prize at the end was greater than any of them could have imagined.`,
-        wordCount: 380,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: `chapter-${Date.now()}-3`,
-        title: `${config.title} - Chapter 3`,
-        content: `The race across the lunar surface was a grueling test of skill, endurance, and cunning. ${config.characters[0]} and ${config.characters[1]} had faced many challenges in their careers, but nothing quite like this. The low gravity made every jump a potential disaster, and the dust storms could reduce visibility to zero in seconds.
-
-${config.plotPoints[3]} came as they crossed the finish line. The race organizers revealed that the true prize wasn't just the technology—it was land rights on the moon itself. Vast territories that could be developed, mined, and colonized.
-
-But as ${config.characters[1]} examined the data more closely, they discovered something even more astonishing. "This isn't just faster-than-light travel," they whispered to ${config.characters[0]}. "This is the key to traveling between dimensions. Between universes."
-
-${config.characters[0]} felt a chill run down her spine. The implications were staggering. If they could master this technology, they could explore not just the stars, but entirely new realities. The possibilities were limitless.
-
-The other competitors congratulated them publicly, but ${config.characters[0]} noticed the resentment in their eyes. They had made enemies today, powerful enemies who would stop at nothing to claim the prize for themselves.
-
-As they accepted their award and looked out at the lunar landscape that was now theirs, ${config.characters[0]} and ${config.characters[1]} knew that this was just the beginning. The real adventure was about to start, and the fate of multiple universes hung in the balance.
-
-"We've won the race," ${config.characters[0]} said quietly, "but the real challenge is just beginning." ${config.characters[1]} nodded in agreement. "And we're ready for it."`,
-        wordCount: 320,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
-    ];
-  };
 
   const handleGenreChange = (genre: string) => {
     const genreConfig = genreConfigs[genre as keyof typeof genreConfigs];
@@ -139,42 +49,52 @@ As they accepted their award and looked out at the lunar landscape that was now 
   const generateBook = async () => {
     setIsGenerating(true);
     setError(null);
-    
-    try {
-      let generated;
-      
-      // Try Ollama first, fallback to LocalAI
-      try {
-        generated = await ollama.createBook(config);
-      } catch (ollamaError) {
-        console.log('Ollama not available, using LocalAI fallback');
-        generated = await localAI.createBook(config);
-      }
+    setProgress('Starting generation…');
 
-      const chapters: Chapter[] = generated.map((chapter, index) => ({
+    try {
+      const generated = await generateBookChapters(config, setProgress);
+      const timestamp = nowIso();
+      const chapters: ManuscriptChapter[] = generated.map((chapter, index) => ({
         id: `chapter-${Date.now()}-${index}`,
         title: chapter.title,
         content: chapter.content,
         wordCount: chapter.wordCount,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: timestamp,
+        updatedAt: timestamp,
       }));
-      
+
+      const story: ManuscriptStory = {
+        id: currentStory?.id || `story-${Date.now()}`,
+        title: config.title,
+        genre: config.genre,
+        description: `Set in ${config.setting}`,
+        characters: config.characters,
+        plotPoints: config.plotPoints,
+        createdAt: currentStory?.createdAt || timestamp,
+        updatedAt: timestamp,
+      };
+
       setGeneratedChapters(chapters);
-      onChaptersGenerated(chapters);
-      
-      // Save to file
-      const bookContent = `# ${config.title}\n\nGenre: ${config.genre}\n\n` +
-        chapters.map(ch => `## ${ch.title}\n\n${ch.content}\n\n`).join('');
-      
-      const blob = new Blob([bookContent], { type: 'text/markdown' });
-      saveAs(blob, `${config.title.replace(/\s+/g, '_')}.md`);
-      
+      onChaptersGenerated(chapters, story);
+      setProgress('Draft saved on this device.');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to generate book');
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Failed to generate the book. Your existing chapters were left unchanged.'
+      );
+      setProgress(null);
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const downloadGenerated = () => {
+    if (!generatedChapters.length) return;
+    const bookContent =
+      `# ${config.title}\n\nGenre: ${config.genre}\n\n` +
+      generatedChapters.map((chapter) => `## ${chapter.title}\n\n${chapter.content}\n\n`).join('');
+    saveAs(new Blob([bookContent], { type: 'text/markdown' }), `${config.title.replace(/\s+/g, '_')}.md`);
   };
 
   const addPlotPoint = () => {
@@ -246,7 +166,7 @@ As they accepted their award and looked out at the lunar landscape that was now 
         }}>
           <strong>Error:</strong> {error}
           <br />
-          <small>Make sure Ollama is running: <code>ollama serve</code></small>
+          <small>Existing chapters were not replaced. Check the AI badge in the header and confirm the provider is reachable.</small>
         </div>
       )}
 
@@ -443,8 +363,28 @@ As they accepted their award and looked out at the lunar landscape that was now 
             fontWeight: 'bold'
           }}
         >
-          {isGenerating ? '🔄 Generating Book...' : '🚀 Generate AI Book'}
+          {isGenerating ? 'Generating book…' : 'Generate AI Book'}
         </button>
+        {progress && (
+          <p style={{ marginTop: '10px', color: '#4169e1' }}>{progress}</p>
+        )}
+        {generatedChapters.length > 0 && (
+          <button
+            onClick={downloadGenerated}
+            style={{
+              marginLeft: '12px',
+              padding: '12px 20px',
+              backgroundColor: '#10b981',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '14px',
+            }}
+          >
+            Download Markdown
+          </button>
+        )}
       </div>
 
       {/* Generated Chapters Preview */}

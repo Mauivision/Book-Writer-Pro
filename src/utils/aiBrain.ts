@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { apiClient } from './apiClient';
 
 export interface AIBrainContext {
@@ -59,7 +58,7 @@ export interface ConversationMemory {
     role: 'user' | 'assistant';
     content: string;
     timestamp: Date;
-    context?: any;
+    context?: Record<string, unknown>;
     intent?: string;
     mood?: string;
   }>;
@@ -183,7 +182,7 @@ class AIBrain {
   }
 
   // Add a message to memory with enhanced context
-  private addToMemory(role: 'user' | 'assistant', content: string, context?: any, intent?: string, mood?: string) {
+  private addToMemory(role: 'user' | 'assistant', content: string, context?: Record<string, unknown>, intent?: string, mood?: string) {
     this.memory.messages.push({
       role,
       content,
@@ -203,21 +202,21 @@ class AIBrain {
 
   // Update writing stage progress based on current context
   private updateStageProgress() {
-    const { chapters, characters, plot, setting } = this.context;
+    const { chapterCount, characters, plot, setting } = this.context;
     
     // Idea stage - completed if we have any story elements
-    if (plot?.summary || characters?.length > 0 || setting?.description) {
+    if (plot?.summary || (characters && characters.length > 0) || setting?.description) {
       this.memory.stageProgress.idea.completed = true;
     }
     
     // Planning stage - completed if we have plot and characters
-    if (plot?.summary && characters?.length > 0) {
+    if (plot?.summary && characters && characters.length > 0) {
       this.memory.stageProgress.planning.completed = true;
     }
     
     // Writing stage - in progress if we have chapters
-    if (chapters > 0) {
-      this.memory.stageProgress.writing.completed = chapters > 5; // Consider complete after 5 chapters
+    if (chapterCount > 0) {
+      this.memory.stageProgress.writing.completed = chapterCount > 5; // Consider complete after 5 chapters
     }
     
     this.saveMemory();
@@ -340,7 +339,7 @@ class AIBrain {
         }
       });
 
-      return this.parseEnhancedResponse(response.response, intent, emotions);
+      return this.parseEnhancedResponse(response.response || '', intent, emotions);
     } catch (error) {
       console.error('Error generating AI response:', error);
       return this.generateFallbackResponse(intent, emotions);
@@ -391,7 +390,7 @@ class AIBrain {
 
   // Get stage-specific guidance
   private getStageSpecificGuidance(stage: string, intent: string): string {
-    const guidance = {
+    const guidance: Record<string, Record<string, string>> = {
       idea: {
         general: "You're in the exciting idea phase! This is where creativity flows freely.",
         plot: "Consider what makes your story unique. What's the central conflict that drives everything?",
@@ -429,7 +428,7 @@ class AIBrain {
 
   // Get intent-specific responses
   private getIntentSpecificResponse(intent: string, entities: string[], emotions: string[]): string {
-    const responses = {
+    const responses: Record<string, string> = {
       story_help: `I can see you're working on your story! Based on what you have so far, here are some key areas to focus on:
 
 • Plot Structure: Every story needs a clear beginning, middle, and end
@@ -494,7 +493,7 @@ What's the smallest step you can take right now?`
 
   // Get context-aware suggestions
   private getContextAwareSuggestions(stage: string, entities: string[]): string {
-    const suggestions = {
+    const suggestions: Record<string, string[]> = {
       idea: [
         "Try writing a one-sentence summary of your story",
         "List 10 possible conflicts your character could face",
@@ -566,7 +565,7 @@ What's one thing about your story that you're certain about?`;
 
   // Get next steps
   private getNextSteps(currentStage: string, intent: string): string[] {
-    const nextSteps = {
+    const nextSteps: Record<string, string[]> = {
       idea: [
         "Write a one-paragraph summary of your story",
         "List 3-5 key characters and their roles",
@@ -602,7 +601,7 @@ What's one thing about your story that you're certain about?`;
 
   // Get suggested actions
   private getSuggestedActions(intent: string, currentStage: string): string[] {
-    const actions = {
+    const actions: Record<string, string[]> = {
       story_help: [
         "Help me outline my plot",
         "Brainstorm character ideas",
@@ -648,7 +647,7 @@ What's one thing about your story that you're certain about?`;
 
   // Get stage tips
   private getStageTips(currentStage: string): string[] {
-    const tips = {
+    const tips: Record<string, string[]> = {
       idea: [
         "Don't worry about perfection - just get ideas down",
         "Explore multiple concepts before committing",
@@ -798,7 +797,7 @@ Provide a helpful, contextual response that:
 
   // Generate writing insights based on current context
   private generateWritingInsights(intent: string) {
-    const insights: any = {};
+    const insights: NonNullable<AIResponse['writingInsights']> = {};
     
     if (intent === 'writing_analysis') {
       insights.styleAnalysis = 'Consider varying your sentence structure for better flow.';

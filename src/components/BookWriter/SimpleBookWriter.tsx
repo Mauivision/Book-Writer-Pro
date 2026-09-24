@@ -3,38 +3,24 @@
 import React, { useState, useEffect } from 'react';
 import { saveAs } from 'file-saver';
 import FullRichTextEditor from './FullRichTextEditor';
-
-interface Chapter {
-  id: string;
-  title: string;
-  content: string;
-  wordCount: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface Story {
-  id: string;
-  title: string;
-  genre: string;
-  description: string;
-  chapters: Chapter[];
-  characters: string[];
-  plotPoints: string[];
-  createdAt: Date;
-  updatedAt: Date;
-}
+import type {
+  ManuscriptChapter,
+  ManuscriptSaveStatus,
+  ManuscriptStory,
+} from '@/types/manuscript';
 
 interface SimpleBookWriterProps {
-  chapters: Chapter[];
+  chapters: ManuscriptChapter[];
   currentChapterIndex: number;
   onChapterUpdate: (index: number, content: string) => void;
   onWordCountUpdate?: (count: number) => void;
   onAddChapter?: () => void;
-  storyContext?: Story | null;
+  storyContext?: ManuscriptStory | null;
   onPromptSelect?: (prompt: string) => void;
   onPromptInsert?: (text: string) => void;
   showPrompts?: boolean;
+  saveStatus?: ManuscriptSaveStatus;
+  saveError?: string | null;
 }
 
 const SimpleBookWriter: React.FC<SimpleBookWriterProps> = ({
@@ -46,46 +32,38 @@ const SimpleBookWriter: React.FC<SimpleBookWriterProps> = ({
   storyContext,
   onPromptSelect = () => {},
   onPromptInsert = () => {},
-  showPrompts = true
+  showPrompts = true,
+  saveStatus = 'saved',
+  saveError = null,
 }) => {
   const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
   const [isListening, setIsListening] = useState(false);
   const [writingStartTime, setWritingStartTime] = useState<Date | null>(null);
-  const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
 
   useEffect(() => {
-    if ('webkitSpeechRecognition' in window) {
-      const rec = new (window as any).webkitSpeechRecognition();
-      rec.continuous = true;
-      rec.interimResults = true;
-      rec.onresult = (e: any) => {
-        const transcript = e.results[e.results.length - 1][0].transcript;
-        // Write directly to current chapter
-        if (chapters[currentChapterIndex]) {
-          const currentContent = chapters[currentChapterIndex].content;
-          onChapterUpdate(currentChapterIndex, currentContent + transcript + ' ');
-        }
-      };
-      rec.onstart = () => setIsListening(true);
-      rec.onend = () => setIsListening(false);
-      setRecognition(rec);
-    }
-  }, [chapters, currentChapterIndex, onChapterUpdate]);
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognitionAPI) return;
 
-  // Auto-save functionality
-  useEffect(() => {
-    const autoSaveInterval = setInterval(() => {
-      if (chapters.length > 0) {
-        setAutoSaveStatus('saving');
-        // Simulate save operation
-        setTimeout(() => {
-          setAutoSaveStatus('saved');
-        }, 500);
+    const rec = new SpeechRecognitionAPI();
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.onresult = (event: SpeechRecognitionEvent) => {
+      const result = event.results[event.results.length - 1];
+      const transcript = result?.[0]?.transcript;
+      if (!transcript || !result?.isFinal) return;
+      const current = chapters[currentChapterIndex];
+      if (current) {
+        onChapterUpdate(currentChapterIndex, `${current.content}${transcript} `);
       }
-    }, 5000); // Auto-save every 5 seconds
+    };
+    rec.onstart = () => setIsListening(true);
+    rec.onend = () => setIsListening(false);
+    setRecognition(rec);
 
-    return () => clearInterval(autoSaveInterval);
-  }, [chapters]);
+    return () => {
+      rec.stop();
+    };
+  }, [chapters, currentChapterIndex, onChapterUpdate]);
 
   // Track writing time
   useEffect(() => {
@@ -226,7 +204,7 @@ const SimpleBookWriter: React.FC<SimpleBookWriterProps> = ({
                   📝 {currentChapter.wordCount} words
                 </span>
                 <span>
-                  📅 {currentChapter.updatedAt.toLocaleDateString()}
+                  📅 {new Date(currentChapter.updatedAt).toLocaleDateString()}
                 </span>
               </div>
 
@@ -281,17 +259,17 @@ const SimpleBookWriter: React.FC<SimpleBookWriterProps> = ({
             alignItems: 'center',
             gap: '8px',
             fontSize: '12px',
-            color: autoSaveStatus === 'saved' ? '#10b981' : autoSaveStatus === 'saving' ? '#f59e0b' : '#ef4444'
+            color: saveStatus === 'saved' || saveStatus === 'idle' ? '#10b981' : saveStatus === 'saving' ? '#f59e0b' : '#ef4444'
           }}>
             <div style={{
               width: '8px',
               height: '8px',
               borderRadius: '50%',
-              backgroundColor: autoSaveStatus === 'saved' ? '#10b981' : autoSaveStatus === 'saving' ? '#f59e0b' : '#ef4444'
+              backgroundColor: saveStatus === 'saved' || saveStatus === 'idle' ? '#10b981' : saveStatus === 'saving' ? '#f59e0b' : '#ef4444'
             }} />
-            {autoSaveStatus === 'saved' && '💾 Auto-saved'}
-            {autoSaveStatus === 'saving' && '⏳ Saving...'}
-            {autoSaveStatus === 'error' && '❌ Save failed'}
+            {saveStatus === 'saving' && 'Saving on this device…'}
+            {(saveStatus === 'saved' || saveStatus === 'idle') && 'Saved on this device'}
+            {saveStatus === 'error' && (saveError || 'Save failed')}
           </div>
         </div>
       )}

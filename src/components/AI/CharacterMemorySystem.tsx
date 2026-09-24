@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -191,7 +190,7 @@ export default function CharacterMemorySystem() {
         traitPatterns.forEach(pattern => {
           const matches = context.match(pattern);
           if (matches) {
-            matches.forEach(match => {
+            matches.forEach((match: string) => {
               if (!personality.traits.includes(match.toLowerCase())) {
                 personality.traits.push(match.toLowerCase());
               }

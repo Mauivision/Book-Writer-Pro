@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import '../styles/paper-editor.css';
-@import '../styles/ancient-scroll.css';
-
 @layer base {
   :root {
     --background: 0 0% 100%;

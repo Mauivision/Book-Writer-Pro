@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -42,7 +41,7 @@ import {
   FaBookmark,
   FaShare,
   FaCopy,
-  FaRefresh
+  FaRedo
 } from 'react-icons/fa';
 
 interface PomodoroSession {

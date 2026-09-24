@@ -18,7 +18,6 @@ Define and maintain a consistent structure for all assets in the Book Writer pro
  docs/
  scripts/
  src/
- src_python/
  public/
  PRODUCT_OUTPUT/
  package.json
