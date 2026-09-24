@@ -7,7 +7,6 @@ import {
   generateRandomTitle,
   generateRandomTheme,
 } from '@/utils/nameGenerator';
-import { getClientAIProviderConfig } from '@/utils/clientAIRequest';
 import type { AIProviderType } from '@/utils/aiProvider';
 
 interface ProviderStatus {
@@ -30,13 +29,7 @@ export default function SettingsPage() {
   const router = useRouter();
 
   const loadStatus = async () => {
-    const response = await fetch('/api/ai/status', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        providerConfig: getClientAIProviderConfig(),
-      }),
-    });
+    const response = await fetch('/api/ai/status');
     if (!response.ok) {
       throw new Error('Could not load AI provider status.');
     }
@@ -58,9 +51,7 @@ export default function SettingsPage() {
       const response = await fetch('/api/ai/test-key', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          providerConfig: getClientAIProviderConfig(),
-        }),
+        body: JSON.stringify({}),
       });
       const data = (await response.json().catch(() => ({}))) as {
         error?: string;

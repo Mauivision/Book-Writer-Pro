@@ -33,6 +33,26 @@ describe('AI provider gateway', () => {
     });
   });
 
+  it('does not let a leftover Ollama URL override an env-locked xAI provider', () => {
+    setEnv({
+      AI_PROVIDER: 'xai',
+      XAI_API_KEY: 'server-xai-key',
+    });
+
+    expect(
+      resolveServerProviderConfig({
+        type: 'ollama',
+        baseUrl: 'http://localhost:11434',
+        model: 'llama3.1',
+      })
+    ).toEqual({
+      type: 'xai',
+      baseUrl: 'https://api.x.ai/v1',
+      model: 'grok-4.7',
+      apiKey: 'server-xai-key',
+    });
+  });
+
   it('selects xAI Grok from env and never uses a client-supplied key', () => {
     setEnv({
       AI_PROVIDER: 'xai',

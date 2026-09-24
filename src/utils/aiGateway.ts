@@ -60,32 +60,45 @@ function envApiKey(
   return '';
 }
 
+function hintForType(
+  type: AIProviderType,
+  hint: Partial<AIProviderConfig> | undefined,
+  allowClientHints: boolean
+): Partial<AIProviderConfig> | undefined {
+  if (!allowClientHints || !hint) {
+    return undefined;
+  }
+  if (hint.type && hint.type !== type) {
+    return undefined;
+  }
+  return hint;
+}
+
 export function resolveServerProviderConfig(
   providerConfig?: Partial<AIProviderConfig>,
   env: NodeJS.ProcessEnv = process.env
 ): AIProviderConfig {
   const safeHint = sanitizeClientProviderConfig(providerConfig);
+  const envType = getEnvProviderType(env);
   const type = normalizeProviderType(safeHint?.type, env);
+  const hint = hintForType(type, safeHint, !envType);
 
   if (type === 'ollama') {
     const baseUrl = cleanBaseUrl(
       env.OLLAMA_BASE_URL?.trim() ||
-        safeHint?.baseUrl ||
+        hint?.baseUrl ||
         DEFAULT_OLLAMA_BASE_URL
     );
     const model =
-      env.OLLAMA_MODEL?.trim() ||
-      safeHint?.model ||
-      DEFAULT_MODELS.ollama;
+      env.OLLAMA_MODEL?.trim() || hint?.model || DEFAULT_MODELS.ollama;
     return { type, baseUrl, model };
   }
 
   if (type === 'xai') {
     const baseUrl = cleanBaseUrl(
-      env.XAI_BASE_URL?.trim() || safeHint?.baseUrl || DEFAULT_XAI_BASE_URL
+      env.XAI_BASE_URL?.trim() || hint?.baseUrl || DEFAULT_XAI_BASE_URL
     );
-    const model =
-      env.XAI_MODEL?.trim() || safeHint?.model || DEFAULT_MODELS.xai;
+    const model = env.XAI_MODEL?.trim() || hint?.model || DEFAULT_MODELS.xai;
     return {
       type,
       baseUrl,
@@ -95,12 +108,10 @@ export function resolveServerProviderConfig(
   }
 
   const baseUrl = cleanBaseUrl(
-    env.OPENAI_BASE_URL?.trim() ||
-      safeHint?.baseUrl ||
-      DEFAULT_OPENAI_BASE_URL
+    env.OPENAI_BASE_URL?.trim() || hint?.baseUrl || DEFAULT_OPENAI_BASE_URL
   );
   const model =
-    env.OPENAI_MODEL?.trim() || safeHint?.model || DEFAULT_MODELS[type];
+    env.OPENAI_MODEL?.trim() || hint?.model || DEFAULT_MODELS[type];
 
   return {
     type,
