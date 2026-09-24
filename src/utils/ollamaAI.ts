@@ -180,4 +180,5 @@ export const genreConfigs = {
   }
 };
 
+export const ollama = new OllamaAI();
 export default OllamaAI;

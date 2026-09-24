@@ -1,5 +1,3 @@
-import { WritingStyle } from '@/types/writing';
-
 export interface WritingStyle {
   name: string;
   description: string;

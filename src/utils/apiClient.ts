@@ -1,9 +1,6 @@
 import { ApiError } from './api';
-import type { AIProviderConfig } from './aiProvider';
-import {
-  getAIAuthToken,
-  getClientAIProviderConfig,
-} from './clientAIRequest';
+import type { PublicAIProviderConfig } from './aiProvider';
+import { getClientAIProviderConfig } from './clientAIRequest';
 
 interface ApiResponse<T = any> {
   data?: T;
@@ -40,7 +37,7 @@ class ApiClient {
 
   private attachProviderToBody(
     body: BodyInit | null | undefined,
-    providerConfig: AIProviderConfig
+    providerConfig: PublicAIProviderConfig
   ): BodyInit {
     if (!body) {
       return JSON.stringify({ providerConfig });
@@ -81,7 +78,6 @@ class ApiClient {
 
       if (this.shouldAttachAIProvider(endpoint)) {
         const providerConfig = getClientAIProviderConfig();
-        headers.set('Authorization', `Bearer ${getAIAuthToken(providerConfig)}`);
         requestBody = this.attachProviderToBody(options.body, providerConfig);
       }
 
@@ -89,6 +85,7 @@ class ApiClient {
         ...options,
         headers,
         body: requestBody,
+        credentials: 'same-origin',
       });
 
       if (!response.ok) {

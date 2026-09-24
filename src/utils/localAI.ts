@@ -349,4 +349,5 @@ This chapter demonstrates the power of storytelling to entertain, educate, and i
   }
 }
 
+export const localAI = new LocalAI();
 export default LocalAI;

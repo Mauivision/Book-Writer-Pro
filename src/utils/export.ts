@@ -108,7 +108,7 @@ export function exportCharacterSheet(characters: Character[]) {
     
     ## Relationships
     ${char.relationships.map(rel => {
-      const targetChar = characters.find(c => c.id === rel.targetId)
+      const targetChar = characters.find(c => c.id === rel.characterId)
       return `- ${targetChar?.name || 'Unknown'}: ${rel.type}`
     }).join('\n')}
   `).join('\n\n')

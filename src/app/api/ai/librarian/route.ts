@@ -90,16 +90,11 @@ Consider the user's experience level and current writing stage when providing gu
   } catch (error) {
     console.error('Librarian API - Error:', error);
 
-    if (error instanceof Error && error.message.toLowerCase().includes('ollama')) {
-      return NextResponse.json({
-        response:
-          "I couldn't reach your local model yet. If you're using Ollama, make sure it's running (`ollama serve`) and that your model is available (for example, `ollama pull llama3.1`). Then try again.",
-      });
-    }
-
+    const detail =
+      error instanceof Error ? error.message : 'the configured AI provider is unreachable';
     return NextResponse.json({
-      response:
-        "I'm having trouble connecting to your configured AI provider right now. Please check your provider settings and try again. If you're using a local model, confirm Ollama is running and the selected model is installed.",
-    });
+      response: `I couldn't reach the AI brain. ${detail}`,
+      error: detail,
+    }, { status: 502 });
   }
 } 

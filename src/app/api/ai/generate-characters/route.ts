@@ -79,8 +79,8 @@ Return JSON only, as an object with a "characters" array. Each character must in
   } catch (error) {
     console.error('Error generating characters:', error)
     return NextResponse.json(
-      { error: 'Failed to generate characters' },
-      { status: 500 }
+      { error: error instanceof Error ? error.message : 'Failed to generate characters' },
+      { status: 502 }
     )
   }
 } 

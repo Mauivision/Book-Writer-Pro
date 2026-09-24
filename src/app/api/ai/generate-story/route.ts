@@ -98,7 +98,7 @@ export async function POST(request: Request) {
     console.error('Error generating story:', error)
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to generate story' },
-      { status: 500 }
+      { status: 502 }
     )
   }
 } 

@@ -72,8 +72,8 @@ Format the response as a JSON object with these fields:
   } catch (error) {
     console.error('Error generating setting:', error);
     return NextResponse.json(
-      { error: 'Failed to generate setting' },
-      { status: 500 }
+      { error: error instanceof Error ? error.message : 'Failed to generate setting' },
+      { status: 502 }
     );
   }
 } 

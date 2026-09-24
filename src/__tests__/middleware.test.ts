@@ -1,175 +1,70 @@
+/**
+ * @jest-environment node
+ */
+
 import { NextRequest } from 'next/server';
 import { middleware } from '@/middleware';
-import { middlewareConfig } from '@/config/middleware';
+import { ACCESS_COOKIE_NAME, expectedSessionToken } from '@/utils/accessGate';
 
-// Mock the Next.js request environment
-const createMockRequest = (path: string, authHeader?: string | string[]) => {
+const ORIGINAL_ENV = process.env;
+
+function request(path: string, cookie?: string) {
   const headers = new Headers();
-  if (authHeader) {
-    if (Array.isArray(authHeader)) {
-      authHeader.forEach(header => headers.append('authorization', header));
-    } else {
-      headers.set('authorization', authHeader);
-    }
+  if (cookie) {
+    headers.set('cookie', cookie);
   }
-  
-  const url = new URL(`http://localhost${path}`);
-  return new NextRequest(url, {
-    headers,
-  });
-};
+  return new NextRequest(new URL(`http://localhost${path}`), { headers });
+}
 
-describe('Middleware', () => {
-  it('should allow requests with valid API key', async () => {
-    const request = createMockRequest(
-      `${middlewareConfig.api.routes.prefix}/test`,
-      `${middlewareConfig.api.routes.authScheme} valid-api-key`
-    );
-    const response = await middleware(request);
-    expect(response.status).toBe(200);
+describe('access-gate middleware', () => {
+  afterEach(() => {
+    process.env = ORIGINAL_ENV;
   });
 
-  it('should reject requests without API key', async () => {
-    const request = createMockRequest(`${middlewareConfig.api.routes.prefix}/test`);
-    const response = await middleware(request);
-    expect(response.status).toBe(middlewareConfig.api.errors.unauthorized.status);
-    
-    const data = await response.json();
-    expect(data).toBe(middlewareConfig.api.errors.unauthorized.message);
+  it('lets every page and API through when APP_PASSWORD is unset', async () => {
+    process.env = { ...ORIGINAL_ENV };
+    delete process.env.APP_PASSWORD;
+
+    const page = await middleware(request('/settings'));
+    const api = await middleware(request('/api/ai/generate-chapter'));
+
+    expect(page.status).toBe(200);
+    expect(api.status).toBe(200);
   });
 
-  it('should reject requests with invalid authorization format', async () => {
-    const request = createMockRequest(
-      `${middlewareConfig.api.routes.prefix}/test`,
-      'InvalidFormat'
-    );
-    const response = await middleware(request);
-    expect(response.status).toBe(middlewareConfig.api.errors.unauthorized.status);
-    
-    const data = await response.json();
-    expect(data).toBe(middlewareConfig.api.errors.unauthorized.message);
-  });
+  it('redirects pages and blocks APIs when the password is set and there is no cookie', async () => {
+    process.env = { ...ORIGINAL_ENV, APP_PASSWORD: 'only-aaron' };
 
-  it('should not intercept non-API routes', async () => {
-    const request = createMockRequest('/some-other-route');
-    const response = await middleware(request);
-    expect(response.status).toBe(200);
-  });
+    const page = await middleware(request('/settings'));
+    expect(page.status).toBe(307);
+    expect(page.headers.get('location')).toContain('/login');
 
-  it('should handle empty authorization header', async () => {
-    const request = createMockRequest(
-      `${middlewareConfig.api.routes.prefix}/test`,
-      ''
-    );
-    const response = await middleware(request);
-    expect(response.status).toBe(middlewareConfig.api.errors.unauthorized.status);
-  });
-
-  it('should handle malformed authorization header', async () => {
-    const request = createMockRequest(
-      `${middlewareConfig.api.routes.prefix}/test`,
-      'Bearer'
-    );
-    const response = await middleware(request);
-    expect(response.status).toBe(middlewareConfig.api.errors.unauthorized.status);
-  });
-
-  // Test cases for API key formats
-  describe('API Key Formats', () => {
-    it('should accept standard API key format', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        `${middlewareConfig.api.routes.authScheme} sk-1234567890abcdef`
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(200);
-    });
-
-    it('should accept API key with special characters', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        `${middlewareConfig.api.routes.authScheme} sk-123!@#$%^&*()_+`
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(200);
-    });
-
-    it('should accept API key with spaces', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        `${middlewareConfig.api.routes.authScheme} sk-123 456 789`
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(200);
+    const api = await middleware(request('/api/ai/generate-chapter'));
+    expect(api.status).toBe(401);
+    await expect(api.json()).resolves.toMatchObject({
+      error: expect.stringMatching(/Unauthorized/i),
     });
   });
 
-  // Test cases for case sensitivity
-  describe('Case Sensitivity', () => {
-    it('should accept lowercase bearer scheme', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        'bearer valid-api-key'
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(200);
-    });
+  it('allows the login page and login API without a cookie', async () => {
+    process.env = { ...ORIGINAL_ENV, APP_PASSWORD: 'only-aaron' };
 
-    it('should accept uppercase bearer scheme', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        'BEARER valid-api-key'
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(200);
-    });
+    const page = await middleware(request('/login'));
+    const api = await middleware(request('/api/auth/login'));
 
-    it('should accept mixed case bearer scheme', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        'BeArEr valid-api-key'
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(200);
-    });
+    expect(page.status).toBe(200);
+    expect(api.status).toBe(200);
   });
 
-  // New test cases for multiple authorization headers
-  describe('Multiple Authorization Headers', () => {
-    it('should use the first authorization header', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        [
-          `${middlewareConfig.api.routes.authScheme} valid-api-key`,
-          `${middlewareConfig.api.routes.authScheme} invalid-api-key`
-        ]
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(200);
-    });
+  it('allows the rest of the app with a valid session cookie', async () => {
+    process.env = { ...ORIGINAL_ENV, APP_PASSWORD: 'only-aaron' };
+    const token = await expectedSessionToken();
+    const cookie = `${ACCESS_COOKIE_NAME}=${token}`;
 
-    it('should handle multiple invalid headers', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        [
-          'InvalidFormat1',
-          'InvalidFormat2'
-        ]
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(middlewareConfig.api.errors.unauthorized.status);
-    });
+    const page = await middleware(request('/', cookie));
+    const api = await middleware(request('/api/ai/status', cookie));
 
-    it('should handle mix of valid and invalid headers', async () => {
-      const request = createMockRequest(
-        `${middlewareConfig.api.routes.prefix}/test`,
-        [
-          'InvalidFormat',
-          `${middlewareConfig.api.routes.authScheme} valid-api-key`
-        ]
-      );
-      const response = await middleware(request);
-      expect(response.status).toBe(200);
-    });
+    expect(page.status).toBe(200);
+    expect(api.status).toBe(200);
   });
-}); 
+});

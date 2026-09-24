@@ -97,8 +97,8 @@ Return only the rewritten content without any additional commentary or formattin
   } catch (error) {
     console.error('Error rewriting chapter:', error)
     return NextResponse.json(
-      { error: 'Failed to rewrite chapter' },
-      { status: 500 }
+      { error: error instanceof Error ? error.message : 'Failed to rewrite chapter' },
+      { status: 502 }
     )
   }
 } 

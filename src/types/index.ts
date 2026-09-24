@@ -7,15 +7,18 @@ export interface BookMetadata {
   isbn?: string;
   publisher?: string;
   copyrightYear?: number;
-  genres: string[];
-  description: string;
-  targetAudience: string;
+  genres?: string[];
+  description?: string;
+  targetAudience?: string;
+  theme?: string;
   wordCountGoal?: number;
+  targetWordCount?: number;
   currentWordCount?: number;
   status?: 'in-progress' | 'completed' | 'draft';
   themes?: string[];
   setting?: string;
   createdAt?: string;
+  updatedAt?: string;
   lastModified?: string;
 }
 
@@ -26,21 +29,29 @@ export interface Chapter {
   summary: string;
   wordCount: number;
   order: number;
-  status: 'draft' | 'review' | 'final';
+  status: 'draft' | 'review' | 'final' | 'in-progress' | 'completed' | 'reviewed';
   lastModified: string;
   pageNumber?: number;
+  targetWordCount?: number;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Character {
   id: string;
   name: string;
-  role: 'protagonist' | 'antagonist' | 'supporting' | 'minor';
+  role: 'protagonist' | 'antagonist' | 'supporting' | 'minor' | string;
   description: string;
   background: string;
   motivations: string[];
+  type?: string;
+  lastSeen?: string;
   relationships: Array<{
     characterId: string;
     type: string;
+    strength?: number;
+    description?: string;
   }>;
 }
 
@@ -207,6 +218,7 @@ export interface BookState {
   chapters: Chapter[];
   characters: Character[];
   currentChapterId: string | null;
+  currentChapter?: Chapter | null;
   lastSaved: Date | null;
   version: string;
   plot: Plot;
@@ -215,8 +227,9 @@ export interface BookState {
     title: string;
     genres: string[];
   } | null;
-  achievements?: import('./achievements').Achievement[];
-  userProgress?: import('./achievements').UserProgress;
-  dailyChallenge?: import('./achievements').DailyChallenge | null;
-  writingSessions?: Array<{ date: string; wordCount: number }>;
+  book?: BookMetadata;
+  achievements: import('./achievements').Achievement[];
+  userProgress: import('./achievements').UserProgress;
+  dailyChallenge: import('./achievements').DailyChallenge | null;
+  writingSessions: Array<{ date: string; wordCount: number }>;
 } 

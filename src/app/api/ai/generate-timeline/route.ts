@@ -73,8 +73,8 @@ Format each event as JSON with:
   } catch (error) {
     console.error('Error generating timeline events:', error)
     return NextResponse.json(
-      { error: 'Failed to generate timeline events' },
-      { status: 500 }
+      { error: error instanceof Error ? error.message : 'Failed to generate timeline events' },
+      { status: 502 }
     )
   }
 } 

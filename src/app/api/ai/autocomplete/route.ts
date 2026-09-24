@@ -102,7 +102,7 @@ Provide only the completion text, starting immediately after the current text.`
     console.error('Error in auto-completion:', error)
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to complete text' },
-      { status: 500 }
+      { status: 502 }
     )
   }
 } 

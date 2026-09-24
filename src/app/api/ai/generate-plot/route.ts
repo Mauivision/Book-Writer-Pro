@@ -69,8 +69,8 @@ Format the response as a JSON object with these fields:
   } catch (error) {
     console.error('Error generating plot:', error);
     return NextResponse.json(
-      { error: 'Failed to generate plot' },
-      { status: 500 }
+      { error: error instanceof Error ? error.message : 'Failed to generate plot' },
+      { status: 502 }
     );
   }
 } 
