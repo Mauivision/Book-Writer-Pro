@@ -7,7 +7,8 @@ interface RetryConfig {
 export class ApiError extends Error {
   constructor(
     message: string,
-    public code: string = 'UNKNOWN_ERROR'
+    public code: string | number = 'UNKNOWN_ERROR',
+    public details?: unknown
   ) {
     super(message);
     this.name = 'ApiError';
@@ -29,17 +30,12 @@ export async function fetchWithRetry(
   
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      const apiKey = localStorage.getItem('openai_api_key');
-      if (!apiKey) {
-        throw new ApiError('API key not found. Please configure it in settings.', 401);
-      }
-
       const response = await fetch(url, {
         ...options,
+        credentials: 'same-origin',
         headers: {
           ...options.headers,
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
         }
       });
 
@@ -67,11 +63,9 @@ export async function fetchWithRetry(
 }
 
 export async function getApiKey(): Promise<string> {
-  const apiKey = localStorage.getItem('openai_api_key');
-  if (!apiKey) {
-    throw new ApiError('API key not found. Please configure it in settings.');
-  }
-  return apiKey;
+  throw new ApiError(
+    'API keys stay on the server. Set XAI_API_KEY or OPENAI_API_KEY in the environment instead of the browser.'
+  );
 }
 
 export async function makeApiRequest<T>(

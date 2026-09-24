@@ -9,11 +9,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 import { useEffect, useState, useCallback } from 'react'
 import { useBookStore } from '@/store/useBookStore'
 import { FaMagic, FaSpinner, FaLightbulb, FaKeyboard } from 'react-icons/fa'
-import {
-  attachProviderConfig,
-  getAIAuthToken,
-  getClientAIProviderConfig,
-} from '@/utils/clientAIRequest'
+import { attachProviderConfig } from '@/utils/clientAIRequest'
 
 export interface RichTextEditorProps {
   initialContent: string
@@ -59,11 +55,10 @@ export default function RichTextEditor({ initialContent, onChange, chapterId }: 
   })
 
   const buildAIRequest = useCallback((payload: Record<string, unknown>) => {
-    const providerConfig = getClientAIProviderConfig()
     return {
+      credentials: 'same-origin' as const,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${getAIAuthToken(providerConfig)}`,
       },
       body: JSON.stringify(attachProviderConfig(payload)),
     }

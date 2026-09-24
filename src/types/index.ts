@@ -3,6 +3,8 @@ export interface BookMetadata {
   title: string;
   author: string;
   genre?: string;
+  theme?: string;
+  targetWordCount?: number;
   synopsis?: string;
   isbn?: string;
   publisher?: string;
@@ -26,21 +28,30 @@ export interface Chapter {
   summary: string;
   wordCount: number;
   order: number;
-  status: 'draft' | 'review' | 'final';
+  status: 'draft' | 'review' | 'final' | 'in-progress' | 'completed' | 'reviewed';
   lastModified: string;
   pageNumber?: number;
+  targetWordCount?: number;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Character {
   id: string;
   name: string;
-  role: 'protagonist' | 'antagonist' | 'supporting' | 'minor';
+  role: 'protagonist' | 'antagonist' | 'supporting' | 'minor' | 'family';
+  type?: string;
   description: string;
   background: string;
   motivations: string[];
+  lastSeen?: string;
   relationships: Array<{
     characterId: string;
     type: string;
+    targetId?: string;
+    strength?: number;
+    description?: string;
   }>;
 }
 
@@ -48,11 +59,19 @@ export interface Plot {
   summary: string;
   outline: string[];
   subplots?: string[];
+  themes?: string[];
+  mainPlot?: string;
+  conflicts?: string[];
+  resolution?: string;
 }
 
 export interface Setting {
   description: string;
   worldBuilding?: string;
+  location?: string;
+  timePeriod?: string;
+  atmosphere?: string;
+  worldbuilding?: string[];
 }
 
 export interface TimelineEvent {
@@ -215,8 +234,9 @@ export interface BookState {
     title: string;
     genres: string[];
   } | null;
-  achievements?: import('./achievements').Achievement[];
-  userProgress?: import('./achievements').UserProgress;
-  dailyChallenge?: import('./achievements').DailyChallenge | null;
-  writingSessions?: Array<{ date: string; wordCount: number }>;
+  achievements: import('./achievements').Achievement[];
+  userProgress: import('./achievements').UserProgress;
+  dailyChallenge: import('./achievements').DailyChallenge | null;
+  writingSessions: Array<{ date: string; wordCount: number }>;
+  currentChapter?: string | null;
 } 

@@ -2,6 +2,8 @@
 
 A comprehensive book writing application with AI assistance, voice dictation, and Scrivener-like organization features.
 
+**Personal setup:** run it on your Windows PC with Ollama, or on Vercel with xAI Grok. See [`docs/SETUP.md`](docs/SETUP.md) and [`.env.example`](.env.example).
+
 ## 🎉 **COMPLETE TRILOGY ACHIEVEMENT** 🎉
 
 ### **The Cosmic Consciousness Trilogy - COMPLETE**

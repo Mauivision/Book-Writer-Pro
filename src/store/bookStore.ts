@@ -41,6 +41,7 @@ interface BookActions {
   addCharacter: (character: Omit<Character, 'id'>) => void;
   updateCharacter: (id: string, character: Partial<Character>) => void;
   removeCharacter: (id: string) => void;
+  deleteCharacter: (id: string) => void;
   addRelationship: (characterId: string, targetId: string, type: string) => void;
   removeRelationship: (characterId: string, targetId: string) => void;
   
@@ -214,19 +215,23 @@ export const useBookStore = create<BookState & BookActions>()(
           chapters: [],
           characters: [],
           plot: {
-            mainPlot: '',
+            summary: '',
+            outline: [],
             subplots: [],
             themes: [],
+            mainPlot: '',
             conflicts: [],
             resolution: '',
           },
           setting: {
+            description: '',
             timePeriod: '',
             location: '',
             atmosphere: '',
             worldbuilding: [],
           },
           currentChapter: null,
+          currentChapterId: null,
         })),
 
       // Chapter actions
@@ -269,6 +274,7 @@ export const useBookStore = create<BookState & BookActions>()(
       setCurrentChapter: (id) =>
         set(() => ({
           currentChapterId: id,
+          currentChapter: id,
         })),
 
       // Character actions
@@ -291,6 +297,11 @@ export const useBookStore = create<BookState & BookActions>()(
         })),
 
       removeCharacter: (id) =>
+        set((state) => ({
+          characters: state.characters.filter((character) => character.id !== id),
+        })),
+
+      deleteCharacter: (id) =>
         set((state) => ({
           characters: state.characters.filter((character) => character.id !== id),
         })),

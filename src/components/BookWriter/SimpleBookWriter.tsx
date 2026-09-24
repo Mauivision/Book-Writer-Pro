@@ -4,6 +4,16 @@ import React, { useState, useEffect } from 'react';
 import { saveAs } from 'file-saver';
 import FullRichTextEditor from './FullRichTextEditor';
 
+type SpeechRecognitionLike = {
+  continuous: boolean;
+  interimResults: boolean;
+  onresult: ((event: unknown) => void) | null;
+  onstart: (() => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+};
+
 interface Chapter {
   id: string;
   title: string;
@@ -48,7 +58,7 @@ const SimpleBookWriter: React.FC<SimpleBookWriterProps> = ({
   onPromptInsert = () => {},
   showPrompts = true
 }) => {
-  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
+  const [recognition, setRecognition] = useState<SpeechRecognitionLike | null>(null);
   const [isListening, setIsListening] = useState(false);
   const [writingStartTime, setWritingStartTime] = useState<Date | null>(null);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');

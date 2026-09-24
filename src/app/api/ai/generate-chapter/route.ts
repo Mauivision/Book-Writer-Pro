@@ -103,8 +103,8 @@ Please provide the chapter in this JSON format:
   } catch (error) {
     console.error('Error generating chapter:', error)
     return NextResponse.json(
-      { error: 'Failed to generate chapter' },
-      { status: 500 }
+      { error: error instanceof Error ? error.message : 'Failed to generate chapter' },
+      { status: 502 }
     )
   }
 } 

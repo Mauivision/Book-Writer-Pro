@@ -90,16 +90,15 @@ Consider the user's experience level and current writing stage when providing gu
   } catch (error) {
     console.error('Librarian API - Error:', error);
 
-    if (error instanceof Error && error.message.toLowerCase().includes('ollama')) {
-      return NextResponse.json({
-        response:
-          "I couldn't reach your local model yet. If you're using Ollama, make sure it's running (`ollama serve`) and that your model is available (for example, `ollama pull llama3.1`). Then try again.",
-      });
+    const message =
+      error instanceof Error ? error.message : '';
+    if (message) {
+      return NextResponse.json({ response: message });
     }
 
     return NextResponse.json({
       response:
-        "I'm having trouble connecting to your configured AI provider right now. Please check your provider settings and try again. If you're using a local model, confirm Ollama is running and the selected model is installed.",
+        "I'm having trouble connecting to your configured AI provider right now. If this PC uses Ollama, run `ollama serve`. If this is the Vercel backup, check XAI_API_KEY.",
     });
   }
 } 

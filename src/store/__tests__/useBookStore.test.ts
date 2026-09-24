@@ -3,23 +3,27 @@ import { useBookStore } from '../useBookStore';
 
 describe('useBookStore', () => {
   beforeEach(() => {
-    const { result } = renderHook(() => useBookStore());
+    localStorage.clear();
+    useBookStore.persist.clearStorage();
     act(() => {
-      result.current.updateMetadata({
-        title: '',
-        genre: '',
-        theme: '',
-        synopsis: '',
+      useBookStore.setState({
+        chapters: [],
+        characters: [],
+        plot: {
+          summary: '',
+          outline: [],
+        },
+        setting: {
+          description: '',
+        },
+        metadata: {
+          ...useBookStore.getState().metadata,
+          title: '',
+          genre: '',
+          theme: '',
+          synopsis: '',
+        },
       });
-      result.current.chapters = [];
-      result.current.characters = [];
-      result.current.plot = {
-        summary: '',
-        outline: [],
-      };
-      result.current.setting = {
-        description: '',
-      };
     });
   });
 
@@ -35,7 +39,7 @@ describe('useBookStore', () => {
       });
     });
 
-    expect(result.current.metadata).toEqual({
+    expect(result.current.metadata).toMatchObject({
       title: 'Test Book',
       genre: 'Fantasy',
       theme: 'Adventure',

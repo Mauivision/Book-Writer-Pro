@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
-import { testAIProviderConnection } from '@/utils/aiGateway';
+import {
+  providerErrorMessage,
+  testAIProviderConnection,
+} from '@/utils/aiGateway';
+import { sanitizeClientProviderConfig } from '@/utils/aiProvider';
 import type { AIProviderConfig } from '@/utils/aiProvider';
 
 interface TestConnectionRequest {
@@ -9,40 +13,27 @@ interface TestConnectionRequest {
 
 export async function POST(request: Request) {
   try {
-    const { apiKey, providerConfig } =
-      (await request.json()) as TestConnectionRequest;
+    const body = (await request.json().catch(() => ({}))) as TestConnectionRequest;
+    const providerConfig = sanitizeClientProviderConfig(body.providerConfig);
 
-    const effectiveConfig: Partial<AIProviderConfig> | undefined = apiKey
-      ? {
-          type: 'openai',
-          baseUrl: providerConfig?.baseUrl || 'https://api.openai.com/v1',
-          model: providerConfig?.model || 'gpt-4o-mini',
-          apiKey,
-        }
-      : providerConfig;
-
-    if (!effectiveConfig && !process.env.OPENAI_API_KEY) {
-      return NextResponse.json(
-        {
-          error:
-            'No provider configured. Choose Ollama/local model or provide an API key.',
-        },
-        { status: 400 }
-      );
-    }
-
-    const result = await testAIProviderConnection(effectiveConfig);
+    const result = await testAIProviderConnection(providerConfig);
 
     return NextResponse.json({
       success: true,
       provider: result.provider,
       model: result.model,
+      baseUrl: result.baseUrl,
     });
   } catch (error) {
     console.error('Error testing AI provider:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Connection failed' },
-      { status: 401 }
+      {
+        error: providerErrorMessage(
+          error,
+          'The chosen AI provider is unreachable.'
+        ),
+      },
+      { status: 502 }
     );
   }
-} 
+}

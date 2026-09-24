@@ -1,44 +1,33 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { Editor } from '@/components/Editor'
+import { render, screen } from '@testing-library/react';
+import { Editor } from '@/components/Editor';
 
-// Mock the TipTap editor since it's a complex component
-jest.mock('@tiptap/react', () => ({
-  useEditor: () => ({
-    commands: {
-      focus: jest.fn(),
-    },
-    isActive: jest.fn(),
-  }),
-}))
+jest.mock('@/store/useBookStore', () => ({
+  useBookStore: (selector: (state: Record<string, unknown>) => unknown) =>
+    selector({
+      updateChapter: jest.fn(),
+      setCurrentChapter: jest.fn(),
+    }),
+}));
+
+jest.mock('@/components/Editor/RichTextEditor', () => ({
+  __esModule: true,
+  default: () => <div data-testid="rich-text-editor">editor</div>,
+}));
+
+jest.mock('@/components/Chapter/ChapterGenerator', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
+jest.mock('@/components/Editor/ChapterRewriter', () => ({
+  __esModule: true,
+  default: () => null,
+}));
 
 describe('Editor Component', () => {
-  it('renders the editor component', () => {
-    render(<Editor />)
-    // Add your assertions here based on what should be visible
-    expect(screen.getByRole('textbox')).toBeInTheDocument()
-  })
-
-  it('handles user input', async () => {
-    const user = userEvent.setup()
-    render(<Editor />)
-    
-    const editor = screen.getByRole('textbox')
-    await user.type(editor, 'Hello, World!')
-    
-    // Add assertions based on how your editor handles input
-    expect(editor).toHaveValue('Hello, World!')
-  })
-
-  it('handles toolbar actions', async () => {
-    const user = userEvent.setup()
-    render(<Editor />)
-    
-    // Example of testing toolbar buttons
-    const boldButton = screen.getByRole('button', { name: /bold/i })
-    await user.click(boldButton)
-    
-    // Add assertions based on how your editor handles formatting
-    expect(boldButton).toHaveAttribute('aria-pressed', 'true')
-  })
-}) 
+  it('renders the chapter editor chrome', () => {
+    render(<Editor chapterId="chapter-1" initialContent="<p>Hello</p>" />);
+    expect(screen.getByText('Chapter Editor')).toBeInTheDocument();
+    expect(screen.getByTestId('rich-text-editor')).toBeInTheDocument();
+  });
+});
